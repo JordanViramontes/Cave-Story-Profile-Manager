@@ -1,0 +1,20 @@
+#ifndef WINDOW_H
+#define WINDOW_H
+
+#include <QWidget>
+
+class Window : public QWidget
+{
+    Q_OBJECT
+private:
+    QWidget * createFileWidget();
+    QWidget * createImageLoader();
+    QWidget * createScrollArea();
+
+public:
+    explicit Window(QWidget *parent = nullptr);
+
+signals:
+};
+
+#endif // WINDOW_H
