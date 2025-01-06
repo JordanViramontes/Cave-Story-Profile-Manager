@@ -1,4 +1,5 @@
 #include "window.h"
+#include "tablewidgetdragrows.h"
 
 #include <QWidget>
 #include <QGridLayout>
@@ -15,6 +16,11 @@
 #include <QMenuBar>
 #include <QLabel>
 #include <QPixmap>
+#include <QDrag>
+#include <QMimeData>
+#include <QTableView>
+#include <QAbstractTableModel>
+#include <QHeaderView>
 
 Window::Window(QWidget *parent)
     : QWidget{parent}
@@ -38,7 +44,6 @@ Window::Window(QWidget *parent)
     // Center Column
     QWidget *centerWidget = new QWidget(this);
     QVBoxLayout *centerColumn = new QVBoxLayout(centerWidget);
-    centerColumn->addWidget(imageLoader, 0, Qt::AlignHCenter);
     centerColumn->addWidget(scrollArea, 1);
     centerColumn->setStretch(0, 1);
     centerColumn->setStretch(1, 4);
@@ -47,6 +52,7 @@ Window::Window(QWidget *parent)
     // Right Column
     QWidget *rightWidget = new QWidget(this);
     QVBoxLayout *rightColumn = new QVBoxLayout(rightWidget);
+    rightColumn->addWidget(imageLoader, 0, Qt::AlignHCenter);
     rightColumn->setAlignment(Qt::AlignTop);
     rightColumn->addWidget(tempButton, 0);
 
@@ -94,15 +100,22 @@ QWidget * Window::createImageLoader() {
 }
 
 QWidget * Window::createScrollArea() {
+    // create Weapons Table
+    TableWidgetDragRows * tableWidget = new TableWidgetDragRows(this);
+
+    // create scroll layout
+    QVBoxLayout *scrollLayout = new QVBoxLayout(this);
+    scrollLayout->addWidget(tableWidget);
+
+    // scroll area
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    scrollArea->setLayout(scrollLayout);
 
     return scrollArea;
 }
-
-
-
 
 

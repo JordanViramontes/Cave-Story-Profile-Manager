@@ -11,10 +11,14 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    tablewidgetdragrows.cpp \
+    weaponwidget.cpp \
     window.cpp
 
 HEADERS += \
     mainwindow.h \
+    tablewidgetdragrows.h \
+    weaponwidget.h \
     window.h
 
 FORMS += \
