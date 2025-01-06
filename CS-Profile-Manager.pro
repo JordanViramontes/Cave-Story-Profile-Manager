@@ -18,7 +18,6 @@ SOURCES += \
 HEADERS += \
     mainwindow.h \
     tablewidgetdragrows.h \
-    weaponwidget.h \
     window.h
 
 FORMS += \
