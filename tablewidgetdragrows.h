@@ -68,13 +68,10 @@ protected:
 
                 removeRow(row);
 
-                // check/uncheck depending on row
-                // if (targetRow > 5) {
-                //     qDebug() << "dropped later";
-                // }
-                // else {
-                //     qDebug() << "dropped before";
-                // }
+                // set scrollbar in a good spot
+                if (targetRow < 5) scrollTo(model()->index(0, 0));
+                else scrollTo(model()->index(rowCount()-1, 0));
+
             }
             event->accept();
 
@@ -254,13 +251,10 @@ public:
     }
     void setWeaponType(int n) { weaponType = n; }
     void setEnabled(bool e) {
-        // qDebug() << "new: " << e;
-        bool newE = isEnabled;
-        isEnabled = e;
-
         // change click
-        if (newE == isEnabled) return;
+        if (e == isEnabled) return;
 
+        // we will actually change isEnabled in the slot for the checkbox
         if (check->checkState() == Qt::Checked) {
             check->setCheckState(Qt::Unchecked);
         }
@@ -291,7 +285,7 @@ private:
     QVector<int> xpNeeded = {-1, -1, -1, 0};
     bool hasAmmo = false;
     int ammo = 0;
-    int ammoMax = 50;
+    int ammoMax = 0;
 
     // parent
     TableWidgetDragRows *parentTable = nullptr;
@@ -333,7 +327,7 @@ public slots:
 
 private slots:
     void enabledUpdate() {
-        // isEnabled = !isEnabled;
+        isEnabled = !isEnabled;
 
         // update
         updatePaint();

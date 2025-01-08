@@ -126,14 +126,14 @@ QWidget * Window::createScrollArea() {
     AmmoEdit->setFixedWidth(40);
     AmmoEdit->setMaxLength(3);
     AmmoEdit->setPlaceholderText("xx");
-    AmmoEdit->setText("50");
+    AmmoEdit->setText("0");
     AmmoEdit->setToolTip("Set Max Missile Ammo");
 
     // slider
     slider = new QSlider(this);
     slider->setOrientation(Qt::Horizontal);
     slider->setRange(0, 99);
-    slider->setValue(50);
+    slider->setValue(0);
     slider->setToolTip("Adjust Max Ammo");
     // slider->setGeometry(10,140, 115, 30);
 
