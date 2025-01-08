@@ -1,3 +1,6 @@
+#include "profileloader.h"
+
+#include "qcombobox.h"
 #include "qlineedit.h"
 #include <QApplication>
 #include <QTableWidget>
@@ -14,6 +17,7 @@
 #include <QLabel>
 #include <QTextEdit>
 
+
 #pragma once // to avoid redefinition error
 
 class TableWidgetDragRows : public QTableWidget {
@@ -21,6 +25,7 @@ class TableWidgetDragRows : public QTableWidget {
 
 public:
     TableWidgetDragRows(QWidget* parent = nullptr);
+    void newWeaponTable(QVector<WeaponSlot> &weapons);
 
     // get
     int getWeaponTotal() const { return weaponTotal; }
@@ -61,6 +66,14 @@ protected:
                 }
 
                 removeRow(row);
+
+                // check/uncheck depending on row
+                // if (targetRow > 5) {
+                //     qDebug() << "dropped later";
+                // }
+                // else {
+                //     qDebug() << "dropped before";
+                // }
             }
             event->accept();
 
@@ -75,7 +88,8 @@ protected:
 
 private:
     int weaponTotal = 10;
-    const int rowHeight = 40;
+    int maxMissileAmmo = 50;
+    const int rowHeight = 60;
 
     QList<int> getSelectedRowsFast() {
         QSet<int> uniqueRows; // Use QSet to avoid duplicates
@@ -91,6 +105,23 @@ public slots:
         rowRect.setRight(viewport()->width());  // Ensure it covers the full width of the table
         update(rowRect);  // Update the entire row
     }
+
+    void updateMaxAmmo(QString str) {
+        maxMissileAmmo = str.toInt(); // should always be int due to validators
+
+        qDebug() << "in: " << maxMissileAmmo;
+
+        emit ammoChanged(maxMissileAmmo);
+    }
+
+    void updateMaxAmmo(int n) {
+        maxMissileAmmo = n; // should always be int due to validators
+
+        emit ammoChanged(maxMissileAmmo);
+    }
+
+signals:
+    void ammoChanged(int n);
 };
 
 class WeaponWidget : public QWidget
@@ -98,8 +129,8 @@ class WeaponWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit WeaponWidget(QWidget *parent = nullptr);
-    explicit WeaponWidget(QString n, int l, int x, QVector<int> xN, QWidget *parent = nullptr);
+    WeaponWidget(int &w, bool &missile, QString &n, int &l, int &x, QVector<int> &xN,
+                 TableWidgetDragRows *pT, QWidget *parent = nullptr);
 
     // get
     QString getName() const { return name; }
@@ -107,8 +138,9 @@ public:
     int getXp() const { return xp; }
     QVector<int> getxpNeeded() const { return xpNeeded; }
     bool getIsEnabled() const { return isEnabled; }
+    int getWeaponType() const { return weaponType; }
+    bool getIsMissile() const { return isMissile; }
 
-    // set
     void setName(QString n) {
         name = n;
 
@@ -118,10 +150,14 @@ public:
     }
 
     void setLvl(int l) {
+        // qDebug() << "incoming level: " << l;
         lvl = l;
 
         // update xp amount
         if (xp > xpNeeded[lvl-1]) xp = xpNeeded[lvl-1];
+
+        // update lvl label
+        level->setCurrentIndex(lvl-1);
 
         // update text label
         xpNeededLabel->setText("/" + QString::number(xpNeeded[lvl-1]));
@@ -138,14 +174,14 @@ public:
             intVal->setBottom(0.0);  // New minimum value
             intVal->setTop(xpNeeded[lvl-1]);    // New maximum value
 
-            qDebug() << "New range:" << intVal->bottom() << "to" << intVal->top();
+            // qDebug() << "New range:" << intVal->bottom() << "to" << intVal->top();
         }
         xpText->update();
 
         // update xpText value if MAX
         if (xpText->text().toInt() > xpNeeded[lvl-1]) xpText->setText(QString::number(xpNeeded[lvl-1]));
 
-        qDebug() << "xp: " << xp;
+        // qDebug() << "xp: " << xp;
     }
     void setXp(int x) {
         xp = x;
@@ -183,13 +219,49 @@ public:
     void setParent(TableWidgetDragRows *parent) { parentTable = parent; }
     void setTablePosition(int newPos) { tablePosition = newPos; }
 
+    void setAmmoMax(int n) {
+        ammoMax = n;
+
+        // update values
+        if (ammoMax < ammo) {
+            setAmmo(ammoMax);
+        }
+
+        // update labels
+        ammoLine->setText("/" + QString::number(ammoMax));
+
+        // update validator
+        QValidator *validator = const_cast<QValidator *>(ammoEdit->validator());
+        if (QIntValidator *intVal = dynamic_cast<QIntValidator *>(validator)) {
+            // Set a new range for the integer validator
+            intVal->setBottom(0.0);  // New minimum value
+            intVal->setTop(ammoMax);    // New maximum value
+
+            qDebug() << "New range:" << intVal->bottom() << "to" << intVal->top();
+        }
+        ammoEdit->update();
+    }
+
+    void setAmmo(int n) {
+        ammo = n;
+
+        // qDebug() << "ammo now: " << ammo << ", max: " << ammoMax;
+        ammoEdit->setText(QString::number(ammo));
+    }
+    void setWeaponType(int n) { weaponType = n; }
+
 private:
+    int weaponType = -1;
     bool isEnabled = true;
+    bool isMissile = false;
     int tablePosition = 0;
     QString name = "temp";
     int lvl = 1;
     int xp = 0;
     QVector<int> xpNeeded = {-1, -1, -1, 0};
+    bool hasAmmo = false;
+    int ammo = 0;
+    int ammoMax = 50;
 
     // parent
     TableWidgetDragRows *parentTable = nullptr;
@@ -198,22 +270,33 @@ private:
     QWidget *check;
     QLabel *icon;
     QLabel *levelText;
-    QWidget *level;
+    QComboBox *level;
     QLabel *xpLabel;
     QSlider *slider;
     QLineEdit *xpText;
     QLabel * xpNeededLabel;
+    QLabel * ammoLabel;
+    QLineEdit *ammoEdit;
+    QLabel * ammoLine;
+
+    QGridLayout * layout;
 
     // constructors
     QLabel * createIcon();
-    QWidget * createLevel();
+    QComboBox * createLevel();
     QSlider * createSlider();
     QWidget * createCheck();
     QLineEdit * createXpText();
     QLabel * createXpNeededLabel();
+    QLineEdit * createAmmoEdit();
 
 signals:
     void isEnabledChanged();
+
+public slots:
+    void maxAmmoSlot(int n) {
+        setAmmoMax(n);
+    }
 
 private slots:
     void enabledChecked() {
@@ -244,7 +327,7 @@ public:
         if (table) {
             // do red rows first
             if (index.row() <= m_endRow && index.row() >= m_startRow) {
-                painter->fillRect(option.rect, Qt::darkRed);
+                painter->fillRect(option.rect, QColor(0xff363636));
                 return;
             }
 
@@ -260,7 +343,6 @@ public:
                     QColor backgroundColor = Qt::darkBlue;
 
                     if (!isEnabled) backgroundColor = Qt::darkGray;
-
 
                     // Fill the background
                     QRect fullRowRect = option.rect;

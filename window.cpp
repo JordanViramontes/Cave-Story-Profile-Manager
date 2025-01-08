@@ -21,6 +21,8 @@
 #include <QTableView>
 #include <QAbstractTableModel>
 #include <QHeaderView>
+#include <QFile>
+#include <QMessageBox>
 
 Window::Window(QWidget *parent)
     : QWidget{parent}
@@ -64,16 +66,15 @@ Window::Window(QWidget *parent)
 
     mainGrid->setColumnStretch(0, 4);
     mainGrid->setColumnStretch(1, 12);
-    mainGrid->setColumnStretch(2, 1);
+    mainGrid->setColumnStretch(2, 2);
 
     setLayout(mainGrid);
 }
 
 QWidget * Window::createFileWidget() {
     // file system
-    QFileSystemModel *fileSystem = new QFileSystemModel(this);
+    fileSystem = new QFileSystemModel(this);
     fileSystem->setRootPath(QDir::rootPath());
-
 
     // tree for file system
     QTreeView *view = new QTreeView;
@@ -81,7 +82,11 @@ QWidget * Window::createFileWidget() {
     view->hideColumn(1);
     view->hideColumn(2);
     view->hideColumn(3);
-    view->setRootIndex(fileSystem->index("C:/Users/jorda/OneDrive/Desktop/cs_practice/saves"));
+    view->setRootIndex(fileSystem->index(saveDirectory));
+
+    // get the file loaded
+    // connect(fileSystem, SIGNAL(directoryLoaded(QString)), this, SLOT(getProfileDirectory(QString)));
+    connect(view, SIGNAL(clicked(QModelIndex)), this, SLOT(getProfileDirectory(QModelIndex)));
 
     return view;
 }
@@ -101,34 +106,76 @@ QWidget * Window::createImageLoader() {
 
 QWidget * Window::createScrollArea() {
     // create Weapons Table
-    TableWidgetDragRows * tableWidget = new TableWidgetDragRows(this);
+    tableWidget = new TableWidgetDragRows(this);
 
     // text box
-    QString weaponsNotes = "Only the first 5 weapons in the table will be \nadded to the Profile's Inventory";
-    QLabel *detailsLabel = new QLabel(weaponsNotes, this);
-    detailsLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    QVBoxLayout *boxlayout = new QVBoxLayout(this);
-    boxlayout->addWidget(detailsLabel);
-    QGroupBox *box = new QGroupBox(tr("Notes:"), this);
-    box->setLayout(boxlayout);
+    // QString weaponsNotes = "You can Drag and Drop rows in the table to change weapon order";
+    // weaponsNotes        += "\nWeapons will be added to the inventory (and appear blue) if they are:";
+    // weaponsNotes        += "\n\t- Checked (unchecked items will appear gray), and";
+    // weaponsNotes        += "\n\t- Within the first 5 slots of the table";
+
+    // QLabel *detailsLabel = new QLabel(weaponsNotes, this);
+    // detailsLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    // detailsLabel->setWordWrap(true);
+
+
+    // max ammo
+    QLabel *maxAmmoLabel = new QLabel("Max Missile Ammo: ", this);
+    AmmoEdit = new QLineEdit(this);
+    AmmoEdit->setAlignment(Qt::AlignCenter);
+    AmmoEdit->setFixedWidth(40);
+    AmmoEdit->setMaxLength(3);
+    AmmoEdit->setPlaceholderText("xx");
+    AmmoEdit->setText("50");
+    AmmoEdit->setToolTip("Set Max Missile Ammo");
+
+    // slider
+    QSlider *slider;
+    slider = new QSlider(this);
+    slider->setOrientation(Qt::Horizontal);
+    slider->setRange(0, 99);
+    slider->setValue(50);
+    slider->setToolTip("Adjust Max Ammo");
+    // slider->setGeometry(10,140, 115, 30);
+
+    // update counter
+    connect(slider, SIGNAL(sliderMoved(int)), tableWidget, SLOT(updateMaxAmmo(int)));
+
+    // change text
+    connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(updateAmmoEdit(int)));
+
+
+    // validator
+    QIntValidator *intValidator = new QIntValidator(0, 99, this);  // Valid floating-point numbers from 0.0 to 1000.0 with 2 decimal places
+    intValidator->setLocale(QLocale::C);
+    AmmoEdit->setValidator(intValidator);
+
+    // Connect textChanged to handle user input
+    connect(AmmoEdit, SIGNAL(textChanged(QString)), tableWidget, SLOT(updateMaxAmmo(QString)));
+
+    QSpacerItem *spacer = new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+    QHBoxLayout *ammoLayout = new QHBoxLayout(this);
+    ammoLayout->addWidget(maxAmmoLabel);
+    ammoLayout->addWidget(AmmoEdit);
+    ammoLayout->addWidget(slider);
+    // ammoLayout->addItem(spacer);
+
+    QWidget *ammoWidget = new QWidget(this);
+    ammoWidget->setLayout(ammoLayout);
 
     // create scroll layout
     QVBoxLayout *scrollLayout = new QVBoxLayout(this);
-    scrollLayout->addWidget(tableWidget);
-    scrollLayout->addWidget(box);
+    scrollLayout->addWidget(tableWidget, QSizePolicy::MinimumExpanding);
+    scrollLayout->addWidget(ammoWidget);
 
-    // scroll area
-    QScrollArea *scrollArea = new QScrollArea(this);
-    scrollArea->setWidgetResizable(true);
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    scrollArea->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    scrollArea->setLayout(scrollLayout);
+    QGroupBox *box = new QGroupBox(tr("Inventory::"), this);
+    box->setLayout(scrollLayout);
 
-    // QWidget *scrollArea = new QWidget(this);
-    // scrollArea->setLayout(scrollLayout);
+    // connection for profile stuff
+    connect(this, SIGNAL(updateAmmoFromProfile(int)), this, SLOT(updateAmmoEdit(int)));
 
-    return scrollArea;
+
+    return box;
 }
-
 

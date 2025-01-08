@@ -1,4 +1,5 @@
 #include "tablewidgetdragrows.h"
+#include "qscrollbar.h"
 
 #include <QHeaderView>
 
@@ -19,15 +20,33 @@ TableWidgetDragRows::TableWidgetDragRows(QWidget *parent)
     verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
+    setEditTriggers(QAbstractItemView::NoEditTriggers);
+    setFocusPolicy(Qt::NoFocus);
+
     setRowCount(weaponTotal);
     setColumnCount(1);
 
-    // fill table
+    int w; bool m; QString n; int l; int x; QVector<int> xN; TableWidgetDragRows * pT = this; QWidget *p = this;
+
+    // fill default table
     for (int i = 0; i < weaponTotal; i++) {
+        // initialize variables
+        switch(i) {
+            case (0): w=0x1; m=0; n="SN"; l=1; x=0; xN={30, 40, 16, 0}; break; // snake
+            case (1): w=0x2; m=0; n="PS"; l=1; x=0; xN={10, 20, 10, 0}; break; // PS
+            case (2): w=0x3; m=0; n="FB"; l=1; x=0; xN={10, 20, 20, 0}; break; // FB
+            case (3): w=0x4; m=0; n="MG"; l=1; x=0; xN={30, 40, 10, 0}; break; // MG
+            case (4): w=0x5; m=1; n="ML"; l=1; x=0; xN={10, 20, 10, 0}; break; // ML
+            case (5): w=0x7; m=0; n="BB"; l=1; x=0; xN={10, 20, 5, 0}; break; // BB
+            case (6): w=0x9; m=0; n="BL"; l=1; x=0; xN={30, 60, 0, 0}; break; // BL
+            case (7): w=0xA; m=1; n="SM"; l=1; x=0; xN={30, 60, 10, 0}; break; // SM
+            case (8): w=0xC; m=0; n="NS"; l=1; x=0; xN={1, 1, 1, 0}; break; // NS
+            case (9): w=0xD; m=0; n="SP"; l=1; x=0; xN={40, 60, 200, 0}; break; // SP
+            default: w=-1; m=0; n="xx"; l=1; x=0; xN={0, 0, 0, 0}; break; // default
+        }
+
         // create widget
-        WeaponWidget *widget = new WeaponWidget(this);
-        widget->setParent(this);
-        widget->setTablePosition(i);
+        WeaponWidget *widget = new WeaponWidget(w, m, n, l, x, xN, pT, p);
 
         // UI
         setCellWidget(i, 0, widget);
@@ -39,42 +58,128 @@ TableWidgetDragRows::TableWidgetDragRows(QWidget *parent)
         });
     }
 
-    // manually edit values
-    qobject_cast<WeaponWidget*>(cellWidget(0, 0))->setName("PS");
-    qobject_cast<WeaponWidget*>(cellWidget(0, 0))->setXpNeeded({10, 20, 10, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(1, 0))->setName("MG");
-    qobject_cast<WeaponWidget*>(cellWidget(1, 0))->setXpNeeded({30, 40, 10, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(2, 0))->setName("SK");
-    qobject_cast<WeaponWidget*>(cellWidget(2, 0))->setXpNeeded({30, 40, 16, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(3, 0))->setName("SP");
-    qobject_cast<WeaponWidget*>(cellWidget(3, 0))->setXpNeeded({40, 60, 200, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(4, 0))->setName("ML");
-    qobject_cast<WeaponWidget*>(cellWidget(4, 0))->setXpNeeded({10, 20, 10, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(5, 0))->setName("SM");
-    qobject_cast<WeaponWidget*>(cellWidget(5, 0))->setXpNeeded({30, 60, 10, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(6, 0))->setName("FB");
-    qobject_cast<WeaponWidget*>(cellWidget(6, 0))->setXpNeeded({10, 20, 20, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(7, 0))->setName("BB");
-    qobject_cast<WeaponWidget*>(cellWidget(7, 0))->setXpNeeded({10, 20, 5, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(8, 0))->setName("BL");
-    qobject_cast<WeaponWidget*>(cellWidget(8, 0))->setXpNeeded({30, 60, 0, 0});
-
-    qobject_cast<WeaponWidget*>(cellWidget(9, 0))->setName("NS");
-    qobject_cast<WeaponWidget*>(cellWidget(9, 0))->setXpNeeded({1, 1, 1, 0});
-
-
     // delegate
     WeaponsDelegate * delegate = new WeaponsDelegate(5, weaponTotal, this);
     setItemDelegate(delegate);
-
-
-
 }
+
+void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
+    QVector<int> w; // vector to know the order of parsed weapons
+    QVector<int> weaponPlace;
+    QVector<QWidget*> firstHalf(5, nullptr);
+    QVector<QWidget*> secondHalf;
+    QVector<int> oldRowsFirst(5, -1);
+    QVector<int> oldRowsSecond;
+
+    // add weapons queue
+    for (unsigned int i = 0; i < weapons.size(); i++) {
+        // qDebug() << "check weapons: " << static_cast<int>(weapons[i].type);
+        w.push_back(static_cast<int>(weapons[i].type));
+        weaponPlace.push_back(i);
+    }
+
+    // prepare order of swaps and set widget amounts
+    for (int i = 0; i < rowCount(); i++) { // i->cells, j->weapons
+        // cast the cell widget and check
+        WeaponWidget *weaponWidget = qobject_cast<WeaponWidget*>(cellWidget(i, 0));
+        if (!weaponWidget) continue;
+
+        // reset weapon values
+        weaponWidget->setLvl(1);
+        weaponWidget->setXp(0);
+        if (weaponWidget->getIsMissile())
+            weaponWidget->setAmmo(0);
+
+        // add to vector
+        bool isInWeapons = false;
+        for (int j = 0; j < w.size(); j++) { // hate this is nested but w can only be 5 large at most
+            if (weaponWidget->getWeaponType() == w.at(j)) {
+                firstHalf[j] = cellWidget(i, 0); // make sure to push a QWIDGET
+                isInWeapons = true;
+
+                // get weapon values
+                int lvl = static_cast<int>(weapons[weaponPlace[j]].level);
+                int xp = static_cast<int>(weapons[weaponPlace[j]].energy);
+                int getNeeded = weaponWidget->getxpNeeded().at(2);
+                // qDebug() << "need: " << getNeeded[3];
+
+                // set levels
+                if (lvl == 3 && xp == getNeeded) {
+                    // qDebug() << "a";
+                    weaponWidget->setLvl(4);
+                }
+                else {
+                    weaponWidget->setLvl(static_cast<int>(weapons[weaponPlace[j]].level));
+                    weaponWidget->setXp(static_cast<int>(weapons[weaponPlace[j]].energy));
+                }
+
+                // set missiles
+                if (weaponWidget->getIsMissile())
+                    weaponWidget->setAmmo(static_cast<int>(weapons[weaponPlace[j]].currentAmmo));
+
+                // set up oldrows
+                oldRowsFirst[j] = i;
+
+                break;
+            }
+        }
+        if (!isInWeapons) {
+            secondHalf.push_back(cellWidget(i, 0));
+            // set up oldrows
+            oldRowsSecond.push_back(i);
+        } // make sure to push a QWIDGET
+    }
+
+    // make 10 new rows to swap to
+    for (int i = 0; i < weaponTotal; i++) { insertRow(0); }
+
+    int newRow = 0;
+
+    // first half
+    for (unsigned int i = 0; i < oldRowsFirst.size(); i++) {
+        // if empty
+        if (oldRowsFirst[i] == -1) continue;
+
+        // offset row and move widget
+        int oldRow = oldRowsFirst[i] + 10;
+        setRowHeight(newRow, rowHeight);
+
+        // get widget and set new values
+        QWidget *widget = cellWidget(oldRow, 0);
+
+        if (widget) {
+            setCellWidget(newRow, 0, widget);
+        }
+
+        // incriment
+        newRow++;
+    }
+
+    // second half
+    for (unsigned int i = 0; i < oldRowsSecond.size(); i++) {
+
+        // offset row and move widget
+        int oldRow = oldRowsSecond[i] + 10;
+        setRowHeight(newRow, rowHeight);
+
+        QWidget *widget = cellWidget(oldRow, 0);
+        if (widget) {
+            setCellWidget(newRow, 0, widget);
+        }
+
+        // incriment
+        newRow++;
+    }
+
+    // reset to normal row count
+    setRowCount(weaponTotal);
+
+    // reset scroll
+    verticalScrollBar()->setValue(0);
+}
+
+
+
+
+
+

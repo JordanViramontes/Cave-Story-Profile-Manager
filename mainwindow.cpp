@@ -10,10 +10,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     // main layout
     Window *window = new Window;
+    window->setGeometry(0, 0, 854, 480);
 
     setCentralWidget(window);
-    setFixedSize(854, 480);
-    setWindowTitle("8 Slider Puzzle Solver GUI");
+    // setFixedSize(854, 480);
+    setWindowTitle("Cave Story Profile Manager");
 }
 
 MainWindow::~MainWindow()
