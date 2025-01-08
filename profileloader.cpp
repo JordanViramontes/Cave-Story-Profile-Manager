@@ -27,7 +27,7 @@ ProfileLoader::ProfileLoader(string profilePath) {
 
 bool ProfileLoader::parseProfile(string profilePath) {
 
-    qDebug() << "opening file";
+    // qDebug() << "opening file";
 
     // // open and check file
     ifstream file(profilePath, std::ios::binary);
@@ -92,7 +92,7 @@ bool ProfileLoader::parseProfile(string profilePath) {
         w.level = buffer[weaponIt+0x04];
         w.energy = buffer[weaponIt+0x08];
         w.maxAmmo = buffer[weaponIt+0x0C];
-        if (w.maxAmmo != 0) { maxAmmo = w.maxAmmo; }
+        if (w.maxAmmo != 0x0) { maxAmmo = w.maxAmmo; }
         w.currentAmmo = buffer[weaponIt+0x10];
 
         weapons[i] = w;

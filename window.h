@@ -27,6 +27,7 @@ private:
     // widgets
     TableWidgetDragRows * tableWidget;
     QLineEdit * AmmoEdit;
+    QSlider *slider;
 
 public:
     explicit Window(QWidget *parent = nullptr);
@@ -42,8 +43,13 @@ private slots:
 
         ProfileLoader profile = ProfileLoader(fileSystem->filePath(index).toStdString());
         QVector<WeaponSlot> weapons = profile.getWeapons();
+        int ammoMax = profile.getMaxAmmo();
+        qDebug() << "ammoMax: " << ammoMax;
         // int ammoMax = profile.getMaxAmmo();
         // qDebug() << "size: " << weapons.size();
+        slider->setValue(ammoMax);
+        emit slider->sliderMoved(ammoMax);
+
 
         tableWidget->newWeaponTable(weapons);
         // emit updateAmmoFromProfile(ammoMax);

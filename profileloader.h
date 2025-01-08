@@ -46,7 +46,7 @@ private:
     char time[3];       // 034-036
     QVector<WeaponSlot> weapons;    // 038-0D4
     InventoryItems items; // 0D8-153
-    int maxAmmo;
+    char maxAmmo = 0;
 
     bool parseProfile(string profilePath);
     void printContents();
@@ -55,7 +55,10 @@ public:
 
     // get
     QVector<WeaponSlot> &getWeapons() { return weapons; }
-    // int &getMaxAmmo() { int a = static_cast<int>(maxAmmo); return a; }
+    int getMaxAmmo() const {
+        return static_cast<int>(maxAmmo);
+        // return a;
+    }
 
 };
 

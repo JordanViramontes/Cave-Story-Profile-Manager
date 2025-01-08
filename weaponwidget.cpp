@@ -84,18 +84,14 @@ WeaponWidget::WeaponWidget(int &w, bool &missile, QString &n, int &l, int &x, QV
     // qDebug() << "second";
 }
 
-QWidget * WeaponWidget::createCheck() {
+QCheckBox * WeaponWidget::createCheck() {
     QCheckBox *check = new QCheckBox();
     check->setCheckState(Qt::Checked);
     check->setToolTip("Enables/Disables the weapon");
 
-    if (tablePosition > 5) {
-        check->setEnabled(false);
-    }
-
     // connection for changing bool isEnabled
     connect(check, SIGNAL(checkStateChanged(Qt::CheckState)),
-            this, SLOT(enabledChecked()));
+            this, SLOT(enabledUpdate()));
 
     return check;
 }

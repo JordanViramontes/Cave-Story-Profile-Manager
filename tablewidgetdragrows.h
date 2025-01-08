@@ -1,5 +1,6 @@
 #include "profileloader.h"
 
+#include "qcheckbox.h"
 #include "qcombobox.h"
 #include "qlineedit.h"
 #include <QApplication>
@@ -141,6 +142,7 @@ public:
     int getWeaponType() const { return weaponType; }
     bool getIsMissile() const { return isMissile; }
 
+    // set
     void setName(QString n) {
         name = n;
 
@@ -148,7 +150,6 @@ public:
         icon->setText(name);
         icon->update();
     }
-
     void setLvl(int l) {
         // qDebug() << "incoming level: " << l;
         lvl = l;
@@ -215,11 +216,10 @@ public:
         }
         xpText->update();
     }
-
     void setParent(TableWidgetDragRows *parent) { parentTable = parent; }
     void setTablePosition(int newPos) { tablePosition = newPos; }
-
     void setAmmoMax(int n) {
+        if (!isMissile) return;
         ammoMax = n;
 
         // update values
@@ -230,6 +230,7 @@ public:
         // update labels
         ammoLine->setText("/" + QString::number(ammoMax));
 
+
         // update validator
         QValidator *validator = const_cast<QValidator *>(ammoEdit->validator());
         if (QIntValidator *intVal = dynamic_cast<QIntValidator *>(validator)) {
@@ -237,18 +238,47 @@ public:
             intVal->setBottom(0.0);  // New minimum value
             intVal->setTop(ammoMax);    // New maximum value
 
-            qDebug() << "New range:" << intVal->bottom() << "to" << intVal->top();
+            // qDebug() << "New range:" << intVal->bottom() << "to" << intVal->top();
         }
+
+        qDebug() << "set3: " << n;
+
         ammoEdit->update();
     }
-
     void setAmmo(int n) {
+        if (!isMissile) return;
         ammo = n;
 
         // qDebug() << "ammo now: " << ammo << ", max: " << ammoMax;
         ammoEdit->setText(QString::number(ammo));
     }
     void setWeaponType(int n) { weaponType = n; }
+    void setEnabled(bool e) {
+        // qDebug() << "new: " << e;
+        bool newE = isEnabled;
+        isEnabled = e;
+
+        // change click
+        if (newE == isEnabled) return;
+
+        if (check->checkState() == Qt::Checked) {
+            check->setCheckState(Qt::Unchecked);
+        }
+        else {
+            check->setCheckState(Qt::Checked);
+        }
+    }
+
+    // etc
+    void updatePaint() {
+        // qDebug() << "updating";
+        // update the state of the parent table
+        if (parentTable == nullptr) return;
+
+        // emit signals
+        emit isEnabledChanged();
+        update();  // Force a repaint
+    }
 
 private:
     int weaponType = -1;
@@ -267,7 +297,7 @@ private:
     TableWidgetDragRows *parentTable = nullptr;
 
     // subwidgets
-    QWidget *check;
+    QCheckBox *check;
     QLabel *icon;
     QLabel *levelText;
     QComboBox *level;
@@ -285,29 +315,28 @@ private:
     QLabel * createIcon();
     QComboBox * createLevel();
     QSlider * createSlider();
-    QWidget * createCheck();
+    QCheckBox * createCheck();
     QLineEdit * createXpText();
     QLabel * createXpNeededLabel();
     QLineEdit * createAmmoEdit();
+
+
 
 signals:
     void isEnabledChanged();
 
 public slots:
     void maxAmmoSlot(int n) {
+        qDebug() << "slot";
         setAmmoMax(n);
     }
 
 private slots:
-    void enabledChecked() {
-        isEnabled = !isEnabled;
+    void enabledUpdate() {
+        // isEnabled = !isEnabled;
 
-        // update the state of the parent table
-        if (parentTable == nullptr) return;
-
-        // emit signals
-        emit isEnabledChanged();
-        update();  // Force a repaint
+        // update
+        updatePaint();
     }
 };
 
@@ -338,6 +367,7 @@ public:
                 WeaponWidget* customWidget = qobject_cast<WeaponWidget*>(widget);
                 if (customWidget) {
                     bool isEnabled = customWidget->getIsEnabled();
+                    // qDebug() << "isE: " << isEnabled;
 
                     // Decide background color based on the bool value
                     QColor backgroundColor = Qt::darkBlue;

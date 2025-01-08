@@ -56,11 +56,16 @@ TableWidgetDragRows::TableWidgetDragRows(QWidget *parent)
         connect(widget, &WeaponWidget::isEnabledChanged, this, [this, i]() {
             updatePainter(i, 0); // Call your custom update logic
         });
+
+        connect(this, SIGNAL(ammoChanged(int)), widget, SLOT(maxAmmoSlot(int)));
     }
 
     // delegate
     WeaponsDelegate * delegate = new WeaponsDelegate(5, weaponTotal, this);
     setItemDelegate(delegate);
+
+    // WeaponWidget *widget = qobject_cast<WeaponWidget*>(cellWidget(0, 0));
+    // widget->setEnabled(!widget->getIsEnabled());
 }
 
 void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
@@ -70,6 +75,7 @@ void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
     QVector<QWidget*> secondHalf;
     QVector<int> oldRowsFirst(5, -1);
     QVector<int> oldRowsSecond;
+    int amountActive = 0;
 
     // add weapons queue
     for (unsigned int i = 0; i < weapons.size(); i++) {
@@ -77,6 +83,7 @@ void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
         w.push_back(static_cast<int>(weapons[i].type));
         weaponPlace.push_back(i);
     }
+
 
     // prepare order of swaps and set widget amounts
     for (int i = 0; i < rowCount(); i++) { // i->cells, j->weapons
@@ -87,6 +94,7 @@ void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
         // reset weapon values
         weaponWidget->setLvl(1);
         weaponWidget->setXp(0);
+        // weaponWidget->setEnabled(false);
         if (weaponWidget->getIsMissile())
             weaponWidget->setAmmo(0);
 
@@ -97,13 +105,13 @@ void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
                 firstHalf[j] = cellWidget(i, 0); // make sure to push a QWIDGET
                 isInWeapons = true;
 
-                // get weapon values
+                // get weapon values and set them
                 int lvl = static_cast<int>(weapons[weaponPlace[j]].level);
                 int xp = static_cast<int>(weapons[weaponPlace[j]].energy);
                 int getNeeded = weaponWidget->getxpNeeded().at(2);
-                // qDebug() << "need: " << getNeeded[3];
 
-                // set levels
+                amountActive++; // counter for later
+
                 if (lvl == 3 && xp == getNeeded) {
                     // qDebug() << "a";
                     weaponWidget->setLvl(4);
@@ -113,7 +121,6 @@ void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
                     weaponWidget->setXp(static_cast<int>(weapons[weaponPlace[j]].energy));
                 }
 
-                // set missiles
                 if (weaponWidget->getIsMissile())
                     weaponWidget->setAmmo(static_cast<int>(weapons[weaponPlace[j]].currentAmmo));
 
@@ -176,6 +183,17 @@ void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
 
     // reset scroll
     verticalScrollBar()->setValue(0);
+
+    // reset paint
+    // qDebug() << "size: " << amountActive;
+    for (int i = 0; i < rowCount(); i++) {
+        WeaponWidget *widget = qobject_cast<WeaponWidget*>(cellWidget(i, 0));
+
+        if (i < amountActive) widget->setEnabled(true);
+        else widget->setEnabled(false);
+
+        // widget->updatePaint();
+    }
 }
 
 
