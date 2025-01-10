@@ -23,10 +23,15 @@
 #include <QHeaderView>
 #include <QFile>
 #include <QMessageBox>
+#include <QToolBar>
+
 
 Window::Window(QWidget *parent)
     : QWidget{parent}
 {
+    // settings
+    loadSettings();
+
 
     // constructors
     QWidget *fileWidget = createFileWidget();
@@ -35,8 +40,8 @@ Window::Window(QWidget *parent)
     imageLoader->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     QWidget *scrollArea = createScrollArea();
     scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    QPushButton *tempButton = new QPushButton(this);
-    tempButton->setText("testButton");
+    QWidget *buttonArea = createButtonArea();
+    scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     // Left Column
     QWidget *leftWidget = new QWidget(this);
@@ -50,25 +55,36 @@ Window::Window(QWidget *parent)
     centerColumn->setStretch(0, 1);
     centerColumn->setStretch(1, 4);
 
-
     // Right Column
     QWidget *rightWidget = new QWidget(this);
     QVBoxLayout *rightColumn = new QVBoxLayout(rightWidget);
     rightColumn->addWidget(imageLoader, 0, Qt::AlignHCenter);
     rightColumn->setAlignment(Qt::AlignTop);
-    rightColumn->addWidget(tempButton, 0);
+    rightColumn->addWidget(buttonArea, 0);
 
     // main grid
     QGridLayout *mainGrid = new QGridLayout(this);
-    mainGrid->addWidget(leftWidget, 0, 0);
-    mainGrid->addWidget(centerWidget, 0, 1);
-    mainGrid->addWidget(rightWidget, 0, 2);
+    mainGrid->addWidget(leftWidget, 1, 0);
+    mainGrid->addWidget(centerWidget, 1, 1);
+    mainGrid->addWidget(rightWidget, 1, 2);
 
     mainGrid->setColumnStretch(0, 4);
     mainGrid->setColumnStretch(1, 12);
     mainGrid->setColumnStretch(2, 2);
 
     setLayout(mainGrid);
+
+    // connections
+    connect (this, SIGNAL(updateCanUseProfile(bool)), this, SLOT(updateWidgetEnabled(bool)));
+
+    // remove flag
+    isStartingUp = false;
+    disableWidgets();
+
+    // test
+    // exeDirectory = "C:/Users/jorda/OneDrive/Documents/1-Projects/CSProfileManager/doukutsu";
+    // saveDirectory = "C:/Users/jorda/OneDrive/Documents/1-Projects/CSProfileManager/doukutsu/saves";
+    // saveSettings();
 }
 
 QWidget * Window::createFileWidget() {
@@ -177,4 +193,120 @@ QWidget * Window::createScrollArea() {
 
     return box;
 }
+
+QWidget * Window::createButtonArea() {
+    // quick launch
+    quickApplyButton = new QPushButton(this);
+    quickApplyButton->setText("Quick Apply");
+
+    connect(quickApplyButton, SIGNAL(clicked(bool)), this, SLOT(quickApplySlot()));
+
+    // valid Executable
+    validLabel = new QLabel("Directory to Doukutsu.exe Invalid!!\nPlease update the directory:", this);
+    validLabel->setWordWrap(true);
+    validLabel->setVisible(false);
+    QPushButton *validButton = new QPushButton("Update\nDirectory", this);
+    tempDirectoryLabel = new QLabel(".exe Directory:\n" + exeDirectory, this);
+    tempDirectoryLabel->setWordWrap(true);
+    QVBoxLayout *validLayout = new QVBoxLayout(this);
+    validLayout->addWidget(validLabel, Qt::AlignCenter);
+    validLayout->addWidget(validButton, Qt::AlignCenter);
+    validLayout->addWidget(tempDirectoryLabel);
+    QWidget * validWidget = new QWidget(this);
+    validWidget->setLayout(validLayout);
+
+    // spacer
+    QSpacerItem *spacer = new QSpacerItem(0, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+    // credits
+    QString creditsStr = "By: Jordan";
+    QLabel *credits = new QLabel(creditsStr, this);
+
+    // connections
+    connect(validButton, SIGNAL(clicked(bool)), this, SLOT(updateExeDirectory()));
+
+    connect(this, SIGNAL(needToUpdateDirectorySignal()), this, SLOT(updateExeDirectory()));
+
+    // layout and widget
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(quickApplyButton);
+    layout->addWidget(validWidget);
+    layout->addItem(spacer);
+    layout->addWidget(credits);
+    layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+
+    QWidget *widget = new QWidget(this);
+    widget->setLayout(layout);
+
+    return widget;
+}
+
+void Window::saveSettings() {
+    // Save settings using QSettings
+    QSettings settings("joran", "CaveStoryProfileManager"); // Replace with your org/app names
+    settings.setValue("exeDirectory", exeDirectory);
+    settings.setValue("saveDirectory", saveDirectory);
+    qDebug() << "Settings saved: exeDirectory =" << exeDirectory << ", saveDirectory =" << saveDirectory;
+}
+
+void Window::loadSettings() {
+    // Load settings using QSettings
+    QSettings settings("joran", "CaveStoryProfileManager"); // Replace with your org/app names
+
+    // Check if keys exist before loading
+    if (settings.contains("exeDirectory")) {
+        exeDirectory = settings.value("exeDirectory").toString();
+        QFileInfo fileInfo(exeDirectory);
+
+        // check that our exeDirectory is okay
+        if (fileInfo.fileName() == "Doukutsu.exe") {
+            isDirectoryOkay = true;
+            if (validLabel) validLabel->setVisible(false);
+        }
+        else {
+            isDirectoryOkay = false;
+            if (validLabel) validLabel->setVisible(true);
+        }
+        qDebug() << "is: " << isDirectoryOkay;
+    } else {
+        exeDirectory = ""; // Default value
+        isDirectoryOkay = false;
+    }
+
+    if (settings.contains("saveDirectory")) {
+        saveDirectory = settings.value("saveDirectory").toString();
+    } else {
+        saveDirectory = QCoreApplication::applicationDirPath(); // Default value
+        QDir dir(QCoreApplication::applicationDirPath());
+        dir.cdUp();
+        dir.cd("saves");
+
+        saveDirectory = dir.path(); // default value
+
+    }
+
+    qDebug() << "Settings loaded: exeDirectory =" << exeDirectory;
+    qDebug() << "saveDirectory =" << saveDirectory;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

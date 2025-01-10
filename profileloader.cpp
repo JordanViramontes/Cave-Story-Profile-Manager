@@ -8,7 +8,7 @@ using std::string, std::vector,
     std::ifstream, std::ostream, std::fstream,
     std::shared_ptr, std::make_shared, std::list;
 
-ProfileLoader::ProfileLoader(string profilePath) {
+ProfileLoader::ProfileLoader() {
     WeaponSlot defaultWeapon;
     weapons = QVector<WeaponSlot>(8, defaultWeapon);
 
@@ -17,17 +17,11 @@ ProfileLoader::ProfileLoader(string profilePath) {
         shared_ptr<Item> item = make_shared<Item>();
         items.totalItems[i] = item;
     }
-
-
-    if (!parseProfile(profilePath)) {
-        qDebug() << "error parsing profile";
-    }
-    // else printContents();
 }
 
 bool ProfileLoader::parseProfile(string profilePath) {
 
-    // qDebug() << "opening file";
+    // qDebug() << "opening file" << profilePath;
 
     // // open and check file
     ifstream file(profilePath, std::ios::binary);
@@ -176,4 +170,61 @@ void ProfileLoader::printContents() {
     qDebug() << "currWeapon: " << &std::hex << currWeapon+0 << ", \t";
     // qDebug() << "equipIt: " << std::hex << equipIt[0]+0 << " " << equipIt[1]+0 << ", \t";
     qDebug() << "time: " << &std::hex << time[0]+0 << " " << time[1]+0 << " " << time[2]+0 << ", \t\n";
+}
+
+bool ProfileLoader::updateBuffer() {
+    // write weapons to buffer
+
+    /*
+    038       Slot 1 Weapon Type (see WEAPONS)
+    03C       Slot 1 Weapon Level
+    040       Slot 1 Weapon Energy
+    044       Slot 1 Weapon Max Ammo
+    048       Slot 1 Weapon Current Ammo
+    04C       Slot 2 Weapon Type
+    */
+
+    int weaponAddress = 0x38;
+    for (unsigned int i = 0; i < weapons.size(); i++) {
+        buffer[weaponAddress] = weapons.at(i).type; weaponAddress += 0x04;
+        buffer[weaponAddress] = weapons.at(i).level; weaponAddress += 0x04;
+        buffer[weaponAddress] = weapons.at(i).energy; weaponAddress += 0x04;
+        buffer[weaponAddress] = weapons.at(i).maxAmmo; weaponAddress += 0x04;
+        buffer[weaponAddress] = weapons.at(i).currentAmmo; weaponAddress += 0x04;
+    }
+
+    // TODO: write items to buffer
+
+    return true;
+}
+
+QVector<char> ProfileLoader::getBuffer() {
+    // probably will change the buffer datatype later, used to get the buffer back to window
+    QVector<char> newBuffer;
+
+    for (int i = 0; i < 1540; i++) {
+        newBuffer.push_back(buffer[i]);
+    }
+
+    return newBuffer;
+}
+
+void ProfileLoader::setWeapons(QVector<WeaponSlot> newWeapons) {
+    // reset weapons
+    for (unsigned int i = 0; i < weapons.size(); i++) {
+        weapons[i].type = 0;
+        weapons[i].level = 0;
+        weapons[i].energy = 0;
+        weapons[i].maxAmmo = 0;
+        weapons[i].currentAmmo = 0;
+    }
+
+    // set new weapons
+    for (unsigned int i = 0; i < newWeapons.size(); i++) {
+        weapons[i].type = newWeapons[i].type;
+        weapons[i].level = newWeapons[i].level;
+        weapons[i].energy = newWeapons[i].energy;
+        weapons[i].maxAmmo = newWeapons[i].maxAmmo;
+        weapons[i].currentAmmo = newWeapons[i].currentAmmo;
+    }
 }

@@ -27,9 +27,11 @@ class TableWidgetDragRows : public QTableWidget {
 public:
     TableWidgetDragRows(QWidget* parent = nullptr);
     void newWeaponTable(QVector<WeaponSlot> &weapons);
+    void resetWeaponTable();
 
     // get
     int getWeaponTotal() const { return weaponTotal; }
+    QVector<WeaponSlot> getWeapons() const;
 
     // set
 
@@ -69,7 +71,7 @@ protected:
                 removeRow(row);
 
                 // set scrollbar in a good spot
-                if (targetRow < 5) scrollTo(model()->index(0, 0));
+                if (targetRow <= 7) scrollTo(model()->index(0, 0));
                 else scrollTo(model()->index(rowCount()-1, 0));
 
             }
@@ -88,6 +90,9 @@ private:
     int weaponTotal = 10;
     int maxMissileAmmo = 50;
     const int rowHeight = 60;
+
+    // flags
+    bool hasClickedOnProfile = false;
 
     QList<int> getSelectedRowsFast() {
         QSet<int> uniqueRows; // Use QSet to avoid duplicates
@@ -138,6 +143,8 @@ public:
     bool getIsEnabled() const { return isEnabled; }
     int getWeaponType() const { return weaponType; }
     bool getIsMissile() const { return isMissile; }
+    int getAmmoMax() const { return ammoMax; }
+    int getAmmo() const { return ammo; }
 
     // set
     void setName(QString n) {
@@ -238,7 +245,7 @@ public:
             // qDebug() << "New range:" << intVal->bottom() << "to" << intVal->top();
         }
 
-        qDebug() << "set3: " << n;
+        // qDebug() << "set3: " << n;
 
         ammoEdit->update();
     }
@@ -321,7 +328,7 @@ signals:
 
 public slots:
     void maxAmmoSlot(int n) {
-        qDebug() << "slot";
+        // qDebug() << "slot";
         setAmmoMax(n);
     }
 

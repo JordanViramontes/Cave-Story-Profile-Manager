@@ -48,18 +48,19 @@ private:
     InventoryItems items; // 0D8-153
     char maxAmmo = 0;
 
+public:
+    ProfileLoader();
     bool parseProfile(string profilePath);
     void printContents();
-public:
-    ProfileLoader(string profilePath);
+    bool updateBuffer();
+    QVector<char> getBuffer();
 
     // get
     QVector<WeaponSlot> &getWeapons() { return weapons; }
-    int getMaxAmmo() const {
-        return static_cast<int>(maxAmmo);
-        // return a;
-    }
+    int getMaxAmmo() const { return static_cast<int>(maxAmmo); }
 
+    // set
+    void setWeapons(QVector<WeaponSlot> weapons);
 };
 
 #endif // PROFILELOADER_H

@@ -196,8 +196,51 @@ void TableWidgetDragRows::newWeaponTable(QVector<WeaponSlot> &weapons) {
     }
 }
 
+QVector<WeaponSlot> TableWidgetDragRows::getWeapons() const {
+    QVector<WeaponSlot> weapons;
+
+    /*
+    char type = 0;
+    char level = 0;
+    char energy = 0;
+    char maxAmmo = 0;
+    char currentAmmo = 0;
+     */
+
+    // you only check the first 5 rows
+    for (int i = 0; i < 5; i++) {
+        WeaponWidget *widget = qobject_cast<WeaponWidget*>(cellWidget(i, 0));
+        if (!widget->getIsEnabled()) {
+            qDebug() << "nope: " << i;
+            continue; // check its enabled and inside rows
+        }
+
+        WeaponSlot currentWeapon;
+
+        currentWeapon.type = static_cast<char>(widget->getWeaponType());
+        currentWeapon.level = static_cast<char>(widget->getlvl());
+        currentWeapon.energy = static_cast<char>(widget->getXp());
+        currentWeapon.maxAmmo = static_cast<char>(widget->getAmmoMax());
+        currentWeapon.currentAmmo = static_cast<char>(widget->getAmmo());
+
+        // check max
+        if (currentWeapon.level >= 4) {
+            currentWeapon.level = 3;
+            QVector<int> xpNeeded = widget->getxpNeeded();
+            currentWeapon.energy = xpNeeded.at(2);
+        }
+
+        qDebug() << currentWeapon.type+0 << ", "
+                 << currentWeapon.level+0 << ", "
+                 << currentWeapon.energy+0 << ", "
+                 << currentWeapon.maxAmmo+0 << ", "
+                 << currentWeapon.currentAmmo+0 << ", ";
 
 
+        weapons.push_back(currentWeapon);
+    }
+    return weapons;
+}
 
 
 

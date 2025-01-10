@@ -19,5 +19,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QMenuBar * createMenuBar();
 };
 #endif // MAINWINDOW_H
