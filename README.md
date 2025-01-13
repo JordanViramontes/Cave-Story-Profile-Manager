@@ -7,7 +7,7 @@ Save Files included (taken from https://www.speedrun.com/cave_story/resources/zl
 
 All you need is to have your own local installation of Doukutsu (found on https://www.cavestory.org/)
 
-![alt text]([https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true](https://github.com/JordanViramontes/Cave-Story-Profile-Manager/blob/main/CSManagerScreenShot.png?raw=true))
+![alt text](https://github.com/JordanViramontes/Cave-Story-Profile-Manager/blob/main/CSManagerScreenShot.png?raw=true)
 
 
 ## Features
