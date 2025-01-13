@@ -32,7 +32,7 @@ After running, the application will prompt you to pick the directory of your loc
 
 Once you click on a valid Profile.dat file (all of the included files are titled as "location".dat), the table of weapons will update to that of the selected Profile.dat. You can edit any values you want as well as drag and drop table cells in order to get them in the order you want.
 
-In order for a weapon to be included in the save file, it must be BOTH:
+In order for a weapon to be included in the save file, it must be **BOTH** of the following. You will know that it is enabled when the weapon's row is BLUE.
 * Enabled (the check box must be on)
 * Within the first 5 rows of the table
 
