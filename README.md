@@ -23,6 +23,9 @@ Planned Features :
 * Item Manipulation
   * Inventory order
   * Equipt trigger
+* Saving
+  * Saving to a new File
+  * Overwriting current Save
 
 ## Instructions
 
