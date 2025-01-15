@@ -103,7 +103,7 @@ private:
     }
 
 public slots:
-    void updatePainter(int row, int column) {
+    void updatePainter(int row) {
         QRect rowRect = visualRect(model()->index(row, 0));
         rowRect.setRight(viewport()->width());  // Ensure it covers the full width of the table
         update(rowRect);  // Update the entire row
@@ -234,6 +234,9 @@ public:
         // update labels
         ammoLine->setText("/" + QString::number(ammoMax));
 
+        // update slider
+        ammoSlider->setRange(0, ammoMax);
+
 
         // update validator
         QValidator *validator = const_cast<QValidator *>(ammoEdit->validator());
@@ -252,6 +255,8 @@ public:
     void setAmmo(int n) {
         if (!isMissile) return;
         ammo = n;
+
+        ammoSlider->setValue(ammo);
 
         // qDebug() << "ammo now: " << ammo << ", max: " << ammoMax;
         ammoEdit->setText(QString::number(ammo));
@@ -286,7 +291,7 @@ private:
     bool isEnabled = true;
     bool isMissile = false;
     int tablePosition = 0;
-    QString name = "temp";
+    QString name = "W";
     int lvl = 1;
     int xp = 0;
     QVector<int> xpNeeded = {-1, -1, -1, 0};
@@ -298,29 +303,35 @@ private:
     TableWidgetDragRows *parentTable = nullptr;
 
     // subwidgets
-    QCheckBox *check;
-    QLabel *icon;
-    QLabel *levelText;
-    QComboBox *level;
-    QLabel *xpLabel;
-    QSlider *slider;
-    QLineEdit *xpText;
-    QLabel * xpNeededLabel;
-    QLabel * ammoLabel;
-    QLineEdit *ammoEdit;
-    QLabel * ammoLine;
+    QCheckBox *check = nullptr;
+    QLabel *icon = nullptr;
+    QLabel *levelText = nullptr;
+    QComboBox *level = nullptr;
+    QLabel *xpLabel = nullptr;
+    QSlider *slider = nullptr;
+    QLineEdit *xpText = nullptr;
+    QLabel * xpNeededLabel = nullptr;
+    QWidget * ammoWidget = nullptr;
+    QLabel * ammoLabel = nullptr;
+    QLineEdit *ammoEdit = nullptr;
+    QSlider * ammoSlider = nullptr;
+    QLabel * ammoLine = nullptr;
 
-    QGridLayout * layout;
+    QGridLayout * layout = nullptr;
 
     // constructors
     QLabel * createIcon();
     QComboBox * createLevel();
-    QSlider * createSlider();
+    QSlider * createXpSlider();
     QCheckBox * createCheck();
     QLineEdit * createXpText();
     QLabel * createXpNeededLabel();
     QLineEdit * createAmmoEdit();
+    QSlider * createAmmoSlider();
+    QWidget * createAmmoWidget();
 
+    // images
+    QString getImagePath(int weaponType);
 
 
 signals:
@@ -339,6 +350,8 @@ private slots:
         // update
         updatePaint();
     }
+
+    // void
 };
 
 Q_DECLARE_METATYPE(WeaponWidget*)
@@ -389,6 +402,32 @@ public:
     }
 
 private:
-    int m_startRow;
-    int m_endRow;
+    int m_startRow = 0;
+    int m_endRow = 0;
+};
+
+class WeaponSlider : public QSlider {
+    Q_OBJECT
+public:
+    explicit WeaponSlider(Qt::Orientation orientation, QWidget *parent = nullptr)
+        : QSlider(orientation, parent) {}
+
+protected:
+    void wheelEvent(QWheelEvent *event) override {
+        // Ignore the wheel event to disable scroll wheel changes
+        event->ignore();
+    }
+};
+
+class WeaponComboBox : public QComboBox {
+    Q_OBJECT
+public:
+    explicit WeaponComboBox(QWidget *parent = nullptr)
+        : QComboBox(parent) {}
+
+protected:
+    void wheelEvent(QWheelEvent *event) override {
+        // Ignore the wheel event to disable scroll wheel changes
+        event->ignore();
+    }
 };

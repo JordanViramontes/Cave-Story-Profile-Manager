@@ -1,13 +1,15 @@
 QT       += core gui
-CONFIG+= static
+# CONFIG += static
+# CONFIG += staticlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
+# CONFIG+=c++11
 
 # You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+# Uncomment the following line to disable deprecated APIs.
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # Disables all APIs deprecated before Qt 6.0.0
 
 SOURCES += \
     main.cpp \
@@ -18,6 +20,7 @@ SOURCES += \
     window.cpp
 
 HEADERS += \
+    global.h \
     mainwindow.h \
     profileloader.h \
     tablewidgetdragrows.h \

@@ -3,12 +3,18 @@
 #include <vector>
 #include <qDebug>
 #include <fstream>
+#include <QMessageBox>
+#include <QFile>
+#include <QByteArray>
 
 using std::string, std::vector,
     std::ifstream, std::ostream, std::fstream,
     std::shared_ptr, std::make_shared, std::list;
 
 ProfileLoader::ProfileLoader() {
+    buffer.resize(1540);  // Safer dynamic allocation
+    buffer.fill(0);
+
     WeaponSlot defaultWeapon;
     weapons = QVector<WeaponSlot>(8, defaultWeapon);
 
@@ -19,21 +25,44 @@ ProfileLoader::ProfileLoader() {
     }
 }
 
+void testProfile(QString str) {
+    // QMessageBox errorBox = QMessageBox();
+    // errorBox.setIcon(QMessageBox::Warning);
+    // errorBox.setWindowTitle("Error");
+    // errorBox.setStandardButtons(QMessageBox::Ok);
+    // errorBox.setText("PROFILE: " + str);
+    // errorBox.exec();
+}
+
 bool ProfileLoader::parseProfile(string profilePath) {
-
+    // buffer.fill(0, 1540);
     // qDebug() << "opening file" << profilePath;
+    // return false;
 
+    testProfile("beginning: " + QString::fromStdString(profilePath));
     // // open and check file
     ifstream file(profilePath, std::ios::binary);
     if (!file) {
         qDebug() << "didn't get a file";
+        testProfile("no file");
         return false;
     }
+
+    // testProfile(QString::fromStdString( profilePath ) + ", is: " + QString::number(file.is_open()));
+
+    // qDebug() << "path: " << QString::fromStdString( profilePath );
 
     // check if file is a doukutsu
 
     // note that profile.dat should ALWAYS be 1540 bytes long
-    file.read(buffer, 1540);  // Read data into the buffer
+    if (1540 > buffer.size()) {
+        qDebug() << "Buffer size mismatch!";
+        return false;
+    }
+
+    file.read(buffer.data(), 1540);
+
+    testProfile("after read");
 
     // Check how many bytes were actually read
     std::streamsize bytesRead = file.gcount();
@@ -41,6 +70,8 @@ bool ProfileLoader::parseProfile(string profilePath) {
         qDebug() << "wrong file size";
         return false;
     }
+
+    testProfile(" after checking count");
 
     // check the beginning bytes, should be 44 6F 30 34 31 32 32 30
     for (int i = 0; i < 8; i++) {
@@ -55,6 +86,8 @@ bool ProfileLoader::parseProfile(string profilePath) {
             case (7): if (buffer[i] != 0x30) return false; break;
         }
     }
+
+    testProfile("after switch");
 
     // parse easy bytes
     map = buffer[0x008];
@@ -118,6 +151,8 @@ bool ProfileLoader::parseProfile(string profilePath) {
     if ((eqL & 0x20) > 0) items.totalItems[0x17]->isEquiped = true; // booster 2.0
     if ((eqL & 0x40) > 0) items.totalItems[0x18]->isEquiped = true; // mask
     if ((eqR & 0x1) > 0) items.totalItems[0x16]->isEquiped = true; // counter
+
+    testProfile("end of parsing");
 
     return true;
 }
@@ -192,6 +227,9 @@ bool ProfileLoader::updateBuffer() {
         buffer[weaponAddress] = weapons.at(i).maxAmmo; weaponAddress += 0x04;
         buffer[weaponAddress] = weapons.at(i).currentAmmo; weaponAddress += 0x04;
     }
+
+    // selected weapon
+    buffer[0x24] = currWeapon;
 
     // TODO: write items to buffer
 

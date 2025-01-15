@@ -1,5 +1,5 @@
 #include "window.h"
-#include "tablewidgetdragrows.h"
+#include "global.h"
 
 #include <QWidget>
 #include <QGridLayout>
@@ -24,6 +24,8 @@
 #include <QFile>
 #include <QMessageBox>
 #include <QToolBar>
+#include <QStandardItemModel>
+#include <QTabWidget>
 
 
 Window::Window(QWidget *parent)
@@ -31,6 +33,8 @@ Window::Window(QWidget *parent)
 {
     // settings
     loadSettings();
+
+    qDebug() << "TEST IMAGE: " << IMAGEPATH;
 
 
     // constructors
@@ -89,55 +93,95 @@ Window::Window(QWidget *parent)
 
 QWidget * Window::createFileWidget() {
     // file system
-    fileSystem = new QFileSystemModel(this);
-    fileSystem->setRootPath(QDir::rootPath());
+    presetProfileModel = new QFileSystemModel(this);
+    presetProfileModel->setRootPath(QDir::rootPath());
 
     // tree for file system
-    QTreeView *view = new QTreeView;
-    view->setModel(fileSystem);
-    view->hideColumn(1);
-    view->hideColumn(2);
-    view->hideColumn(3);
-    view->setRootIndex(fileSystem->index(saveDirectory));
+    QTreeView *presetView = new QTreeView;
+    presetView->setModel(presetProfileModel);
+    presetView->hideColumn(1);
+    presetView->hideColumn(2);
+    presetView->hideColumn(3);
+    presetView->header()->setVisible(false);
+    presetView->setRootIndex(presetProfileModel->index(saveDirectory + "/Preset"));
+    presetView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    // get the file loaded
-    // connect(fileSystem, SIGNAL(directoryLoaded(QString)), this, SLOT(getProfileDirectory(QString)));
-    connect(view, SIGNAL(clicked(QModelIndex)), this, SLOT(getProfileDirectory(QModelIndex)));
+    QTreeView *customView = new QTreeView;
+    customView->setModel(presetProfileModel);
+    customView->hideColumn(1);
+    customView->hideColumn(2);
+    customView->hideColumn(3);
+    customView->header()->setVisible(false);
+    customView->setRootIndex(presetProfileModel->index(saveDirectory + "/Custom"));
+    customView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    return view;
+    // connections
+    connect(presetView, &QTreeView::clicked, this, &Window::getProfileDirectory);
+    connect(customView, &QTreeView::clicked, this, &Window::getProfileDirectory);
+
+    // tabs
+    fileTabs = new QTabWidget(this);
+    fileTabs->addTab(presetView, tr("Presets"));
+    fileTabs->addTab(customView, tr("Custom"));
+
+
+    // save labels
+    QLabel * saveLabel = new QLabel("Save As:", this);
+    saveLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+    saveEdit = new QLineEdit(this);
+    saveEdit->setAlignment(Qt::AlignLeft);
+    saveEdit->setPlaceholderText("Profile");
+    saveEdit->setText("Profile");
+    saveEdit->setToolTip("New Profile Name");
+    saveEdit->setEnabled(false);
+    saveEdit->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
+
+    saveButton = new QPushButton("Save New Profile", this);
+    saveButton->setDisabled(false);
+    saveButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+    QLabel * saveDatLabel = new QLabel(".dat", this);
+    saveDatLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+
+
+    // layout and widget
+    QGridLayout *layout = new QGridLayout(this);
+    layout->addWidget(fileTabs, 0, 0, 1, -1);
+    layout->addWidget(saveLabel, 1, 0);
+    layout->addWidget(saveEdit, 1, 1);
+    layout->addWidget(saveDatLabel, 1, 2);
+    layout->addWidget(saveButton, 2, 0, 1, -1);
+
+    QGroupBox *box = new QGroupBox(tr("Profiles:"), this);
+    box->setLayout(layout);
+
+
+
+
+    connect(saveButton, &QPushButton::clicked, this, &Window::slot_saveNewProfile);
+
+    return box;
 }
 
 QWidget * Window::createImageLoader() {
     QLabel * label = new QLabel(this);
 
     // Load the image into a QPixmap object
-    QPixmap pixmap("C:/Users/jorda/OneDrive/Documents/1-Projects/CSProfileManager/testImage.png");
+    // QPixmap pixmap("C:/Users/jorda/OneDrive/Documents/1-Projects/CSProfileManager/testImage.png");
     // pixmap.scaled(320, 240, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-    label->setPixmap(pixmap.scaled(50,50,Qt::KeepAspectRatio));
-    label->setScaledContents(true);
+    // label->setPixmap(pixmap.scaled(50,50,Qt::KeepAspectRatio));
+    // label->setScaledContents(true);
 
     return label;
 }
 
 QWidget * Window::createScrollArea() {
-    // create Weapons Table
-    tableWidget = new TableWidgetDragRows(this);
-
-    // text box
-    // QString weaponsNotes = "You can Drag and Drop rows in the table to change weapon order";
-    // weaponsNotes        += "\nWeapons will be added to the inventory (and appear blue) if they are:";
-    // weaponsNotes        += "\n\t- Checked (unchecked items will appear gray), and";
-    // weaponsNotes        += "\n\t- Within the first 5 slots of the table";
-
-    // QLabel *detailsLabel = new QLabel(weaponsNotes, this);
-    // detailsLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    // detailsLabel->setWordWrap(true);
-
-
     // max ammo
-    QLabel *maxAmmoLabel = new QLabel("Max Missile Ammo: ", this);
-    AmmoEdit = new QLineEdit(this);
+    QLabel *maxAmmoLabel = new QLabel("Max Ammo: ", this);
+    // AmmoEdit = new QLineEdit(this);
     AmmoEdit->setAlignment(Qt::AlignCenter);
     AmmoEdit->setFixedWidth(40);
     AmmoEdit->setMaxLength(3);
@@ -146,7 +190,7 @@ QWidget * Window::createScrollArea() {
     AmmoEdit->setToolTip("Set Max Missile Ammo");
 
     // slider
-    slider = new QSlider(this);
+    slider = new WeaponSlider(Qt::Horizontal, this);
     slider->setOrientation(Qt::Horizontal);
     slider->setRange(0, 99);
     slider->setValue(0);
@@ -159,7 +203,6 @@ QWidget * Window::createScrollArea() {
     // change text
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(updateAmmoEdit(int)));
 
-
     // validator
     QIntValidator *intValidator = new QIntValidator(0, 99, this);  // Valid floating-point numbers from 0.0 to 1000.0 with 2 decimal places
     intValidator->setLocale(QLocale::C);
@@ -168,12 +211,20 @@ QWidget * Window::createScrollArea() {
     // Connect textChanged to handle user input
     connect(AmmoEdit, SIGNAL(textChanged(QString)), tableWidget, SLOT(updateMaxAmmo(QString)));
 
-    QSpacerItem *spacer = new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    // current weapon
+    QLabel * currentWeaponLabel = new QLabel("Selected Weapon:", this);
+    currentWeapon = new WeaponComboBox(this);
+    for (unsigned int i = 1; i <= 5; i++) { currentWeapon->addItem(QString::number(i)); }
+    currentWeapon->setToolTip("If the currently selected weapon is higher\n"
+                              "than the amount of weapons enabled, it will\n"
+                              "choose the last enabled weapon");
 
     QHBoxLayout *ammoLayout = new QHBoxLayout(this);
     ammoLayout->addWidget(maxAmmoLabel);
     ammoLayout->addWidget(AmmoEdit);
     ammoLayout->addWidget(slider);
+    ammoLayout->addWidget(currentWeaponLabel);
+    ammoLayout->addWidget(currentWeapon);
     // ammoLayout->addItem(spacer);
 
     QWidget *ammoWidget = new QWidget(this);
@@ -184,11 +235,12 @@ QWidget * Window::createScrollArea() {
     scrollLayout->addWidget(tableWidget, QSizePolicy::MinimumExpanding);
     scrollLayout->addWidget(ammoWidget);
 
-    QGroupBox *box = new QGroupBox(tr("Inventory::"), this);
+    QGroupBox *box = new QGroupBox(tr("Inventory:"), this);
     box->setLayout(scrollLayout);
 
     // connection for profile stuff
     connect(this, SIGNAL(updateAmmoFromProfile(int)), this, SLOT(updateAmmoEdit(int)));
+
 
 
     return box;
@@ -196,17 +248,17 @@ QWidget * Window::createScrollArea() {
 
 QWidget * Window::createButtonArea() {
     // quick launch
-    quickApplyButton = new QPushButton(this);
+    // quickApplyButton = new QPushButton(this);
     quickApplyButton->setText("Quick Apply");
 
     connect(quickApplyButton, SIGNAL(clicked(bool)), this, SLOT(quickApplySlot()));
 
     // valid Executable
-    validLabel = new QLabel("Directory to Doukutsu.exe Invalid!!\nPlease update the directory:", this);
+    // validLabel = new QLabel("Directory to Doukutsu.exe Invalid!!\nPlease update the directory:", this);
     validLabel->setWordWrap(true);
-    validLabel->setVisible(false);
-    QPushButton *validButton = new QPushButton("Update\nDirectory", this);
-    tempDirectoryLabel = new QLabel(".exe Directory:\n" + exeDirectory, this);
+    // validLabel->setVisible(false);
+    QPushButton *validButton = new QPushButton("Update\nDoukutsu\nDirectory", this);
+    // tempDirectoryLabel = new QLabel(".exe Directory:\n" + exeDirectory, this);
     tempDirectoryLabel->setWordWrap(true);
     QVBoxLayout *validLayout = new QVBoxLayout(this);
     validLayout->addWidget(validLabel, Qt::AlignCenter);
@@ -219,8 +271,24 @@ QWidget * Window::createButtonArea() {
     QSpacerItem *spacer = new QSpacerItem(0, 1, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     // credits
-    QString creditsStr = "By: Jordan";
+    QString creditsStr = "By: Jordan Viramontes\n@jordantimes on Discord for questions\n\n";
     QLabel *credits = new QLabel(creditsStr, this);
+    credits->setWordWrap(true);
+    QPushButton * helpButton = new QPushButton("Help", this);
+
+    connect(helpButton, &QPushButton::clicked, this, [] {
+        QString helpStr = "Saves:\nThe folder of Profile.dat save files should be included with the Profile Manager program and located in the same folder as the program. Leave it as is.";
+        helpStr += "\n\nQuick Apply:\nPressing this button applies your changes to the local Profile.dat of the linked Doukutsu.exe and then launches the game. If the game is already launched, simply press ESC (in game), press F2 (the restart option), then load.";
+        helpStr += "\n\nWeapons:\nIn order for a weapon to be included in the save it must be BOTH: \n\t1) Enabled (the check box must be checked), and\n\t2) Within the first 5 rows\nYou know that the weapon is enabled when it's row is BLUE.\nIf you want to change the currently selected weapon, use the \"Selected Weapon\" Drop down. If the currently selected weapon is higher than the amount of weapons enabled, it will select the last enabled weapon.";
+        helpStr += "\n\nSaving:\nYou are able to save new profiles based on any profile. They will be saved into the \"Custom\" tab with whatever name you enter in the \"Save As\" box.\nYou may save new profiles based on preset profiles as well as custom profiles.";
+        QMessageBox helpBox = QMessageBox();
+        // helpBox.setIcon(QMessageBox::Warning);
+        helpBox.setWindowTitle("Help");
+        helpBox.setStandardButtons(QMessageBox::Ok);
+        helpBox.setText(helpStr);
+        helpBox.exec();
+    });
+
 
     // connections
     connect(validButton, SIGNAL(clicked(bool)), this, SLOT(updateExeDirectory()));
@@ -233,6 +301,7 @@ QWidget * Window::createButtonArea() {
     layout->addWidget(validWidget);
     layout->addItem(spacer);
     layout->addWidget(credits);
+    layout->addWidget(helpButton);
     layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
 
@@ -262,11 +331,14 @@ void Window::loadSettings() {
         // check that our exeDirectory is okay
         if (fileInfo.fileName() == "Doukutsu.exe") {
             isDirectoryOkay = true;
-            if (validLabel) validLabel->setVisible(false);
+            validLabel->setVisible(false);
+            if (tempDirectoryLabel) tempDirectoryLabel->setText(".exe Directory:\n" + exeDirectory);
         }
         else {
+            // qDebug() << "ASDASDASD";
             isDirectoryOkay = false;
-            if (validLabel) validLabel->setVisible(true);
+            validLabel->setVisible(true);
+            disableWidgets();
         }
         qDebug() << "is: " << isDirectoryOkay;
     } else {
@@ -274,17 +346,13 @@ void Window::loadSettings() {
         isDirectoryOkay = false;
     }
 
-    if (settings.contains("saveDirectory")) {
-        saveDirectory = settings.value("saveDirectory").toString();
-    } else {
-        saveDirectory = QCoreApplication::applicationDirPath(); // Default value
-        QDir dir(QCoreApplication::applicationDirPath());
-        dir.cdUp();
-        dir.cd("saves");
+    saveDirectory = QCoreApplication::applicationDirPath(); // Default value
 
-        saveDirectory = dir.path(); // default value
+    QDir dir(QCoreApplication::applicationDirPath());
+    // dir.cdUp();
+    dir.cd("saves");
 
-    }
+    saveDirectory = dir.path(); // default value
 
     qDebug() << "Settings loaded: exeDirectory =" << exeDirectory;
     qDebug() << "saveDirectory =" << saveDirectory;

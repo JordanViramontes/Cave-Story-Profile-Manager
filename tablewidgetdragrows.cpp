@@ -32,16 +32,16 @@ TableWidgetDragRows::TableWidgetDragRows(QWidget *parent)
     for (int i = 0; i < weaponTotal; i++) {
         // initialize variables
         switch(i) {
-            case (0): w=0x1; m=0; n="SN"; l=1; x=0; xN={30, 40, 16, 0}; break; // snake
-            case (1): w=0x2; m=0; n="PS"; l=1; x=0; xN={10, 20, 10, 0}; break; // PS
-            case (2): w=0x3; m=0; n="FB"; l=1; x=0; xN={10, 20, 20, 0}; break; // FB
-            case (3): w=0x4; m=0; n="MG"; l=1; x=0; xN={30, 40, 10, 0}; break; // MG
-            case (4): w=0x5; m=1; n="ML"; l=1; x=0; xN={10, 20, 10, 0}; break; // ML
-            case (5): w=0x7; m=0; n="BB"; l=1; x=0; xN={10, 20, 5, 0}; break; // BB
-            case (6): w=0x9; m=0; n="BL"; l=1; x=0; xN={30, 60, 0, 0}; break; // BL
-            case (7): w=0xA; m=1; n="SM"; l=1; x=0; xN={30, 60, 10, 0}; break; // SM
-            case (8): w=0xC; m=0; n="NS"; l=1; x=0; xN={1, 1, 1, 0}; break; // NS
-            case (9): w=0xD; m=0; n="SP"; l=1; x=0; xN={40, 60, 200, 0}; break; // SP
+            case (0): w=0x1; m=0; n="Snake"; l=1; x=0; xN={30, 40, 16, 0}; break; // snake
+            case (1): w=0x2; m=0; n="Polar Star"; l=1; x=0; xN={10, 20, 10, 0}; break; // PS
+            case (2): w=0x3; m=0; n="Fireball"; l=1; x=0; xN={10, 20, 20, 0}; break; // FB
+            case (3): w=0x4; m=0; n="Machine Gun"; l=1; x=0; xN={30, 40, 10, 0}; break; // MG
+            case (4): w=0x5; m=1; n="Missile Launcher"; l=1; x=0; xN={10, 20, 10, 0}; break; // ML
+            case (5): w=0x7; m=0; n="Bubbline"; l=1; x=0; xN={10, 20, 5, 0}; break; // BB
+            case (6): w=0x9; m=0; n="Blade"; l=1; x=0; xN={30, 60, 0, 0}; break; // BL
+            case (7): w=0xA; m=1; n="Super Missile Launcher"; l=1; x=0; xN={30, 60, 10, 0}; break; // SM
+            case (8): w=0xC; m=0; n="Nemesis"; l=1; x=0; xN={1, 1, 1, 0}; break; // NS
+            case (9): w=0xD; m=0; n="Spur"; l=1; x=0; xN={40, 60, 200, 0}; break; // SP
             default: w=-1; m=0; n="xx"; l=1; x=0; xN={0, 0, 0, 0}; break; // default
         }
 
@@ -54,7 +54,7 @@ TableWidgetDragRows::TableWidgetDragRows(QWidget *parent)
 
         // connection for updating the painter for each row dynamically
         connect(widget, &WeaponWidget::isEnabledChanged, this, [this, i]() {
-            updatePainter(i, 0); // Call your custom update logic
+            updatePainter(i); // Call your custom update logic
         });
 
         connect(this, SIGNAL(ammoChanged(int)), widget, SLOT(maxAmmoSlot(int)));

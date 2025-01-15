@@ -9,6 +9,9 @@ https://stackoverflow.com/questions/56819085/qt-how-to-implement-simple-internal
 
 
 */
+#include <QtPlugin>
+// Q_IMPORT_PLUGIN(qsqloci)
+// Q_IMPORT_PLUGIN(qgif)
 
 #include "mainwindow.h"
 

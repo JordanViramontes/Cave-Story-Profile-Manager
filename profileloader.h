@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <QVector>
+#include <QVector>
 
 using std::string, std::shared_ptr, std::list;
 
@@ -32,18 +33,18 @@ struct WeaponSlot {
 class ProfileLoader
 {
 private:
-    char buffer[1540];  // buffer with raw file input
-    char map;           // 008
-    char song;          // 00C
-    char horizPos[4];   // 011-012
-    char vertPos[4];    // 015-016
-    char facingDir;     // 018
-    char maxHp[2];      // 01C-01D
-    char whimsicalSt;   // 01E
-    char currHp[2];     // 020-021
-    char currWeapon;    // 024
+    QByteArray buffer; // buffer with raw file input
+    char map = 0;           // 008
+    char song = 0;          // 00C
+    char horizPos[4] = {0};   // 011-012
+    char vertPos[4] = {0};    // 015-016
+    char facingDir = 0;     // 018
+    char maxHp[2] = {0};      // 01C-01D
+    char whimsicalSt = 0;   // 01E
+    char currHp[2] = {0};     // 020-021
+    char currWeapon = 0;    // 024
     // char equipIt[2];    // 02C-02D (low byte first)
-    char time[3];       // 034-036
+    char time[3] = {0};       // 034-036
     QVector<WeaponSlot> weapons;    // 038-0D4
     InventoryItems items; // 0D8-153
     char maxAmmo = 0;
@@ -58,9 +59,11 @@ public:
     // get
     QVector<WeaponSlot> &getWeapons() { return weapons; }
     int getMaxAmmo() const { return static_cast<int>(maxAmmo); }
+    int getCurrentWeapon() const { return static_cast<int>(currWeapon); }
 
     // set
     void setWeapons(QVector<WeaponSlot> weapons);
+    void setCurrentWeapon(int i) { currWeapon = static_cast<char>(i); }
 };
 
 #endif // PROFILELOADER_H
