@@ -19,5 +19,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    // set up stuff
+    void setGlobals();
+    void setFileTrees();
 };
 #endif // MAINWINDOW_H
