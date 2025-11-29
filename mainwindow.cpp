@@ -10,12 +10,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    savesDirectory = "C:\\Users\\jorda\\Documents\\2-Programs\\CaveStoryProfileManager2\\build\\Desktop_Qt_6_10_1_MinGW_64_bit-Debug\\saves";
+    savesDirectory = QCoreApplication::applicationDirPath() + "/saves";
 
     // set stuff
     // setGlobals();
     loadSettings();
     setSignals();
+
+    // update state depending on valid path
+    // gameDirectory = "";
+    checkGameDirPath(gameDirectory);
 
     // set widgets
     setFileTrees();
@@ -64,7 +68,11 @@ void MainWindow::setSignals() {
 void MainWindow::setFileTrees() {
     // initialize file system
     QFileSystemModel* presetProfileModel = new QFileSystemModel(this);
-    presetProfileModel->setRootPath(QDir::rootPath());
+    presetProfileModel->setRootPath(QDir::rootPath()); // default path
+
+    // update to correct saves file if it exists
+    if (QDir(savesDirectory).exists()) presetProfileModel->setRootPath(savesDirectory);
+    else qDebug() << "mainwindow.cpp: ERROR, path to saves folder incorrect, setting to root";
 
     // set preset and column tabs
     for (auto i : {ui->presetFileTree, ui->customFileTree}) {

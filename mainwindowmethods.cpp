@@ -9,11 +9,15 @@ bool MainWindow::checkGameDirPath(QString path) {
         auto error_box = new Dialog(this);
         error_box->setStackedWidgetPage("directoryErrorBox");
         error_box->show();
+
+        // update ui label
+        ui->exeDirLabel->setText("No Doukutsu.exe path set!");
+
         return false;
     }
 
     // we good!
-    qDebug() << "mainwindowmethods.cpp: The selected file is a valid Doukutsu.exe.";
+    // qDebug() << "mainwindowmethods.cpp: The selected file is a valid Doukutsu.exe.";
     gameDirectory = path;
 
     // update ui label

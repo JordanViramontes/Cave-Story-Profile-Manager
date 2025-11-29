@@ -8,20 +8,33 @@
 #include <qabstractitemmodel.h>
 #include <QModelIndex>
 #include <qfilesystemmodel.h>
+#include <QProcess>
 
 // when you click on the run button
 void MainWindow::_onRunButton() {
 
     // write to the save file
-    QString filePath = "C:\\Users\\jorda\\Documents\\2-Programs";
-    if (!parser.writeToFile(filePath + "\\Profile.dat")) {
+    QString profilePath = gameDirectory;
+    profilePath.chop(12);
+    profilePath += "Profile.dat";
+
+    if (!parser.writeToFile(profilePath)) {
         qDebug() << "mainwindowslots.cpp: Writing to file DID NOT complete";
         return;
     }
-    qDebug() << "mainwindowslots.cpp: Writing to file completed with no error";
+    // qDebug() << "mainwindowslots.cpp: Writing to file completed with no error";
 
     // launch game
-    qDebug() << "TODO: LAUNCH GAME";
+    qDebug() << "mainwindowslots: launching game at: " << gameDirectory;
+    if (!checkGameDirPath(gameDirectory)) {
+        qDebug() << "mainwindowslots: ERROR, game directory incorrect!";
+        return;
+    }
+
+    QProcess *process = new QProcess(this);
+    QString gameExeFile = gameDirectory;
+    process->setProgram(gameExeFile);
+    process->start();
 }
 
 // when you click the update directory button
@@ -67,7 +80,7 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
         qDebug() << "mainwindowslots.cpp: Parsing DID NOT complete";
         return;
     }
-    qDebug() << "mainwindowslots.cpp: Parsing completed with no error";
+    // qDebug() << "mainwindowslots.cpp: Parsing completed with no error";
 
     parser.printSaveData();
     // parser.printBuffer();
