@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "dialog.h"
+#include "profileloader.h"
 
 #include <QMainWindow>
 #include <QSettings>
@@ -24,9 +25,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    // QSettings settings;?
     QString gameDirectory;
     QString savesDirectory;
+    ProfileLoader parser;
 
     // save/load
     void saveSettings();

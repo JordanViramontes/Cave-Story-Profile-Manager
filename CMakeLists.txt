@@ -27,6 +27,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         mainwindowslots.cpp
         dialog.h dialog.cpp dialog.ui
         mainwindowmethods.cpp
+        profileloader.h profileloader.cpp
 
 
     )

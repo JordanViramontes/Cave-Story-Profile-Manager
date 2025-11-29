@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "profileloader.h"
 // #include "ui_"
 
 #include <QFileDialog>
@@ -8,11 +9,12 @@
 #include <QModelIndex>
 #include <qfilesystemmodel.h>
 
-// slots
+// when you click on the run button
 void MainWindow::_onRunButton() {
     qDebug() << "TODO: LAUNCH GAME";
 }
 
+// when you click the update directory button
 void MainWindow::_onUpdateDirectoryButton() {
     QString selectedFile = QFileDialog::getOpenFileName(
         nullptr,                // Parent widget (nullptr for no parent)
@@ -30,6 +32,7 @@ void MainWindow::_onUpdateDirectoryButton() {
     saveSettings();
 }
 
+// when you click on a file in the file tree
 void MainWindow::_onSelectFile(QModelIndex fileIndex) {
     // get the file path
     auto tab = ui->filesTabWidget->currentIndex();
@@ -46,7 +49,26 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
         return;
     }
 
-    qDebug() << "check file: " << model->filePath(fileIndex).toStdString();
+    // parse the file
+    QString filePath = model->filePath(fileIndex);
+    // qDebug() << "check file: " << filePath;
 
-    //
+    if (!parser.parseProfile(filePath)) {
+        qDebug() << "mainwindowslots.cpp: Parsing DID NOT complete";
+        return;
+    }
+    qDebug() << "mainwindowslots.cpp: Parsing completed with no error";
+
+    parser.printSaveData();
+    // parser.printBuffer();
 }
+
+
+
+
+
+
+
+
+
+
