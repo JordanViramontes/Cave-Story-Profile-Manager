@@ -54,10 +54,13 @@ void MainWindow::setSignals() {
     // buttons
     connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(_onRunButton()));
     connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(_onUpdateDirectoryButton()));
+
+    // file
+    connect(ui->presetFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
+    connect(ui->customFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
 }
 
 // set widgets
-
 void MainWindow::setFileTrees() {
     // initialize file system
     QFileSystemModel* presetProfileModel = new QFileSystemModel(this);

@@ -2,8 +2,6 @@
 #include "ui_mainwindow.h"
 
 bool MainWindow::checkGameDirPath(QString path) {
-    qDebug() << "check: " << path << ";\t" << path.right(12);
-
     // check if we're a doukutsu exe
     QFileInfo fileInfo(path);
     if (fileInfo.fileName() != "Doukutsu.exe") {

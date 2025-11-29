@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QFileInfo>
+#include <QModelIndex>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -45,6 +46,7 @@ private slots:
     // buttons
     void _onRunButton();
     void _onUpdateDirectoryButton();
+    void _onSelectFile(QModelIndex);
 };
 
 #endif // MAINWINDOW_H
