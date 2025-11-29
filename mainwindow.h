@@ -22,6 +22,15 @@ private:
 
     // set up stuff
     void setGlobals();
+    void setSignals();
+
+    // set up widgets
     void setFileTrees();
+
+private slots:
+    // buttons
+    void _onRunButton();
+    void _onUpdateDirectoryButton();
 };
+
 #endif // MAINWINDOW_H

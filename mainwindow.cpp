@@ -10,8 +10,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // update widgets
+    // set stuff
     setGlobals();
+    setSignals();
+
+    // set widgets
     setFileTrees();
 }
 
@@ -20,9 +23,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// set stuff
 void MainWindow::setGlobals() {
     SAVESDIRECTORY = "C:\\Users\\jorda\\Documents\\2-Programs\\CaveStoryProfileManager2\\build\\Desktop_Qt_6_10_1_MinGW_64_bit-Debug\\saves";
 }
+
+void MainWindow::setSignals() {
+    // buttons
+    connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(_onRunButton()));
+    connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(_onUpdateDirectoryButton()));
+}
+
+// set widgets
 
 void MainWindow::setFileTrees() {
     // initialize file system
@@ -36,20 +48,12 @@ void MainWindow::setFileTrees() {
         i->hideColumn(2);
         i->hideColumn(3);
         i->setHeaderHidden(true);
-        if (i == ui->presetFileTree) i->setRootIndex(presetProfileModel->index(SAVESDIRECTORY + "\\Presets"));
-        else                         i->setRootIndex(presetProfileModel->index(SAVESDIRECTORY + "\\Custom"));
+        if (i == ui->presetFileTree)
+            i->setRootIndex(presetProfileModel->index(SAVESDIRECTORY + "\\Presets"));
+        else
+            i->setRootIndex(presetProfileModel->index(SAVESDIRECTORY + "\\Custom"));
     }
-
-
 }
-
-
-
-
-
-
-
-
 
 
 
