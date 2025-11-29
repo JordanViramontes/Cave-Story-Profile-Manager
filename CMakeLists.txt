@@ -23,9 +23,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(CaveStoryProfileManager2
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        globals.h
+
         mainwindowslots.cpp
         dialog.h dialog.cpp dialog.ui
+        mainwindowmethods.cpp
 
 
     )

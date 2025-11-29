@@ -1,7 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "dialog.h"
+
 #include <QMainWindow>
+#include <QSettings>
+#include <QFileInfo>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,13 +23,23 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    // QSettings settings;?
+    QString gameDirectory;
+    QString savesDirectory;
 
-    // set up stuff
-    void setGlobals();
+    // save/load
+    void saveSettings();
+    void loadSettings();
+
+    // constructors
+    // void setGlobals();
     void setSignals();
 
     // set up widgets
     void setFileTrees();
+
+    // helper functions
+    bool checkGameDirPath(QString path);
 
 private slots:
     // buttons

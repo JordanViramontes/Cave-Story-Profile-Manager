@@ -1,7 +1,4 @@
 #include "mainwindow.h"
-#include "globals.h"
-#include "dialog.h"
-#include "ui_mainwindow.h"
 // #include "ui_"
 
 #include <QFileDialog>
@@ -23,23 +20,10 @@ void MainWindow::_onUpdateDirectoryButton() {
     qDebug() << "mainwindowslots.cpp: double check exe file: " << selectedFile;
 
     // double check that it is Doukutsu
-    QFileInfo fileInfo(selectedFile);
-    if (fileInfo.fileName() != "Doukutsu.exe") {
-        qDebug() << "mainwindowslots.cpp: The selected file is not Doukutsu.exe. It is:" << fileInfo.fileName();
-        auto error_box = new Dialog(this);
-        error_box->setStackedWidgetPage("directoryErrorBox");
-        error_box->show();
-        return;
-    }
+    checkGameDirPath(selectedFile);
 
-    // we good!
-    qDebug() << "mainwindowslots.cpp: The selected file is a valid Doukutsu.exe.";
-    GAMEDIRECTORY = selectedFile;
-
-    // update label
-    ui->exeDirLabel->setText(".exe directory: " + GAMEDIRECTORY);
-
-
+    // save game
+    saveSettings();
 }
 
 

@@ -10,8 +10,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    savesDirectory = "C:\\Users\\jorda\\Documents\\2-Programs\\CaveStoryProfileManager2\\build\\Desktop_Qt_6_10_1_MinGW_64_bit-Debug\\saves";
+
     // set stuff
-    setGlobals();
+    // setGlobals();
+    loadSettings();
     setSignals();
 
     // set widgets
@@ -23,9 +26,28 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-// set stuff
-void MainWindow::setGlobals() {
-    SAVESDIRECTORY = "C:\\Users\\jorda\\Documents\\2-Programs\\CaveStoryProfileManager2\\build\\Desktop_Qt_6_10_1_MinGW_64_bit-Debug\\saves";
+// save/load
+void MainWindow::saveSettings() {
+    QSettings settings("JordanV", "CaveStoryProfileManager");
+    settings.setValue("gameDirectory", gameDirectory);
+    qDebug() << "mainwindow.cpp: Settings saved, gameDirectory =" << gameDirectory;
+}
+
+void MainWindow::loadSettings() {
+    QSettings settings("JordanV", "CaveStoryProfileManager");
+
+    if (!settings.contains("gameDirectory")) {
+        qDebug() << "mainwindow.cpp: settings don't contain 'gameDirectory'";
+        return;
+    }
+
+    QString tryDirectory = settings.value("gameDirectory").toString();
+
+    // double check file directory
+    if (!checkGameDirPath(tryDirectory)) return;
+
+    // if our dir is good!
+    qDebug() << "mainwindow.cpp: Settings loaded, gameDirectory =" << gameDirectory;
 }
 
 void MainWindow::setSignals() {
@@ -49,9 +71,9 @@ void MainWindow::setFileTrees() {
         i->hideColumn(3);
         i->setHeaderHidden(true);
         if (i == ui->presetFileTree)
-            i->setRootIndex(presetProfileModel->index(SAVESDIRECTORY + "\\Presets"));
+            i->setRootIndex(presetProfileModel->index(savesDirectory + "\\Presets"));
         else
-            i->setRootIndex(presetProfileModel->index(SAVESDIRECTORY + "\\Custom"));
+            i->setRootIndex(presetProfileModel->index(savesDirectory + "\\Custom"));
     }
 }
 
