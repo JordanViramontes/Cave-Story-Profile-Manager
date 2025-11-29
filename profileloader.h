@@ -43,12 +43,11 @@ private:
     QVector<WeaponSlot> weapons;    // 038-0D4
     QVector<char> items;      // 0D8-154
     QVector<TeleportSlot> teleporters; // 158-195
-    char maxAmmo = 0;
 
 public:
     ProfileLoader();
     bool parseProfile(QString profilePath);
-    // void printContents();
+    bool writeToFile(QString profilePath);
     // bool updateBuffer();
     // QVector<char> getBuffer();
 
@@ -66,7 +65,6 @@ public:
 
     // get
     QVector<WeaponSlot> &getWeapons() { return weapons; }
-    int getMaxAmmo() const { return static_cast<int>(maxAmmo); }
     int getCurrentWeapon() const { return static_cast<int>(currWeapon); }
 
     // set

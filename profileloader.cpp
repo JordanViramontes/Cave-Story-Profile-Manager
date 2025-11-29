@@ -18,6 +18,8 @@ ProfileLoader::ProfileLoader() {
     // create teleporters - 8 slots
     TeleportSlot defaultTele;
     teleporters = QVector<TeleportSlot>(8, defaultTele);
+
+    qDebug() << "profileloader.cpp: TODO: IMPLEMENT FLAG SAVING";
 }
 
 bool ProfileLoader::parseProfile(QString profilePath) {
@@ -29,31 +31,38 @@ bool ProfileLoader::parseProfile(QString profilePath) {
         qDebug() << "profileloader.cpp: ERROR, file isnt open!";
         return false;
     }
+    if (file.size() != 1540) {
+        qDebug() << "profileloader.cpp: ERROR, file size isn't correct for profile!";
+        return false;
+    }
+
+    // set buffer and parse!
     buffer = file.readAll();
+    file.close();
 
     // parse easy bytes
-    map = buffer[0x008];
-    song = buffer[0x00C];
+    map         = buffer[0x008];
+    song        = buffer[0x00C];
     horizPos[0] = buffer[0x010];
     horizPos[1] = buffer[0x011];
     horizPos[2] = buffer[0x012];
     horizPos[3] = buffer[0x013];
-    vertPos[0] = buffer[0x014];
-    vertPos[1] = buffer[0x015];
-    vertPos[2] = buffer[0x016];
-    vertPos[3] = buffer[0x017];
-    facingDir = buffer[0x018];
-    maxHp[0] = buffer[0x01C];
-    maxHp[1] = buffer[0x1D];
+    vertPos[0]  = buffer[0x014];
+    vertPos[1]  = buffer[0x015];
+    vertPos[2]  = buffer[0x016];
+    vertPos[3]  = buffer[0x017];
+    facingDir   = buffer[0x018];
+    maxHp[0]    = buffer[0x01C];
+    maxHp[1]    = buffer[0x1D];
     whimsicalSt = buffer[0x01E];
-    currHp[0] = buffer[0x020];
-    currHp[1] = buffer[0x021];
-    currWeapon = buffer[0x024];
-    equipIt[0] = buffer[0x02C];
-    equipIt[1] = buffer[0x02D];
-    time[0] = buffer[0x034];
-    time[1] = buffer[0x035];
-    time[2] = buffer[0x036];
+    currHp[0]   = buffer[0x020];
+    currHp[1]   = buffer[0x021];
+    currWeapon  = buffer[0x024];
+    equipIt[0]  = buffer[0x02C];
+    equipIt[1]  = buffer[0x02D];
+    time[0]     = buffer[0x034];
+    time[1]     = buffer[0x035];
+    time[2]     = buffer[0x036];
 
     // parse weapons
     unsigned int weaponIt = 0x038;
@@ -63,7 +72,6 @@ bool ProfileLoader::parseProfile(QString profilePath) {
         w.level = buffer[weaponIt+0x04];
         w.energy = buffer[weaponIt+0x08];
         w.maxAmmo = buffer[weaponIt+0x0C];
-        if (w.maxAmmo != 0x0) { maxAmmo = w.maxAmmo; }
         w.currentAmmo = buffer[weaponIt+0x10];
 
         weapons[i] = w;
@@ -89,6 +97,82 @@ bool ProfileLoader::parseProfile(QString profilePath) {
         teleportIt += 0x08;
     }
 
+    return true;
+}
+
+bool ProfileLoader::writeToFile(QString profilePath) {
+    qDebug() << "profileloader.cpp: writing to file " << profilePath;
+
+    // check that the file is valid
+    QFile file(profilePath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "profileloader.cpp: ERROR, file isnt open!";
+        return false;
+    }
+
+    // we need to set the buffer values with the updated stuff!
+
+    // set easy bytes
+    buffer[0x008] = map;
+    buffer[0x00C] = song;
+    buffer[0x010] = horizPos[0];
+    buffer[0x011] = horizPos[1];
+    buffer[0x012] = horizPos[2];
+    buffer[0x013] = horizPos[3];
+    buffer[0x014] = vertPos[0];
+    buffer[0x015] = vertPos[1];
+    buffer[0x016] = vertPos[2];
+    buffer[0x017] = vertPos[3];
+    buffer[0x018] = facingDir;
+    buffer[0x01C] = maxHp[0];
+    buffer[0x01D] = maxHp[1];
+    buffer[0x01E] = whimsicalSt;
+    buffer[0x020] = currHp[0];
+    buffer[0x021] = currHp[1];
+    buffer[0x024] = currWeapon;
+    buffer[0x02C] = equipIt[0];
+    buffer[0x02D] = equipIt[1];
+    buffer[0x034] = time[0];
+    buffer[0x035] = time[1];
+    buffer[0x036] = time[2];
+
+    // set weapons
+    unsigned int weaponIt = 0x038;
+    for (unsigned int i = 0; i < weapons.size(); i++) {
+        WeaponSlot w = weapons[i];
+        buffer[weaponIt]        = w.type;
+        buffer[weaponIt + 0x04] = w.level;
+        buffer[weaponIt + 0x08] = w.energy;
+        buffer[weaponIt + 0x0C] = w.maxAmmo;
+        buffer[weaponIt + 0x10] = w.currentAmmo;
+
+        weaponIt += 0x14;
+    }
+
+    // set items
+    unsigned int itemIt = 0x0D8;
+    for (unsigned int i = 0; i < items.size(); i++) {
+        buffer[itemIt] = items[i];
+        itemIt += 0x04;
+    }
+
+    // set teleporter
+    unsigned int teleportIt = 0x158;
+    for (unsigned int i = 0; i < teleporters.size(); i++) {
+        TeleportSlot t = teleporters[i];
+        buffer[teleportIt]        = t.menu;
+        buffer[teleportIt + 0x05] = t.location[0];
+        buffer[teleportIt + 0x06] = t.location[1];
+
+        teleportIt += 0x08;
+    }
+
+    // write buffer to file
+    file.resize(0);
+    file.write(buffer);
+
+
+    file.close();
     return true;
 }
 

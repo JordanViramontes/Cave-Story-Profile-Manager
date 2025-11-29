@@ -11,6 +11,16 @@
 
 // when you click on the run button
 void MainWindow::_onRunButton() {
+
+    // write to the save file
+    QString filePath = "C:\\Users\\jorda\\Documents\\2-Programs";
+    if (!parser.writeToFile(filePath + "\\Profile.dat")) {
+        qDebug() << "mainwindowslots.cpp: Writing to file DID NOT complete";
+        return;
+    }
+    qDebug() << "mainwindowslots.cpp: Writing to file completed with no error";
+
+    // launch game
     qDebug() << "TODO: LAUNCH GAME";
 }
 
