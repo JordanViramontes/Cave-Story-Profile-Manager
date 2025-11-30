@@ -17,12 +17,13 @@ MainWindow::MainWindow(QWidget *parent)
     loadSettings();
     setSignals();
 
-    // update state depending on valid path
-    // gameDirectory = "";
-    checkGameDirPath(gameDirectory);
-
     // set widgets
     setFileTrees();
+
+    // update state depending on valid path
+    gameDirectory = "";
+    widgetLock(checkGameDirPath(gameDirectory));
+
 }
 
 MainWindow::~MainWindow()

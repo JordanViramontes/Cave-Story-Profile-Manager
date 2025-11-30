@@ -49,7 +49,13 @@ void MainWindow::_onUpdateDirectoryButton() {
     qDebug() << "mainwindowslots.cpp: double check exe file: " << selectedFile;
 
     // double check that it is Doukutsu
-    checkGameDirPath(selectedFile);
+    if (!checkGameDirPath(selectedFile)) {
+        qDebug() << "mainwindowslots.cpp: new game dir file invalid!";
+        return;
+    }
+
+    // update game state
+    widgetLock(true);
 
     // save game
     saveSettings();

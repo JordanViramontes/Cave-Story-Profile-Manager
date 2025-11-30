@@ -10,9 +10,6 @@ bool MainWindow::checkGameDirPath(QString path) {
         error_box->setStackedWidgetPage("directoryErrorBox");
         error_box->show();
 
-        // update ui label
-        ui->exeDirLabel->setText("No Doukutsu.exe path set!");
-
         return false;
     }
 
@@ -20,9 +17,29 @@ bool MainWindow::checkGameDirPath(QString path) {
     // qDebug() << "mainwindowmethods.cpp: The selected file is a valid Doukutsu.exe.";
     gameDirectory = path;
 
-    // update ui label
-    ui->exeDirLabel->setText("exe directory: " + path);
+
 
 
     return true;
+}
+
+// if enable is true, enable widgets, if false, disable widgets
+void MainWindow::widgetLock(bool enable) {
+    // file systems
+    ui->presetFileTree->setMouseTracking(enable);
+    ui->customFileTree->setMouseTracking(enable);
+    ui->presetFileTree->setFocusPolicy(Qt::NoFocus);
+
+    // enables
+    ui->runPushButton->setEnabled(enable);
+    ui->profilesGrBox->setEnabled(enable);
+    ui->inventoryGrBox->setEnabled(enable);
+
+    // ui elements
+    if (enable) {
+        ui->exeDirLabel->setText("exe directory: " + gameDirectory);
+    }
+    else {
+        ui->exeDirLabel->setText("No Doukutsu.exe path set!");
+    }
 }

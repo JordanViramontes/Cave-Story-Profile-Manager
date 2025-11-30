@@ -33,8 +33,10 @@ private:
     void saveSettings();
     void loadSettings();
 
+    // enable / disable states
+    void widgetLock(bool);
+
     // constructors
-    // void setGlobals();
     void setSignals();
 
     // set up widgets
