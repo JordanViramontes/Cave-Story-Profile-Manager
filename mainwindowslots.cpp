@@ -44,7 +44,7 @@ void MainWindow::_onUpdateDirectoryButton() {
         "Select Doukutsu executable",          // Dialog title
         QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),       // Initial directory
         "Executable Files (*.exe);;All Files (*)" // File filter
-        );
+    );
 
     qDebug() << "mainwindowslots.cpp: double check exe file: " << selectedFile;
 
@@ -67,10 +67,11 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
     auto tab = ui->filesTabWidget->currentIndex();
     QFileSystemModel* model = nullptr;
 
+    // get the model depending on which tab we're on
     switch (tab) {
-    case (0): model = qobject_cast<QFileSystemModel*>(ui->presetFileTree->model()); break;
-    case (1): model = qobject_cast<QFileSystemModel*>(ui->customFileTree->model());
-    default: break;
+        case (0): model = qobject_cast<QFileSystemModel*>(ui->presetFileTree->model()); break;
+        case (1): model = qobject_cast<QFileSystemModel*>(ui->customFileTree->model()); break;
+        default: break;
     }
 
     if (!model) {
@@ -78,7 +79,7 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
         return;
     }
 
-    // parse the file
+    // parse the file now that we have the filepath
     QString filePath = model->filePath(fileIndex);
     // qDebug() << "check file: " << filePath;
 
@@ -90,6 +91,9 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
 
     parser.printSaveData();
     // parser.printBuffer();
+
+    // update widgets
+    ui->saveAsEdit->setText(QFileInfo(filePath).fileName());
 }
 
 

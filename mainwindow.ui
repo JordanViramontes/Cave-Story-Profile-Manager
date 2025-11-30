@@ -65,7 +65,7 @@
              </property>
              <widget class="QWidget" name="presetTab">
               <attribute name="title">
-               <string>Presets</string>
+               <string>Preset Saves</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0">
@@ -85,7 +85,7 @@
              </widget>
              <widget class="QWidget" name="customTab">
               <attribute name="title">
-               <string>Custom</string>
+               <string>Custom Saves</string>
               </attribute>
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="0">
@@ -168,7 +168,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
            <item>
             <widget class="QPushButton" name="saveAsPushButton">
              <property name="text">
-              <string>Save As New Profile</string>
+              <string>Save As New Custom Profile</string>
              </property>
             </widget>
            </item>

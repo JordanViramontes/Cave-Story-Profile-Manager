@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     setFileTrees();
 
     // update state depending on valid path
-    gameDirectory = "";
+    // gameDirectory = "";
     widgetLock(checkGameDirPath(gameDirectory));
 
 }
