@@ -12,7 +12,7 @@
 // };
 
 // each weapon!
-struct WeaponSlot {
+struct WeaponDataSlot {
     char type = 0x00;
     char level = 0x00;
     char energy = 0x00;
@@ -20,7 +20,7 @@ struct WeaponSlot {
     char currentAmmo = 0x00;
 };
 
-struct TeleportSlot {
+struct TeleportDataSlot {
     char menu = 0x00;
     char location[2] = {0};
 };
@@ -40,9 +40,9 @@ private:
     char currWeapon = 0;        // 024 (0-04 AKA slots 1-5)
     char equipIt[2];            // 02C-02D (low byte first)
     char time[3] = {0};         // 034-036
-    QVector<WeaponSlot> weapons;    // 038-0D4
+    QVector<WeaponDataSlot> weapons;    // 038-0D4
     QVector<char> items;      // 0D8-154
-    QVector<TeleportSlot> teleporters; // 158-195
+    QVector<TeleportDataSlot> teleporters; // 158-195
 
 public:
     ProfileLoader();
@@ -64,11 +64,11 @@ public:
     }
 
     // get
-    QVector<WeaponSlot> &getWeapons() { return weapons; }
+    QVector<WeaponDataSlot> &getWeapons() { return weapons; }
     int getCurrentWeapon() const { return static_cast<int>(currWeapon); }
 
     // set
-    void setWeapons(QVector<WeaponSlot> weapons);
+    void setWeapons(QVector<WeaponDataSlot> weapons);
     void setCurrentWeapon(int i) { currWeapon = static_cast<char>(i); }
 };
 

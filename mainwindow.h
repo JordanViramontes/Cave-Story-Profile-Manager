@@ -29,6 +29,9 @@ private:
     QString savesDirectory;
     ProfileLoader parser;
 
+    // game information
+    int totalWeapons = 10;
+
     // save/load
     void saveSettings();
     void loadSettings();
@@ -40,7 +43,8 @@ private:
     void setSignals();
 
     // set up widgets
-    void setFileTrees();
+    void createFileTrees();
+    void createWeaponTable();
 
     // helper functions
     bool checkGameDirPath(QString path);

@@ -196,7 +196,53 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item row="0" column="0">
               <layout class="QVBoxLayout" name="weaponsVLayout_3">
                <item>
-                <widget class="QTableWidget" name="weaponsTable"/>
+                <widget class="QTableWidget" name="weaponsTable">
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+                 </property>
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+                 </property>
+                 <property name="dragEnabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="dragDropOverwriteMode">
+                  <bool>false</bool>
+                 </property>
+                 <property name="dragDropMode">
+                  <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
+                 </property>
+                 <property name="defaultDropAction">
+                  <enum>Qt::DropAction::MoveAction</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+                 </property>
+                 <property name="rowCount">
+                  <number>8</number>
+                 </property>
+                 <property name="columnCount">
+                  <number>1</number>
+                 </property>
+                 <attribute name="horizontalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderHighlightSections">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="verticalHeaderVisible">
+                  <bool>true</bool>
+                 </attribute>
+                 <row/>
+                 <row/>
+                 <row/>
+                 <row/>
+                 <row/>
+                 <row/>
+                 <row/>
+                 <row/>
+                 <column/>
+                </widget>
                </item>
                <item>
                 <layout class="QVBoxLayout" name="weaponsEtcVLayout">

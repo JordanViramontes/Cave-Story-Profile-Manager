@@ -28,6 +28,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         dialog.h dialog.cpp dialog.ui
         mainwindowmethods.cpp
         profileloader.h profileloader.cpp
+        qweapontableslot.h qweapontableslot.cpp qweapontableslot.ui
+
 
 
     )

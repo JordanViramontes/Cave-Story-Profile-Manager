@@ -9,15 +9,15 @@ ProfileLoader::ProfileLoader() {
     buffer.fill(0);
 
     // create weapons - 8 weapon slots
-    WeaponSlot defaultWeapon;
-    weapons = QVector<WeaponSlot>(8, defaultWeapon);
+    WeaponDataSlot defaultWeapon;
+    weapons = QVector<WeaponDataSlot>(8, defaultWeapon);
 
     // create items - 32 (5rows*6columns + 2) slots
     items = QVector<char>(32, 0);
 
     // create teleporters - 8 slots
-    TeleportSlot defaultTele;
-    teleporters = QVector<TeleportSlot>(8, defaultTele);
+    TeleportDataSlot defaultTele;
+    teleporters = QVector<TeleportDataSlot>(8, defaultTele);
 
     qDebug() << "profileloader.cpp: TODO: IMPLEMENT FLAG SAVING";
 }
@@ -67,7 +67,7 @@ bool ProfileLoader::parseProfile(QString profilePath) {
     // parse weapons
     unsigned int weaponIt = 0x038;
     for (unsigned int i = 0; i < weapons.size(); i++) {
-        WeaponSlot w;
+        WeaponDataSlot w;
         w.type = buffer[weaponIt];
         w.level = buffer[weaponIt+0x04];
         w.energy = buffer[weaponIt+0x08];
@@ -88,7 +88,7 @@ bool ProfileLoader::parseProfile(QString profilePath) {
     // parse teleporter
     unsigned int teleportIt = 0x158;
     for (unsigned int i = 0; i < teleporters.size(); i++) {
-        TeleportSlot t;
+        TeleportDataSlot t;
         t.menu = buffer[teleportIt];
         t.location[0] = buffer[teleportIt + 0x05];
         t.location[1] = buffer[teleportIt + 0x06];
@@ -139,7 +139,7 @@ bool ProfileLoader::writeToFile(QString profilePath) {
     // set weapons
     unsigned int weaponIt = 0x038;
     for (unsigned int i = 0; i < weapons.size(); i++) {
-        WeaponSlot w = weapons[i];
+        WeaponDataSlot w = weapons[i];
         buffer[weaponIt]        = w.type;
         buffer[weaponIt + 0x04] = w.level;
         buffer[weaponIt + 0x08] = w.energy;
@@ -159,7 +159,7 @@ bool ProfileLoader::writeToFile(QString profilePath) {
     // set teleporter
     unsigned int teleportIt = 0x158;
     for (unsigned int i = 0; i < teleporters.size(); i++) {
-        TeleportSlot t = teleporters[i];
+        TeleportDataSlot t = teleporters[i];
         buffer[teleportIt]        = t.menu;
         buffer[teleportIt + 0x05] = t.location[0];
         buffer[teleportIt + 0x06] = t.location[1];

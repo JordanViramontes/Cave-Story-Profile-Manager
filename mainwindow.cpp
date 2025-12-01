@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "globals.h"
 #include "./ui_mainwindow.h"
+#include "qweapontableslot.h"
 
 #include <QFileSystemModel>
 
@@ -18,12 +19,13 @@ MainWindow::MainWindow(QWidget *parent)
     setSignals();
 
     // set widgets
-    setFileTrees();
+    createFileTrees();
+    createWeaponTable();
+
 
     // update state depending on valid path
     // gameDirectory = "";
     widgetLock(checkGameDirPath(gameDirectory));
-
 }
 
 MainWindow::~MainWindow()
@@ -66,7 +68,7 @@ void MainWindow::setSignals() {
 }
 
 // set widgets
-void MainWindow::setFileTrees() {
+void MainWindow::createFileTrees() {
     // initialize file system
     QFileSystemModel* presetProfileModel = new QFileSystemModel(this);
     presetProfileModel->setRootPath(QDir::rootPath()); // default path
@@ -89,7 +91,41 @@ void MainWindow::setFileTrees() {
     }
 }
 
+void MainWindow::createWeaponTable() {
+    // set table settings
+    QTableWidget* table = ui->weaponsTable;
+    table->setRowCount(totalWeapons);
+    // table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    // table->setFocusPolicy(Qt::NoFocus);
+    // table->setSelectionMode(QAbstractItemView::NoSelection);
 
+    // set header settings
+    QHeaderView* horizHeader = table->horizontalHeader();
+    QHeaderView* vertHeader = table->verticalHeader();
+    horizHeader->setSectionResizeMode(QHeaderView::Fixed);
+    vertHeader->setSectionResizeMode(QHeaderView::Fixed);
+    horizHeader->setSectionResizeMode(QHeaderView::Stretch);
+    // QHeaderView* vertHeader = table->verticalHeader();
+    // vertHeader->setSectionResizeMode(QHeaderView::Stretch);
+
+    // set weaponslots
+    int row = 0;
+    QWeaponTableSlot* defaultWeapon = new QWeaponTableSlot(this);
+    table->setCellWidget(row, 0, defaultWeapon);
+
+
+    qDebug() << "mainwindow.cpp: weaponSlot size: " << defaultWeapon->height();
+    table->setRowHeight(row, defaultWeapon->height());
+
+
+    qDebug() << "mainwindow.cpp: row heihgt: " << table->rowHeight(row);
+
+
+
+
+
+
+}
 
 
 
