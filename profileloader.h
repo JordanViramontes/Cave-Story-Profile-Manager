@@ -16,8 +16,8 @@ struct WeaponDataSlot {
     char type = 0x00;
     char level = 0x00;
     char energy = 0x00;
-    char maxAmmo = 0x00;
-    char currentAmmo = 0x00;
+    char maxAmmo = 0x00; // 0-255
+    char currentAmmo = 0x00; // 0-255
 };
 
 struct TeleportDataSlot {
