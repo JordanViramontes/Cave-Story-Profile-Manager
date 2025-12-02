@@ -25,7 +25,10 @@ private:
 
     // vars
     QVector<int> weaponLvls;
+    int lvl;
     int xp;
+    int ammo;
+    int maxAmmo;
 
 private slots:
     void xpChanged(int newXp);
