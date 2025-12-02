@@ -14,6 +14,19 @@ QWeaponTableSlot::QWeaponTableSlot(bool hasAmmo, QString text, QWidget *parent)
 {
     ui->setupUi(this);
 
+    // visual changes
+    ui->weaponIconLabel->setText(text);
+
+    // event filters
+    QWeaponSlotEventFilters* eventFilters = new QWeaponSlotEventFilters(this);
+    ui->xpSlider->installEventFilter(eventFilters);
+    ui->ammoSlider->installEventFilter(eventFilters);
+    ui->lvlComboBox->installEventFilter(eventFilters);
+    ui->xpCurrentSpin->installEventFilter(eventFilters);
+    ui->ammoCurrentSpin->installEventFilter(eventFilters);
+    ui->ammoMaxSpin->installEventFilter(eventFilters);
+
+
     // ammo UI bool
     if (!hasAmmo) {
         ui->ammoCurrentSpin->setEnabled(false);
@@ -31,14 +44,60 @@ QWeaponTableSlot::QWeaponTableSlot(bool hasAmmo, QString text, QWidget *parent)
         // ui->ammoSliderLayout->setVisible(false);
     }
 
-    // visual changes
-    ui->weaponIconLabel->setText(text);
-
     // adjust size!
     adjustSize();
+
+    // set values
+    lvlChanged(0);
+
+    // connections
+    connect(ui->xpSlider, SIGNAL(valueChanged(int)), this, SLOT(xpChanged(int)));
+    connect(ui->xpCurrentSpin, SIGNAL(valueChanged(int)), this, SLOT(xpChanged(int)));
+
+    connect(ui->ammoSlider, SIGNAL(valueChanged(int)), this, SLOT(ammoChanged(int)));
+    connect(ui->ammoCurrentSpin, SIGNAL(valueChanged(int)), this, SLOT(ammoChanged(int)));
+
+    connect(ui->ammoMaxSpin, SIGNAL(valueChanged(int)), this, SLOT(ammoMaxChanged(int)));
+
+    connect(ui->lvlComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(lvlChanged(int)));
 }
 
 QWeaponTableSlot::~QWeaponTableSlot()
 {
     delete ui;
 }
+
+// slots
+void QWeaponTableSlot::xpChanged(int newXp) {
+    qDebug() << "qeapontableslot.cpp: TODO: XP CHANGE!";
+}
+
+void QWeaponTableSlot::ammoChanged(int newAmmo) {
+    qDebug() << "qeapontableslot.cpp: TODO: AMMO CHANGE!";
+}
+
+void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
+    qDebug() << "qeapontableslot.cpp: TODO: MAX AMMO CHANGE!";
+}
+
+void QWeaponTableSlot::lvlChanged(int lvl) {
+    qDebug() << "qeapontableslot.cpp: TODO: LVL CHANGE!";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

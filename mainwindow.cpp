@@ -129,16 +129,12 @@ void MainWindow::createWeaponTable() {
             break;
         }
 
-
+        // set widget to cell
         QWeaponTableSlot* defaultWeapon = new QWeaponTableSlot(hasAmmo, text, this);
         table->setCellWidget(row, 0, defaultWeapon);
 
-
-        qDebug() << "mainwindow.cpp: weaponSlot size: " << defaultWeapon->height();
+        // set the fixed row height
         table->setRowHeight(row, defaultWeapon->height());
-
-
-        qDebug() << "mainwindow.cpp: row heihgt: " << table->rowHeight(row);
     }
 
 
