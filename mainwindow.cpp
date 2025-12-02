@@ -109,16 +109,38 @@ void MainWindow::createWeaponTable() {
     // vertHeader->setSectionResizeMode(QHeaderView::Stretch);
 
     // set weaponslots
-    int row = 0;
-    QWeaponTableSlot* defaultWeapon = new QWeaponTableSlot(this);
-    table->setCellWidget(row, 0, defaultWeapon);
+    for (int row = 0; row < totalWeapons; row++) {
+        bool hasAmmo = false;
+        QString text = "weapon";
+
+        switch (row) {
+            case (0): hasAmmo = false; text = "PS"; break;
+            case (1): hasAmmo = false; text = "FB"; break;
+            case (2): hasAmmo = true; text = "MG"; break;
+            case (3): hasAmmo = true; text = "ML"; break;
+            case (4): hasAmmo = true; text = "BB"; break;
+            case (5): hasAmmo = false; text = "BL"; break;
+            case (6): hasAmmo = true; text = "SM"; break;
+            case (7): hasAmmo = false; text = "SN"; break;
+            case (8): hasAmmo = false; text = "NS"; break;
+            case (9): hasAmmo = false; text = "SP"; break;
+
+        default:
+            break;
+        }
 
 
-    qDebug() << "mainwindow.cpp: weaponSlot size: " << defaultWeapon->height();
-    table->setRowHeight(row, defaultWeapon->height());
+        QWeaponTableSlot* defaultWeapon = new QWeaponTableSlot(hasAmmo, text, this);
+        table->setCellWidget(row, 0, defaultWeapon);
 
 
-    qDebug() << "mainwindow.cpp: row heihgt: " << table->rowHeight(row);
+        qDebug() << "mainwindow.cpp: weaponSlot size: " << defaultWeapon->height();
+        table->setRowHeight(row, defaultWeapon->height());
+
+
+        qDebug() << "mainwindow.cpp: row heihgt: " << table->rowHeight(row);
+    }
+
 
 
 

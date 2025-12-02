@@ -10,12 +10,18 @@
     <height>78</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="mainHLayout">
      <item>
       <widget class="QCheckBox" name="enableCheck">
        <property name="text">
@@ -24,21 +30,21 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="weaponIconLabel">
        <property name="text">
         <string>weapon</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="lvlLabel">
        <property name="text">
         <string>Lvl:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox">
+      <widget class="QComboBox" name="lvlComboBox">
        <item>
         <property name="text">
          <string>1</string>
@@ -62,18 +68,18 @@
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="statSliderLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="xpSliderLayout">
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="xpSliderLabel">
            <property name="text">
             <string>XP:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSlider" name="horizontalSlider">
+          <widget class="QSlider" name="xpSlider">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -82,16 +88,16 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="ammoSliderLayout">
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="ammoSliderLabel">
            <property name="text">
             <string>Ammo:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSlider" name="horizontalSlider_2">
+          <widget class="QSlider" name="ammoSlider">
            <property name="orientation">
             <enum>Qt::Orientation::Horizontal</enum>
            </property>
@@ -102,9 +108,9 @@
       </layout>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout_2">
+      <layout class="QGridLayout" name="statCountLayout">
        <item row="1" column="0">
-        <widget class="QSpinBox" name="spinBox_2">
+        <widget class="QSpinBox" name="ammoCurrentSpin">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -117,7 +123,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QSpinBox" name="spinBox">
+        <widget class="QSpinBox" name="xpCurrentSpin">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -130,21 +136,21 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="slashTopLabel">
          <property name="text">
           <string>/</string>
          </property>
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="xpMaxLabel">
          <property name="text">
           <string>30</string>
          </property>
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QSpinBox" name="spinBox_3">
+        <widget class="QSpinBox" name="ammoMaxSpin">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -157,7 +163,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="slashBottomLabel">
          <property name="text">
           <string>/</string>
          </property>

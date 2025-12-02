@@ -13,6 +13,7 @@ class QWeaponTableSlot : public QWidget
 
 public:
     explicit QWeaponTableSlot(QWidget *parent = nullptr);
+    explicit QWeaponTableSlot(bool hasAmmo, QString text, QWidget *parent = nullptr);
     ~QWeaponTableSlot();
 
 private:
