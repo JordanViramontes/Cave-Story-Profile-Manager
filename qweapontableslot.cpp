@@ -70,7 +70,11 @@ QWeaponTableSlot::~QWeaponTableSlot()
 
 // slots
 void QWeaponTableSlot::xpChanged(int newXp) {
-    qDebug() << "qeapontableslot.cpp: TODO: XP CHANGE! " << newXp;
+    xp = newXp;
+
+    // update uis
+    ui->xpSlider->setValue(xp);
+    ui->xpCurrentSpin->setValue(xp);
 }
 
 void QWeaponTableSlot::ammoChanged(int newAmmo) {
@@ -82,20 +86,21 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
 }
 
 void QWeaponTableSlot::lvlChanged(int newlvl) {
-    qDebug() << "qeapontableslot.cpp: TODO: LVL CHANGE! " << newlvl;
-
     // for initializing
     ui->lvlComboBox->setCurrentIndex(newlvl);
     lvl = newlvl;
 
     // set level values
-    int maxXp = weaponLvls[newlvl];
+    double ogXpRatio = (1.0 * xp) / (1.0 * maxXp);
+    maxXp = weaponLvls[newlvl];
     ui->xpSlider->setMinimum(0);
     ui->xpSlider->setMaximum(maxXp);
+    xpChanged(maxXp * ogXpRatio);
     ui->xpMaxLabel->setText(QString::number(maxXp));
 
     // check if we're at max, if we are disable all xp stuff p much
     if (newlvl >= 3) {
+        qDebug() << "max";
         // disable ui elements
         ui->xpSlider->setEnabled(false);
         ui->xpCurrentSpin->setEnabled(false);
@@ -108,12 +113,11 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
         return;
     }
 
+    // turn on ui's in case the prev lvl was max
     ui->xpSlider->setEnabled(true);
     ui->xpCurrentSpin->setEnabled(true);
     ui->slashTopLabel->setEnabled(true);
     ui->xpMaxLabel->setEnabled(true);
-
-
 }
 
 
