@@ -112,25 +112,24 @@ void MainWindow::createWeaponTable() {
     for (int row = 0; row < totalWeapons; row++) {
         bool hasAmmo = false;
         QString text = "weapon";
+        int ammo = 0;
 
         switch (row) {
-            case (0): hasAmmo = false; text = "PS"; break;
-            case (1): hasAmmo = false; text = "FB"; break;
-            case (2): hasAmmo = true; text = "MG"; break;
-            case (3): hasAmmo = true; text = "ML"; break;
-            case (4): hasAmmo = true; text = "BB"; break;
-            case (5): hasAmmo = false; text = "BL"; break;
-            case (6): hasAmmo = true; text = "SM"; break;
-            case (7): hasAmmo = false; text = "SN"; break;
-            case (8): hasAmmo = false; text = "NS"; break;
-            case (9): hasAmmo = false; text = "SP"; break;
-
-        default:
-            break;
+        case (0): hasAmmo = false; text = "PS"; break;
+        case (1): hasAmmo = false; text = "FB"; break;
+        case (2): hasAmmo = true; text = "MG"; ammo = 100; break;
+        case (3): hasAmmo = true; text = "ML"; ammo = 0; break;
+        case (4): hasAmmo = true; text = "BB"; ammo = 100; break;
+        case (5): hasAmmo = false; text = "BL"; break;
+        case (6): hasAmmo = true; text = "SM"; ammo = 0; break;
+        case (7): hasAmmo = false; text = "SN"; break;
+        case (8): hasAmmo = false; text = "NS"; break;
+        case (9): hasAmmo = false; text = "SP"; break;
+        default: break;
         }
 
         // set widget to cell
-        QWeaponTableSlot* defaultWeapon = new QWeaponTableSlot(hasAmmo, text, this);
+        QWeaponTableSlot* defaultWeapon = new QWeaponTableSlot(hasAmmo, text, ammo, this);
         table->setCellWidget(row, 0, defaultWeapon);
 
         // set the fixed row height
