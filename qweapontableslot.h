@@ -35,6 +35,8 @@ public:
 private:
     Ui::QWeaponTableSlot *ui;
 
+    // locks
+
     // vars
     QVector<int> weaponLvls;
     int type = 0;

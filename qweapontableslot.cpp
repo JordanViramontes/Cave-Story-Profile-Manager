@@ -75,11 +75,16 @@ QWeaponTableSlot::~QWeaponTableSlot()
 
 // slots
 void QWeaponTableSlot::xpChanged(int newXp) {
+    qDebug() << "test" << newXp;
     xp = newXp;
 
     // update uis
     ui->xpSlider->setValue(xp);
     ui->xpCurrentSpin->setValue(xp);
+
+    // check if we've hit max and update the combo box if we have
+    if (lvl == 2 && xp == maxXp) ui->lvlComboBox->setCurrentIndex(3);
+    else if (lvl == 2) ui->lvlComboBox->setCurrentIndex(2);
 }
 
 void QWeaponTableSlot::ammoChanged(int newAmmo) {
@@ -110,39 +115,27 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
 }
 
 void QWeaponTableSlot::lvlChanged(int newlvl) {
+    // set values
     lvl = newlvl;
+    maxXp = weaponLvls[lvl];
 
-    // set ui
-    ui->lvlComboBox->setCurrentIndex(newlvl);
-
-    // set level values
-    double ogXpRatio = (1.0 * xp) / (1.0 * maxXp);
-    maxXp = weaponLvls[newlvl];
+    // update UI
     ui->xpSlider->setMinimum(0);
     ui->xpSlider->setMaximum(maxXp);
-    xpChanged(maxXp * ogXpRatio);
     ui->xpMaxLabel->setText(QString::number(maxXp));
+    ui->lvlComboBox->setCurrentIndex(lvl);
 
-    // check if we're at max, if we are disable all xp stuff p much
+    // set level values
+
+    // check if we're at max and set xp to max, move lvl back to 2!
     if (newlvl >= 3) {
-        // disable ui elements
-        ui->xpSlider->setEnabled(false);
-        ui->xpCurrentSpin->setEnabled(false);
-        ui->slashTopLabel->setEnabled(false);
-        ui->xpMaxLabel->setEnabled(false);
-
-        // change the XP amount visually to the max of lvl3
+        lvl = 2;
         xpChanged(maxXp);
-
         return;
     }
-    else {
-        // turn on ui's in case the prev lvl was max
-        ui->xpSlider->setEnabled(true);
-        ui->xpCurrentSpin->setEnabled(true);
-        ui->slashTopLabel->setEnabled(true);
-        ui->xpMaxLabel->setEnabled(true);
-    }
+
+    // edge case to update combo box UI if the new xp lvl hits lvl 3 MAX
+    xpChanged(xp);
 }
 
 
