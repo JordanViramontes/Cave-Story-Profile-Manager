@@ -24,18 +24,21 @@ public:
     int getWeaponType() { return type; }
 
     // set
-    void setData(int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
+    void setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
+        enableChanged(iniEnabled);
         lvlChanged(iniLvl);
         xpChanged(iniEnergy);
         ammoMaxChanged(iniMaxAmmo);
         ammoChanged(iniCurrentAmmo);
     }
-    void resetData() { setData(0, 0, 0, initialMaxAmmo); }
+    void resetData() { setData(false, 0, 0, initialMaxAmmo, 0); }
 
 private:
     Ui::QWeaponTableSlot *ui;
 
-    // locks
+    // locks used to avoid repeating functions
+    void lockSignals();
+    void unlockSignals();
 
     // vars
     QVector<int> weaponLvls;
@@ -47,7 +50,11 @@ private:
     int maxAmmo = 0;
     int initialMaxAmmo = 0;
 
+    // debug
+    bool testLvlChangeXpRatio = true;
+
 private slots:
+    void enableChanged(bool enable);
     void xpChanged(int newXp);
     void ammoChanged(int newAmmo);
     void ammoMaxChanged(int newAmmoMax);

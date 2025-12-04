@@ -102,11 +102,8 @@ void MainWindow::createWeaponTable() {
     // set header settings
     QHeaderView* horizHeader = table->horizontalHeader();
     QHeaderView* vertHeader = table->verticalHeader();
-    horizHeader->setSectionResizeMode(QHeaderView::Fixed);
     vertHeader->setSectionResizeMode(QHeaderView::Fixed);
     horizHeader->setSectionResizeMode(QHeaderView::Stretch);
-    // QHeaderView* vertHeader = table->verticalHeader();
-    // vertHeader->setSectionResizeMode(QHeaderView::Stretch);
 
     // set weaponslots
     for (int type = 0x00, tableRowCount = 0; type <= 0x0D; type++) {
