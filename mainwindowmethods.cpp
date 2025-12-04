@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "dialog.h"
 
 bool MainWindow::checkGameDirPath(QString path) {
     // check if we're a doukutsu exe

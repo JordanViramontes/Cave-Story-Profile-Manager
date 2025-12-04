@@ -8,11 +8,17 @@ QWeaponTableSlot::QWeaponTableSlot(QWidget *parent)
     ui->setupUi(this);
 }
 
-QWeaponTableSlot::QWeaponTableSlot(bool hasAmmo, QString text, int intMaxAmmo, QWidget *parent)
+QWeaponTableSlot::QWeaponTableSlot(int intType, bool hasAmmo, QString text, int intMaxAmmo, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::QWeaponTableSlot)
 {
     ui->setupUi(this);
+
+    // set values
+    type = intType;
+    weaponLvls = {10, 20, 30, 30};
+    lvlChanged(0);
+    ammoMaxChanged(intMaxAmmo);
 
     // visual changes
     ui->weaponIconLabel->setText(text);
@@ -46,11 +52,6 @@ QWeaponTableSlot::QWeaponTableSlot(bool hasAmmo, QString text, int intMaxAmmo, Q
 
     // adjust size!
     adjustSize();
-
-    // set values
-    weaponLvls = {10, 20, 30, 30};
-    lvlChanged(0);
-    ammoMaxChanged(intMaxAmmo);
 
     // connections
     connect(ui->xpSlider, SIGNAL(valueChanged(int)), this, SLOT(xpChanged(int)));

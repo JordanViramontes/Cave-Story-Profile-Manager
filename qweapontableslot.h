@@ -17,14 +17,18 @@ class QWeaponTableSlot : public QWidget
 
 public:
     explicit QWeaponTableSlot(QWidget *parent = nullptr);
-    explicit QWeaponTableSlot(bool hasAmmo, QString text, int intMaxAmmo, QWidget *parent = nullptr);
+    explicit QWeaponTableSlot(int intType, bool hasAmmo, QString text, int intMaxAmmo, QWidget *parent = nullptr);
     ~QWeaponTableSlot();
+
+    // get
+    int getWeaponType() { return type; }
 
 private:
     Ui::QWeaponTableSlot *ui;
 
     // vars
     QVector<int> weaponLvls;
+    int type = 0;
     int lvl = 0;
     int xp = 0;
     int maxXp = 1;

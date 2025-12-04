@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "dialog.h"
+#include "qweapontableslot.h"
 #include "profileloader.h"
 
 #include <QMainWindow>
@@ -28,6 +28,9 @@ private:
     QString gameDirectory;
     QString savesDirectory;
     ProfileLoader parser;
+
+    // given the name of a weapon, get the table entry (ex: "PS")
+    QHash<QString, QWeaponTableSlot*> weaponsTableDictionary;
 
     // game information
     int totalWeapons = 10;
