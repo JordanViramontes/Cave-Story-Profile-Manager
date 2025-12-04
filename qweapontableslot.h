@@ -17,11 +17,20 @@ class QWeaponTableSlot : public QWidget
 
 public:
     explicit QWeaponTableSlot(QWidget *parent = nullptr);
-    explicit QWeaponTableSlot(int intType, bool hasAmmo, QString text, int intMaxAmmo, QWidget *parent = nullptr);
+    explicit QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QString text, QVector<int> iniWeaponLvls, QWidget *parent = nullptr);
     ~QWeaponTableSlot();
 
     // get
     int getWeaponType() { return type; }
+
+    // set
+    void setData(int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
+        lvlChanged(iniLvl);
+        xpChanged(iniEnergy);
+        ammoMaxChanged(iniMaxAmmo);
+        ammoChanged(iniCurrentAmmo);
+    }
+    void resetData() { setData(0, 0, 0, initialMaxAmmo); }
 
 private:
     Ui::QWeaponTableSlot *ui;
@@ -34,6 +43,7 @@ private:
     int maxXp = 1;
     int ammo = 0;
     int maxAmmo = 0;
+    int initialMaxAmmo = 0;
 
 private slots:
     void xpChanged(int newXp);

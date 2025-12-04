@@ -113,28 +113,29 @@ void MainWindow::createWeaponTable() {
         bool hasAmmo = false;
         QString text = "weapon";
         int ammo = 0;
+        QVector<int> weaponLvls = {1, 2, 3, 3};
 
         // ensure that only valid weapon type numbers make it through
         switch (type) {
-            case (0x01): hasAmmo = false; text = "SN"; break;
-            case (0x02): hasAmmo = false; text = "PS"; break;
-            case (0x03): hasAmmo = false; text = "FB"; break;
-            case (0x04): hasAmmo = true; text = "MG"; ammo = 100; break;
-            case (0x05): hasAmmo = true; text = "ML"; ammo = 0; break;
-            case (0x07): hasAmmo = true; text = "BB"; ammo = 100; break;
-            case (0x09): hasAmmo = false; text = "BL"; break;
-            case (0x0A): hasAmmo = true; text = "SM"; ammo = 0; break;
-            case (0x0C): hasAmmo = false; text = "NS"; break;
-            case (0x0D): hasAmmo = false; text = "SP"; break;
+            case (0x01): hasAmmo = false; text = "SN"; weaponLvls = {30, 40, 16, 16}; break;
+            case (0x02): hasAmmo = false; text = "PS"; weaponLvls = {10, 20, 10, 10}; break;
+            case (0x03): hasAmmo = false; text = "FB"; weaponLvls = {10, 20, 20, 20}; break;
+            case (0x04): hasAmmo = true; text = "MG"; weaponLvls = {30, 40, 10, 10}; ammo = 100; break;
+            case (0x05): hasAmmo = true; text = "ML"; weaponLvls = {10, 20, 10, 10};  break;
+            case (0x07): hasAmmo = true; text = "BB"; weaponLvls = {10, 20, 5, 5}; ammo = 100; break;
+            case (0x09): hasAmmo = false; text = "BL"; weaponLvls = {30, 60, 0, 0}; break;
+            case (0x0A): hasAmmo = true; text = "SM"; weaponLvls = {30, 60, 10, 10};  break;
+            case (0x0C): hasAmmo = false; text = "NS"; weaponLvls = {1, 1, 1, 1}; break;
+            case (0x0D): hasAmmo = false; text = "SP"; weaponLvls = {40, 60, 200, 200}; break;
             default: continue; break;
         }
 
         // set widget to cell
-        QWeaponTableSlot* defaultWeapon = new QWeaponTableSlot(type, hasAmmo, text, ammo, this);
+        QWeaponTableSlot* defaultWeapon = new QWeaponTableSlot(type, ammo, hasAmmo, text, weaponLvls, this);
         table->setCellWidget(tableRowCount, 0, defaultWeapon);
 
         // add weapon to weaponsdictionary
-        weaponsTableDictionary[text] = defaultWeapon;
+        weaponsTableDictionary[type] = defaultWeapon;
 
         // set the fixed row height
         table->setRowHeight(tableRowCount, defaultWeapon->height());

@@ -94,6 +94,30 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
 
     // update widgets
     ui->saveAsEdit->setText(QFileInfo(filePath).fileName());
+
+
+    // update the weapons table
+    qDebug() << "mainwindowslots.cpp: updating weapons table";
+    QHash<int, bool> knownWeapons; // used to track which weapons are set in the save file
+    for (auto i : parser.getWeapons()) {
+        if (i.type == 0x00) continue;
+        qDebug() << (int)i.type << ", " << (int)i.level << ", " << (int)i.energy << ", " << (int)i.maxAmmo << ", " << (int)i.currentAmmo;
+
+        // get the weapon table slot pointer
+        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[(int)i.type];
+        currentWeapon->setData((int)i.level - 1, (int)i.energy, (int)i.maxAmmo, (int)i.currentAmmo);
+
+        // add to known weapons
+        knownWeapons[(int)i.type] = true;
+    }
+
+    // go through all table slots EXCLUDING the known weapons and reset them
+    for (auto i : weaponsTableDictionary.keys()) {
+        if (knownWeapons[i]) continue;
+
+        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
+        currentWeapon->resetData();
+    }
 }
 
 

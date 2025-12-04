@@ -8,7 +8,7 @@ QWeaponTableSlot::QWeaponTableSlot(QWidget *parent)
     ui->setupUi(this);
 }
 
-QWeaponTableSlot::QWeaponTableSlot(int intType, bool hasAmmo, QString text, int intMaxAmmo, QWidget *parent)
+QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QString text, QVector<int> iniWeaponLvls, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::QWeaponTableSlot)
 {
@@ -16,9 +16,12 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, bool hasAmmo, QString text, int 
 
     // set values
     type = intType;
-    weaponLvls = {10, 20, 30, 30};
+    weaponLvls = iniWeaponLvls;
+    qDebug() << "qeapontableslot.cpp: weaponLvls: " << weaponLvls;
     lvlChanged(0);
     ammoMaxChanged(intMaxAmmo);
+    initialMaxAmmo = intMaxAmmo;
+
 
     // visual changes
     ui->weaponIconLabel->setText(text);
@@ -108,6 +111,9 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
 
 void QWeaponTableSlot::lvlChanged(int newlvl) {
     lvl = newlvl;
+
+    // set ui
+    ui->lvlComboBox->setCurrentIndex(newlvl);
 
     // set level values
     double ogXpRatio = (1.0 * xp) / (1.0 * maxXp);

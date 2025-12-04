@@ -30,7 +30,7 @@ private:
     ProfileLoader parser;
 
     // given the name of a weapon, get the table entry (ex: "PS")
-    QHash<QString, QWeaponTableSlot*> weaponsTableDictionary;
+    QHash<int, QWeaponTableSlot*> weaponsTableDictionary;
 
     // game information
     int totalWeapons = 10;
