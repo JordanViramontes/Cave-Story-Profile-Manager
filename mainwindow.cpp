@@ -95,6 +95,10 @@ void MainWindow::createWeaponTable() {
     // set table settings
     QTableWidget* table = ui->weaponsTable;
     table->setRowCount(totalWeapons);
+
+    // set event filters
+    QTableWidgetEventFilters* tableWidgetFilters = new QTableWidgetEventFilters(this);
+    table->viewport()->installEventFilter(tableWidgetFilters);
     // table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     // table->setFocusPolicy(Qt::NoFocus);
     // table->setSelectionMode(QAbstractItemView::NoSelection);

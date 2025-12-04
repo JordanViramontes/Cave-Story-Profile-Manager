@@ -117,6 +117,3 @@ void MainWindow::reorderTable(QVector<int> weapons) {
 
 
 
-
-
-

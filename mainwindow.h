@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QModelIndex>
+#include <QTableWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -60,6 +61,46 @@ private slots:
     void _onRunButton();
     void _onUpdateDirectoryButton();
     void _onSelectFile(QModelIndex);
+};
+
+// event filters
+class QTableWidgetEventFilters : public QObject
+{
+public:
+    explicit QTableWidgetEventFilters(QObject *parent = nullptr) : QObject(parent) {}
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override {
+        QTableWidget *table = qobject_cast<QTableWidget*>(obj->parent());
+
+        // disable single clicking
+        if (event->type() == QEvent::MouseButtonPress) {
+            return true;
+        }
+
+        // disable double clicking
+        if (event->type() == QEvent::MouseButtonDblClick) {
+            return true;
+        }
+
+        // when releasing
+        if (event->type() == QEvent::MouseButtonRelease) {
+            // Clear selection and then remove the focus
+            table->clearSelection();
+            table->setCurrentIndex(QModelIndex());
+        }
+
+
+
+        // // disable all mouse events for double clicking
+        // if (event->type() == QEvent::GraphicsSceneMouseDoubleClick) {
+        //     return true;
+        // }
+
+        // call the OG function to do the rest of the events
+        return QObject::eventFilter(obj, event);
+
+    }
 };
 
 #endif // MAINWINDOW_H
