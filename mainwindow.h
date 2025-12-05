@@ -74,9 +74,9 @@ protected:
         QTableWidget *table = qobject_cast<QTableWidget*>(obj->parent());
 
         // disable single clicking
-        if (event->type() == QEvent::MouseButtonPress) {
-            return true;
-        }
+        // if (event->type() == QEvent::MouseButtonPress) {
+        //     return true;
+        // }
 
         // disable double clicking
         if (event->type() == QEvent::MouseButtonDblClick) {
@@ -88,7 +88,37 @@ protected:
             // Clear selection and then remove the focus
             table->clearSelection();
             table->setCurrentIndex(QModelIndex());
+            return true;
         }
+
+        // when releasing drop
+        if (event->type() == QEvent::DragLeave) {
+            qDebug() << "dropped!";
+            // Clear selection and then remove the focus
+            table->clearSelection();
+            table->setCurrentIndex(QModelIndex());
+            return true;
+        }
+
+        if (event->type() == QEvent::Drop) {
+            // Do not consume the event — let Qt handle it
+            bool results = QObject::eventFilter(obj, event); // or just fall-through
+
+            // waits for results to finish and then does this!
+            // invokeMethod schedules your function to run after the drop event finishes; AKA deferred code
+            QMetaObject::invokeMethod(table, [table]() {
+                table->clearSelection();
+                table->setCurrentIndex(QModelIndex());
+            }, Qt::QueuedConnection);
+
+            // return our results
+            return results;
+        }
+
+        // when dragging
+        // if (event->type() == QEvent::MouseMove) {
+        //     qDebug() << "dragging!!";
+        // }
 
 
 
