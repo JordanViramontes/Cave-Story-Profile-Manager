@@ -39,6 +39,7 @@ void MainWindow::_onRunButton() {
 
 // when you click the update directory button
 void MainWindow::_onUpdateDirectoryButton() {
+    // create a file select
     QString selectedFile = QFileDialog::getOpenFileName(
         nullptr,                // Parent widget (nullptr for no parent)
         "Select Doukutsu executable",          // Dialog title
@@ -73,7 +74,6 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
         case (1): model = qobject_cast<QFileSystemModel*>(ui->customFileTree->model()); break;
         default: break;
     }
-
     if (!model) {
         qDebug() << "mainwindowslots.cpp: QTreeView model invalid!";
         return;
@@ -95,39 +95,8 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
     // update widgets
     ui->saveAsEdit->setText(QFileInfo(filePath).fileName());
 
-    // using the known weapons from the parser, update the data in the weapon slot
-    QVector<int> knownWeapons; // used to track which weapons are set in the save file and its order
-    for (auto i : parser.getWeapons()) {
-        if (i.type == 0x00) continue;
-        // qDebug() << (int)i.type << ", " << (int)i.level << ", " << (int)i.energy << ", " << (int)i.maxAmmo << ", " << (int)i.currentAmmo;
-
-        // get the weapon table slot pointer
-        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[(int)i.type];
-        currentWeapon->setData(true, (int)i.level - 1, (int)i.energy, (int)i.maxAmmo, (int)i.currentAmmo);
-
-        // add to known weapons
-        knownWeapons.push_back((int)i.type);
-    }
-
-    // go through all table slots EXCLUDING the known weapons and reset them
-    for (auto i : weaponsTableDictionary.keys()) {
-        if (knownWeapons.contains(i)) continue;
-
-        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
-        currentWeapon->resetData();
-    }
-
-    // set weapons table order to default and then reorder!
-    resetTable();
-    reorderTable(knownWeapons);
-
-    // debug
-    for (int i = 0; i < ui->weaponsTable->rowCount(); i++) {
-        if (ui->weaponsTable->cellWidget(i, 0) == nullptr) continue;
-
-        QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(ui->weaponsTable->cellWidget(i,0));
-        qDebug() << "row: " << i << " has weapon: " << weapon->getWeaponType();
-    }
+    // update the weapons table via parser information
+    ui->weaponsTable->setWeaponsFromParser(parser.getWeapons());
 }
 
 

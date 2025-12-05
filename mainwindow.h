@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "qweapontableslot.h"
 #include "profileloader.h"
 
 #include <QMainWindow>
@@ -30,12 +29,6 @@ private:
     QString savesDirectory;
     ProfileLoader parser;
 
-    // given the name of a weapon, get the table entry (ex: "PS")
-    QHash<int, QWeaponTableSlot*> weaponsTableDictionary;
-
-    // game information
-    int totalWeapons = 10;
-
     // save/load
     void saveSettings();
     void loadSettings();
@@ -48,89 +41,15 @@ private:
 
     // set up widgets
     void createFileTrees();
-    void createWeaponTable();
 
     // helper functions
     bool checkGameDirPath(QString path);
-    int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);
-    void reorderTable(QVector<int> weapons);
-    void resetTable() { reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13}); };
 
 private slots:
     // buttons
     void _onRunButton();
     void _onUpdateDirectoryButton();
     void _onSelectFile(QModelIndex);
-};
-
-// event filters
-class QTableWidgetEventFilters : public QObject
-{
-public:
-    explicit QTableWidgetEventFilters(QObject *parent = nullptr) : QObject(parent) {}
-
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override {
-        QTableWidget *table = qobject_cast<QTableWidget*>(obj->parent());
-
-        // disable single clicking
-        // if (event->type() == QEvent::MouseButtonPress) {
-        //     return true;
-        // }
-
-        // disable double clicking
-        if (event->type() == QEvent::MouseButtonDblClick) {
-            return true;
-        }
-
-        // when releasing
-        if (event->type() == QEvent::MouseButtonRelease) {
-            // Clear selection and then remove the focus
-            table->clearSelection();
-            table->setCurrentIndex(QModelIndex());
-            return true;
-        }
-
-        // when releasing drop
-        if (event->type() == QEvent::DragLeave) {
-            qDebug() << "dropped!";
-            // Clear selection and then remove the focus
-            table->clearSelection();
-            table->setCurrentIndex(QModelIndex());
-            return true;
-        }
-
-        if (event->type() == QEvent::Drop) {
-            // Do not consume the event — let Qt handle it
-            bool results = QObject::eventFilter(obj, event); // or just fall-through
-
-            // waits for results to finish and then does this!
-            // invokeMethod schedules your function to run after the drop event finishes; AKA deferred code
-            QMetaObject::invokeMethod(table, [table]() {
-                table->clearSelection();
-                table->setCurrentIndex(QModelIndex());
-            }, Qt::QueuedConnection);
-
-            // return our results
-            return results;
-        }
-
-        // when dragging
-        // if (event->type() == QEvent::MouseMove) {
-        //     qDebug() << "dragging!!";
-        // }
-
-
-
-        // // disable all mouse events for double clicking
-        // if (event->type() == QEvent::GraphicsSceneMouseDoubleClick) {
-        //     return true;
-        // }
-
-        // call the OG function to do the rest of the events
-        return QObject::eventFilter(obj, event);
-
-    }
 };
 
 #endif // MAINWINDOW_H

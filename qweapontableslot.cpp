@@ -119,7 +119,7 @@ void QWeaponTableSlot::unlockSignals() {
 void QWeaponTableSlot::enableChanged(bool enable) {
     lockSignals(); // lock
 
-    qDebug() << "qweapontableslot.cpp: enable changed to: " << enable;
+    // qDebug() << "qweapontableslot.cpp: enable changed to: " << enable;
 
     ui->enableCheck->setChecked(enable);
 
