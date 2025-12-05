@@ -6,6 +6,7 @@
 #include <QWheelEvent>
 #include <QSlider>
 #include <QVector>
+#include <qcombobox.h>
 
 namespace Ui {
 class QWeaponTableSlot;
@@ -62,17 +63,29 @@ private slots:
 };
 
 // event filters
-class QWeaponSlotEventFilters : public QObject
+class QWeaponLvlComboBoxEventFilters : public QObject
 {
 public:
-    explicit QWeaponSlotEventFilters(QObject *parent = nullptr) : QObject(parent) {}
+    explicit QWeaponLvlComboBoxEventFilters(QObject *parent = nullptr) : QObject(parent) {}
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override {
-        // scrolling with the mouse!
-        if (event->type() == QEvent::Wheel) {
-            event->ignore();
-            return true;
+        if (auto combo = qobject_cast<QComboBox*>(obj)) {
+
+            // if we are scrolling from MAX->3, jump to 2
+            if (event->type() == QEvent::Wheel) {
+                // get the scroll wheel and check the direction its going
+                QWheelEvent* wheel = static_cast<QWheelEvent*>(event);
+                int delta = wheel->angleDelta().y();
+
+                // if we're at max AND we're scrolling up
+                if (combo->currentIndex() == 3 & delta > 0) {
+                    qDebug() << "wowie! at MAX!";
+                    combo->setCurrentIndex(1);
+                    return true;
+                }
+                return QObject::eventFilter(obj, event);
+            }
         }
 
         // call the OG function to do the rest of the events

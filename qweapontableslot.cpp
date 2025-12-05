@@ -27,13 +27,8 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
     ui->weaponIconLabel->setText(text);
 
     // event filters
-    // QWeaponSlotEventFilters* eventFilters = new QWeaponSlotEventFilters(this);
-    // ui->xpSlider->installEventFilter(eventFilters);
-    // ui->ammoSlider->installEventFilter(eventFilters);
-    // ui->lvlComboBox->installEventFilter(eventFilters);
-    // ui->xpCurrentSpin->installEventFilter(eventFilters);
-    // ui->ammoCurrentSpin->installEventFilter(eventFilters);
-    // ui->ammoMaxSpin->installEventFilter(eventFilters);
+    QWeaponLvlComboBoxEventFilters * filters = new QWeaponLvlComboBoxEventFilters(this);
+    ui->lvlComboBox->installEventFilter(filters);
 
 
     // ammo UI bool

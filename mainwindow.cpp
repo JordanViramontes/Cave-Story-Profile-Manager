@@ -20,8 +20,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // set widgets
     createFileTrees();
-    createWeaponTable();
-
 
     // update state depending on valid path
     // gameDirectory = "";

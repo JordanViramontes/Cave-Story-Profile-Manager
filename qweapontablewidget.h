@@ -95,7 +95,6 @@ protected:
 
         // call the OG function to do the rest of the events
         return QObject::eventFilter(obj, event);
-
     }
 };
 
