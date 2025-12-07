@@ -34,7 +34,7 @@ public:
         ammoChanged(iniCurrentAmmo);
     }
     void resetData() { setData(false, 0, 0, initialMaxAmmo, 0); }
-    void setColor(QString color);
+    void setBackgroundColor(QString color);
 
 private:
     Ui::QWeaponTableSlot *ui;

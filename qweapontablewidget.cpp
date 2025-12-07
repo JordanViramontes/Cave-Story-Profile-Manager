@@ -144,17 +144,31 @@ void QWeaponTableWidget::paintTable() {
     int enabledWeaponsCount = 0;
     for (int i = 0; i < rowCount(); i++) {
         QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
-        qDebug() << "painting: " << weapon->getWeaponType();
 
-        QString color = "background-color: lightblue;";
-        weapon->setColor(color);
+        // default color
+        QString backgroundColor = "darkGray";
 
+        // check if we're enabled
         if (weapon->getEnableChecked()) {
-            if (enabledWeaponsCount <= 5) {
+            // if we have open slots
+            if (enabledWeaponsCount < 5) {
                 enabledWeaponsCount++;
-                qDebug() << "painting enabled!";
+
+                backgroundColor = "lightblue";
+
+            }
+
+            // if we dont!
+            else {
+                backgroundColor = "lightGray";
             }
         }
+
+        // set the color
+        weapon->setBackgroundColor(backgroundColor);
+
+
+        qDebug() << "check: " << enabledWeaponsCount;
     }
 }
 

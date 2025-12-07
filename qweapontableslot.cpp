@@ -17,15 +17,14 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
     // set values
     type = intType;
     weaponLvls = iniWeaponLvls;
-    qDebug() << "qeapontableslot.cpp: weaponLvls: " << weaponLvls;
     lvlChanged(0);
     ammoMaxChanged(intMaxAmmo);
     initialMaxAmmo = intMaxAmmo;
+    // qDebug() << "qeapontableslot.cpp: weaponLvls: " << weaponLvls;
 
     // visual changes
     ui->weaponIconLabel->setText(text);
-
-
+    setAttribute(Qt::WA_StyledBackground, true);
 
     // event filters
     QWeaponLvlComboBoxEventFilters * filters = new QWeaponLvlComboBoxEventFilters(this);
@@ -208,8 +207,9 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
 }
 
 // set
-void QWeaponTableSlot::setColor() {
-
+void QWeaponTableSlot::setBackgroundColor(QString backgroundColor) {
+    QString color = "background: " + backgroundColor + ";";
+    setStyleSheet(color);
 }
 
 

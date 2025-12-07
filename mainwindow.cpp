@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     savesDirectory = QCoreApplication::applicationDirPath() + "/saves";
+    qDebug() << "mainwindow.cpp: savesDirectory: " << savesDirectory;
 
     // set stuff
     // setGlobals();
