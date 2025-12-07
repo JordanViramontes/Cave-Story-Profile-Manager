@@ -46,6 +46,10 @@ private:
     int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);
     void reorderTable(QVector<int> weapons);
     void resetTable() { reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13}); };
+    QVector<QWeaponTableSlot*> getValidEnabledWidgets();
+
+public slots:
+    void paintTable();
 
 protected:
     void dropEvent(QDropEvent* event) override {

@@ -22,9 +22,10 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
     ammoMaxChanged(intMaxAmmo);
     initialMaxAmmo = intMaxAmmo;
 
-
     // visual changes
     ui->weaponIconLabel->setText(text);
+
+
 
     // event filters
     QWeaponLvlComboBoxEventFilters * filters = new QWeaponLvlComboBoxEventFilters(this);
@@ -114,9 +115,11 @@ void QWeaponTableSlot::unlockSignals() {
 void QWeaponTableSlot::enableChanged(bool enable) {
     lockSignals(); // lock
 
-    // qDebug() << "qweapontableslot.cpp: enable changed to: " << enable;
+    qDebug() << "qweapontableslot.cpp: " << type << "enable changed to: " << enable;
 
+    enableChecked = enable;
     ui->enableCheck->setChecked(enable);
+    emit enabledChanged();
 
     unlockSignals(); // unlock!
 }
@@ -204,7 +207,10 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
     unlockSignals(); // unlock!
 }
 
+// set
+void QWeaponTableSlot::setColor() {
 
+}
 
 
 

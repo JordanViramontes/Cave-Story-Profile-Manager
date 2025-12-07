@@ -97,6 +97,7 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
 
     // update the weapons table via parser information
     ui->weaponsTable->setWeaponsFromParser(parser.getWeapons());
+    ui->weaponsTable->paintTable();
 }
 
 

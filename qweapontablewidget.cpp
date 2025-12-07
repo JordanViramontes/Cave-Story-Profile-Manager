@@ -48,6 +48,9 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
         // add weapon to weaponsdictionary
         weaponsTableDictionary[type] = defaultWeapon;
 
+        // connections
+        connect(defaultWeapon, SIGNAL(enabledChanged()), this, SLOT(paintTable()));
+
         // set the fixed row height
         setRowHeight(tableRowCount, defaultWeapon->height());
 
@@ -132,9 +135,28 @@ void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> pars
     reorderTable(knownWeapons);
 }
 
+// slots
 
+// when a weapon widget enable bool is changed, tell the table to repaint!
+void QWeaponTableWidget::paintTable() {
+    qDebug() << "qweapontablewidget.cpp: need to paint table!";
 
+    int enabledWeaponsCount = 0;
+    for (int i = 0; i < rowCount(); i++) {
+        QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
+        qDebug() << "painting: " << weapon->getWeaponType();
 
+        QString color = "background-color: lightblue;";
+        weapon->setColor(color);
+
+        if (weapon->getEnableChecked()) {
+            if (enabledWeaponsCount <= 5) {
+                enabledWeaponsCount++;
+                qDebug() << "painting enabled!";
+            }
+        }
+    }
+}
 
 
 
