@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/weaponImages">
+        <file>images/ammo.png</file>
+        <file>images/ammoSuper.png</file>
+        <file>images/blade.png</file>
+        <file>images/bubble.png</file>
+        <file>images/empty.png</file>
+        <file>images/fireball.png</file>
+        <file>images/machineGun.png</file>
+        <file>images/missile.png</file>
+        <file>images/missileSuper.png</file>
+        <file>images/nemesis.png</file>
+        <file>images/polarStar.png</file>
+        <file>images/snake.png</file>
+        <file>images/spur.png</file>
+    </qresource>
+</RCC>

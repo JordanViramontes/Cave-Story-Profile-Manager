@@ -41,6 +41,11 @@ private:
     // variables
     QHash<int, QWeaponTableSlot*> weaponsTableDictionary;
     int totalWeapons = 10;
+    int enabledWeaponsCount = 0;
+    QString disabledColor = "darkGray";
+    QString enabledColor = "lightblue";
+    QString enabledButLeftBehindColor = "lightGray";
+
 
     // methods
     int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);

@@ -196,6 +196,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item row="0" column="0">
               <layout class="QVBoxLayout" name="weaponsVLayout_3">
                <item>
+                <widget class="QWeaponOrderTable" name="weaponOrderTable" native="true"/>
+               </item>
+               <item>
                 <widget class="QWeaponTableWidget" name="weaponsTable">
                  <property name="frameShape">
                   <enum>QFrame::Shape::StyledPanel</enum>
@@ -404,7 +407,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -421,6 +424,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <class>QWeaponTableWidget</class>
    <extends>QTableWidget</extends>
    <header>qweapontablewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QWeaponOrderTable</class>
+   <extends>QWidget</extends>
+   <header location="global">qweaponordertable.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -57,6 +57,9 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
         // update table row iterator
         tableRowCount++;
     }
+
+    // paint the default table
+    paintTable();
 }
 
 // given a vector of weapons in the order we want in the table, reorder the table!
@@ -137,30 +140,29 @@ void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> pars
 
 // slots
 
-// when a weapon widget enable bool is changed, tell the table to repaint!
+// used for sweeping table changes that means we need to repaint everything
 void QWeaponTableWidget::paintTable() {
     qDebug() << "qweapontablewidget.cpp: need to paint table!";
 
-    int enabledWeaponsCount = 0;
+    enabledWeaponsCount = 0;
     for (int i = 0; i < rowCount(); i++) {
         QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
 
         // default color
-        QString backgroundColor = "darkGray";
+        QString backgroundColor = disabledColor;
 
         // check if we're enabled
         if (weapon->getEnableChecked()) {
             // if we have open slots
             if (enabledWeaponsCount < 5) {
                 enabledWeaponsCount++;
-
-                backgroundColor = "lightblue";
+                backgroundColor = enabledColor;
 
             }
 
             // if we dont!
             else {
-                backgroundColor = "lightGray";
+                backgroundColor = enabledButLeftBehindColor;
             }
         }
 
@@ -168,7 +170,7 @@ void QWeaponTableWidget::paintTable() {
         weapon->setBackgroundColor(backgroundColor);
 
 
-        qDebug() << "check: " << enabledWeaponsCount;
+        // qDebug() << "check: " << enabledWeaponsCount;
     }
 }
 

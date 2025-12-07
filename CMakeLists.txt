@@ -31,6 +31,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         profileloader.h profileloader.cpp
         qweapontableslot.h qweapontableslot.cpp qweapontableslot.ui
         qweapontablewidget.h qweapontablewidget.cpp
+        qweaponordertable.h qweaponordertable.cpp qweaponordertable.ui
+        images.qrc
+
 
 
 
