@@ -111,7 +111,7 @@ int QWeaponTableWidget::findTableWidgetIndex(const QWeaponTableSlot* weaponSlot)
 // given a vector of weapons from the parser, update the table
 void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons) {
 
-    // go through parser weapons and find knowns!
+    // go through parser weapons and set data!
     QVector<int> knownWeapons; // used to track which weapons are set in the save file and its order
     for (auto i : parserWeapons) {
         if (i.type == 0x00) continue;

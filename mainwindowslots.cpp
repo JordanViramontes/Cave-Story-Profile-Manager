@@ -98,6 +98,17 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
     // update the weapons table via parser information
     ui->weaponsTable->setWeaponsFromParser(parser.getWeapons());
     ui->weaponsTable->paintTable();
+
+    // get the enabled weapons!
+    QVector<int> enabledWeapons;
+    for (auto i : parser.getWeapons()) {
+        if (i.type == 0x00) continue;
+        // add to known weapons
+        enabledWeapons.push_back((int)i.type);
+    }
+
+    // update weapons order table
+    ui->weaponOrderTable->setAllSlots(enabledWeapons);
 }
 
 
