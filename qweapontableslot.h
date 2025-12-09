@@ -24,6 +24,7 @@ public:
     // get
     int getWeaponType() { return type; }
     bool getEnableChecked() { return enabledState; }
+    QString getWeaponIconPath() { return weaponLabelIconPath; };
 
     // set
     void setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo);
@@ -39,6 +40,7 @@ private:
 
     // vars
     QVector<int> weaponLvls;
+    QString weaponLabelIconPath = "";
     bool enabledState = false;
     int type = 0;
     int lvl = 0;
@@ -80,7 +82,6 @@ protected:
 
                 // if we're at max AND we're scrolling up
                 if (combo->currentIndex() == 3 & delta > 0) {
-                    qDebug() << "wowie! at MAX!";
                     combo->setCurrentIndex(1);
                     return true;
                 }

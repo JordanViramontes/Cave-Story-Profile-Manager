@@ -38,7 +38,16 @@
      <item>
       <widget class="QLabel" name="weaponIconLabel">
        <property name="text">
-        <string>weapon</string>
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="images.qrc">:/weaponImages/images/empty.png</pixmap>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -196,6 +205,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>

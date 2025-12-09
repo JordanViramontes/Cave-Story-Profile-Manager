@@ -24,8 +24,13 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
     // qDebug() << "qeapontableslot.cpp: weaponLvls: " << weaponLvls;
 
     // visual changes
-    ui->weaponIconLabel->setText(text);
+    // ui->weaponIconLabel->setText(text);
     setAttribute(Qt::WA_StyledBackground, true);
+
+
+
+    // set icon
+
 
     // event filters
     QWeaponLvlComboBoxEventFilters * filters = new QWeaponLvlComboBoxEventFilters(this);
@@ -52,6 +57,29 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
 
     // adjust size!
     adjustSize();
+
+    // set the weapon label and resize it
+    QHash<int, QString> weaponImageDictionary = { // only allocated once and then killed once function ends
+     {-1, ":/weaponImages/images/empty.png"},
+     {0x01, ":/weaponImages/images/snake.png"},
+     {0x02, ":/weaponImages/images/polarStar.png"},
+     {0x03, ":/weaponImages/images/fireball.png"},
+     {0x04, ":/weaponImages/images/machineGun.png"},
+     {0x05, ":/weaponImages/images/missile.png"},
+     {0x07, ":/weaponImages/images/bubble.png"},
+     {0x09, ":/weaponImages/images/blade.png"},
+     {0x0A, ":/weaponImages/images/missileSuper.png"},
+     {0x0C, ":/weaponImages/images/nemesis.png"},
+     {0x0D, ":/weaponImages/images/spur.png"},
+    };
+    weaponLabelIconPath = weaponImageDictionary[type];
+
+    QLabel * weaponIconLabel = ui->weaponIconLabel;
+    QPixmap p(weaponLabelIconPath);
+    int w = weaponIconLabel->width();
+    int h = weaponIconLabel->height();
+    weaponIconLabel->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
+    weaponIconLabel->setScaledContents(false); // turns off stretching
 
     // connections
     connect(ui->xpSlider, SIGNAL(valueChanged(int)), this, SLOT(xpChanged(int)));
@@ -80,7 +108,6 @@ void QWeaponTableSlot::setData(bool iniEnabled, int iniLvl, int iniEnergy, int i
     ammoMaxChanged(iniMaxAmmo);
     ammoChanged(iniCurrentAmmo);
 }
-
 
 // signal locks
 void QWeaponTableSlot::lockSignals() {

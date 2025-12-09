@@ -63,7 +63,6 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
     // paint all weapons
     for (int i = 0; i < rowCount(); i++) {
         QWeaponTableSlot * weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
-        qDebug() << "checking: " << weapon->getEnableChecked();
     }
 
     enabledWeaponsCount = 0;
@@ -163,6 +162,9 @@ QVector<int> QWeaponTableWidget::getValidEnabledWidgets() {
     return enabledWeaponsVector;
 }
 
+// QString QWeaponTableWidget::getWeaponIcon() {
+//     return ui->wea
+// }
 
 
 // slots

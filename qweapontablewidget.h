@@ -2,8 +2,9 @@
 #define QWEAPONTABLEWIDGET_H
 
 #include <QTableWidget>
+#include <QDrag>
+#include <QMimeData>
 
-#include "qweaponordertable.h"
 #include "qweapontableslot.h"
 #include "profileloader.h"
 
@@ -17,6 +18,7 @@ public:
     // get
     const QHash<int, QWeaponTableSlot*> &getWeaponsTableDictionary() { return weaponsTableDictionary; }
     QVector<int> getValidEnabledWidgets();
+    QString getWeaponIcon();
 
     // set
     void setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons, QVector<int> enabledWeapons);
@@ -110,7 +112,34 @@ public slots:
     void paintTable(QWeaponTableSlot* weapon, int enabled);
 
 protected:
-    // drag event
+    // start drag event, used for setting the drag preview thing
+    void startDrag(Qt::DropActions supportedActions) override {
+        // check we're actually dragging something
+        QModelIndexList indexes = selectedIndexes();
+        if (indexes.isEmpty()) return;
+
+        // get the row
+        QDrag *drag = new QDrag(this);
+        QMimeData *mimeData = model()->mimeData(indexes);
+        drag->setMimeData(mimeData);
+
+        // customize pixmap
+        QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(indexes.first().row(), 0));
+        // QString imagePath = getWeaponIcon()
+        QPixmap p(weapon->getWeaponIconPath());
+        int pixmapScale = 2;
+        int newW = p.width() * pixmapScale;
+        int newH = p.height() * pixmapScale;
+        p = p.scaled(newW, newH, Qt::KeepAspectRatio);
+        drag->setPixmap(p);
+
+        // sets the spot where the cursor holds onto the pixmap
+        drag->setHotSpot(QPoint(p.width()/-1.5, p.width()/10));
+
+        drag->exec(supportedActions);
+    }
+
+    // drag event, used for checking if our drop point is valid
     void dragMoveEvent(QDragMoveEvent* event) override {
         // qDebug() << "drag event";
 
@@ -127,6 +156,7 @@ protected:
         QTableWidget::dragMoveEvent(event);
     }
 
+    // drop event, used for clearing selections and painting rows
     void dropEvent(QDropEvent* event) override {
         // the OG function!
         QTableWidget::dropEvent(event);

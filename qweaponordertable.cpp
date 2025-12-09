@@ -23,9 +23,9 @@ QWeaponOrderTable::QWeaponOrderTable(QWidget *parent)
         // set pixmap aspect ratio!
         i->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
 
-        if (i == ui->PS) {
-            qDebug() << "qweaponordertable: w, h: " << w << ", " << h;
-        }
+        // if (i == ui->PS) {
+        //     qDebug() << "qweaponordertable: w, h: " << w << ", " << h;
+        // }
     }
 }
 
