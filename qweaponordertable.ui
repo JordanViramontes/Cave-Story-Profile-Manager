@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>328</width>
+    <width>346</width>
     <height>145</height>
    </rect>
   </property>
@@ -38,7 +38,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Inventory:</string>
+         <string>Weapon Preview:</string>
         </property>
         <property name="scaledContents">
          <bool>false</bool>

@@ -3,6 +3,7 @@
 
 #include <QTableWidget>
 
+#include "qweaponordertable.h"
 #include "qweapontableslot.h"
 #include "profileloader.h"
 
@@ -15,10 +16,10 @@ public:
 
     // get
     const QHash<int, QWeaponTableSlot*> &getWeaponsTableDictionary() { return weaponsTableDictionary; }
+    QVector<int> getValidEnabledWidgets();
 
     // set
     void setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons, QVector<int> enabledWeapons);
-    void paintTable();
     void lockWidgetSignals() {
         for (int i = 0; i < rowCount(); i++) {
             qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0))->lockSignals();
@@ -51,6 +52,19 @@ public:
 private:
     // variables
     QHash<int, QWeaponTableSlot*> weaponsTableDictionary;
+    QHash<int, bool> weaponsEnabledDictionary = {
+        {0x01, false},
+        {0x02, false},
+        {0x03, false},
+        {0x04, false},
+        {0x05, false},
+        {0x07, false},
+        {0x09, false},
+        {0x0A, false},
+        {0x0C, false},
+        {0x0D, false},
+    };
+    QVector<QWeaponTableSlot*> enabledWeapons;
     int totalWeapons = 10;
     int enabledWeaponsCount = 0;
     QString disabledColor = "darkGray";
@@ -61,10 +75,13 @@ private:
     int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);
     void reorderTable(QVector<int> weapons);
     void resetTable() { reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13}); };
-    QVector<QWeaponTableSlot*> getValidEnabledWidgets();
+    void paintEnabledRows();
+
+signals:
+    void weaponTableChanged(QVector<int> enabledWeapons);
 
 public slots:
-    void paintTableRow(QWeaponTableSlot* weapon, int enabled);
+    void paintTable(QWeaponTableSlot* weapon, int enabled);
 
 protected:
     void dropEvent(QDropEvent* event) override {
@@ -75,7 +92,9 @@ protected:
         clearSelection();
         setCurrentIndex(QModelIndex());
 
-        printWeaponsTable();
+        // printWeaponsTable();
+        paintEnabledRows();
+        emit weaponTableChanged(getValidEnabledWidgets());
     }
 };
 

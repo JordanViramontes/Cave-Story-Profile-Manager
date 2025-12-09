@@ -8,7 +8,6 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
     setRowCount(totalWeapons);
     setColumnCount(1);
 
-
     // set event filters
     QTableWidgetEventFilters* tableWidgetFilters = new QTableWidgetEventFilters(this);
     viewport()->installEventFilter(tableWidgetFilters);
@@ -49,13 +48,13 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
         weaponsTableDictionary[type] = defaultWeapon;
 
         // connections
-        connect(defaultWeapon, SIGNAL(enabledChanged(QWeaponTableSlot*,int)), this, SLOT(paintTableRow(QWeaponTableSlot*,int)));
+        connect(defaultWeapon, SIGNAL(enabledChanged(QWeaponTableSlot*,int)), this, SLOT(paintTable(QWeaponTableSlot*,int)));
 
         // set the fixed row height
         setRowHeight(tableRowCount, defaultWeapon->height());
 
         // paint the row disabled
-        paintTableRow(defaultWeapon, false);
+        paintTable(defaultWeapon, 0);
 
         // update table row iterator
         tableRowCount++;
@@ -68,9 +67,6 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
     }
 
     enabledWeaponsCount = 0;
-
-    // paint the default table
-    paintTable();
 }
 
 // given a vector of weapons in the order we want in the table, reorder the table!
@@ -152,51 +148,47 @@ void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> pars
     unlockWidgetSignals();
 }
 
-// slots
-
-// used for sweeping table changes that means we need to repaint everything
-void QWeaponTableWidget::paintTable() {
-    return;
-    enabledWeaponsCount = 0;
+// get
+QVector<int> QWeaponTableWidget::getValidEnabledWidgets() {
+    QVector<int> enabledWeaponsVector;
     for (int i = 0; i < rowCount(); i++) {
         QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
+        if (!weapon) return {}; // fail safe
+        if (!weapon->getEnableChecked()) continue;
 
-        // default color
-        QString backgroundColor = disabledColor;
-
-        // check if we're enabled
-        if (weapon->getEnableChecked()) {
-            // if we have open slots
-            if (enabledWeaponsCount < 5) {
-                enabledWeaponsCount++;
-                backgroundColor = enabledColor;
-
-            }
-
-            // if we dont!
-            else {
-                backgroundColor = enabledButLeftBehindColor;
-            }
-        }
-
-        // set the color
-        weapon->setBackgroundColor(backgroundColor);
-
-
-        // qDebug() << "check: " << enabledWeaponsCount;
+        enabledWeaponsVector.push_back(weapon->getWeaponType());
+        if (enabledWeaponsVector.size() >= 5 || enabledWeaponsVector.size() == enabledWeaponsCount)
+            return enabledWeaponsVector;
     }
+
+    return enabledWeaponsVector;
 }
 
+
+
+// slots
 // connected with the enable check signal from widget in order to repaint specific row
-void QWeaponTableWidget::paintTableRow(QWeaponTableSlot* weapon, int enabledChanged) {
+void QWeaponTableWidget::paintTable(QWeaponTableSlot* weapon, int enabledChanged) {
     // update enabledChanged
     enabledWeaponsCount += enabledChanged;
+
+    // emit signal for the above weapon ui!
+    emit weaponTableChanged(getValidEnabledWidgets());
 
     qDebug() << "qweapontablewidget.cpp: painting widget: " << weapon->getWeaponType() << ", " << enabledChanged << ", total count: " << enabledWeaponsCount;
 
     // since weapon from parser function does false weapons before true, we will always paint correctly
 
-    // finally paint!
+    // CONDITION: if weaponcount > 5, we can have a situation where we need to check the table and repaint the enableds!
+    // if we are above 5, or we are AT 5, but that was the result of disabling one
+    if (enabledWeaponsCount > 5 || (enabledWeaponsCount == 5 && enabledChanged < 0)) {
+        paintEnabledRows();
+
+        // if we're enabled, we can just leave since we've already included ourselves
+        if (weapon->getEnableChecked()) return;
+    }
+
+    // finally paint ourselves! O(1)
     QString backgroundColor = disabledColor;
 
     // check if we're enabled
@@ -216,14 +208,21 @@ void QWeaponTableWidget::paintTableRow(QWeaponTableSlot* weapon, int enabledChan
     weapon->setBackgroundColor(backgroundColor);
 }
 
+void QWeaponTableWidget::paintEnabledRows() {
+    int checkWeaponCount = 0;
+    for (int i = 0; i < rowCount(); i++) {
+        QWeaponTableSlot * enabledWeapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
+        if (!enabledWeapon->getEnableChecked()) continue;
 
-
-
-
-
-
-
-
+        if (checkWeaponCount < 5) {
+            enabledWeapon->setBackgroundColor(enabledColor);
+            checkWeaponCount++;
+        }
+        else {
+            enabledWeapon->setBackgroundColor(enabledButLeftBehindColor);
+        }
+    }
+}
 
 
 

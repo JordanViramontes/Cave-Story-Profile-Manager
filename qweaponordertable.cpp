@@ -71,7 +71,14 @@ void QWeaponOrderTable::setSlot(int slot, int weapon) {
 }
 
 
+// slots
 
+// used for changing the UI icons
+void QWeaponOrderTable::weaponUiChanged(QVector<int> enabledWeapons) {
+    for (int i = 0; i < enabledWeapons.size(); i++) {
+        setSlot(i, enabledWeapons[i]);
+    }
+}
 
 
 

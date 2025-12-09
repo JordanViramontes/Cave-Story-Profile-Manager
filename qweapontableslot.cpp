@@ -133,7 +133,7 @@ void QWeaponTableSlot::enableChanged(bool enable) {
 
     // upate enabledState and emit our signal to the table
     enabledState = enable;
-    qDebug() << "qweapontableslot.cpp: setting weapon" << type << " enabled to: " << enable;
+    // qDebug() << "qweapontableslot.cpp: setting weapon" << type << " enabled to: " << enable;
     ui->enableCheck->setChecked(enable);
 
     emit enabledChanged(this, enableChanged);

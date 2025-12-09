@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "profileloader.h"
+#include "qweaponordertable.h"
 
 #include <QMainWindow>
 #include <QSettings>

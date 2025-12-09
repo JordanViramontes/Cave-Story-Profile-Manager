@@ -38,6 +38,9 @@ private:
     // set
     void setSlot(int slot, int weapon);
 
+public slots:
+    void weaponUiChanged(QVector<int> enabledWeapons);
+
 protected:
 };
 
