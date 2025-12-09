@@ -122,7 +122,6 @@ void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> pars
 
     // reset table before reordering stuff for paint logic
     resetTable();
-    qDebug() << "qweapontablewidget.cpp: table reset";
 
     // we want to turn everything thats false false and then true for paint order logic
 
@@ -175,7 +174,7 @@ void QWeaponTableWidget::paintTable(QWeaponTableSlot* weapon, int enabledChanged
     // emit signal for the above weapon ui!
     emit weaponTableChanged(getValidEnabledWidgets());
 
-    qDebug() << "qweapontablewidget.cpp: painting widget: " << weapon->getWeaponType() << ", " << enabledChanged << ", total count: " << enabledWeaponsCount;
+    // qDebug() << "qweapontablewidget.cpp: painting widget: " << weapon->getWeaponType() << ", " << enabledChanged << ", total count: " << enabledWeaponsCount;
 
     // since weapon from parser function does false weapons before true, we will always paint correctly
 
