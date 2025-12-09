@@ -23,25 +23,23 @@ public:
 
     // get
     int getWeaponType() { return type; }
-    bool getEnableChecked() { return enableChecked; }
+    bool getEnableChecked() { return enabledState; }
 
     // set
-    void setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
-        enableChanged(iniEnabled);
-        lvlChanged(iniLvl);
-        xpChanged(iniEnergy);
-        ammoMaxChanged(iniMaxAmmo);
-        ammoChanged(iniCurrentAmmo);
-    }
+    void setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo);
     void resetData() { setData(false, 0, 0, initialMaxAmmo, 0); }
     void setBackgroundColor(QString color);
+
+    // locks used to avoid repeating functions
+    void lockSignals();
+    void unlockSignals();
 
 private:
     Ui::QWeaponTableSlot *ui;
 
     // vars
     QVector<int> weaponLvls;
-    bool enableChecked;
+    bool enabledState = false;
     int type = 0;
     int lvl = 0;
     int xp = 0;
@@ -50,15 +48,11 @@ private:
     int maxAmmo = 0;
     int initialMaxAmmo = 0;
 
-    // locks used to avoid repeating functions
-    void lockSignals();
-    void unlockSignals();
-
     // debug
     bool testLvlChangeXpRatio = true;
 
 signals:
-    bool enabledChanged();
+    bool enabledChanged(QWeaponTableSlot* myself, int enableChanged);
 
 private slots:
     void enableChanged(bool enable);

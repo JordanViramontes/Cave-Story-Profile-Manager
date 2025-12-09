@@ -7,6 +7,10 @@ QWeaponOrderTable::QWeaponOrderTable(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // test
+    ui->weaponCatalogueLabel->setVisible(false);
+    ui->weaponCatalogueContainer->setVisible(false);
+
     // set pixmaps
     for (auto i : {ui->slot0, ui->slot1, ui->slot2, ui->slot3, ui->slot4,
         ui->EMPTY, ui->PS, ui->ML, ui->FB, ui->BB, ui->MG, ui->BL, ui->SN, ui->SML, ui->NS, ui->SP, }) {
@@ -19,7 +23,7 @@ QWeaponOrderTable::QWeaponOrderTable(QWidget *parent)
         // set pixmap aspect ratio!
         i->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
 
-        if (i == ui->slot1) {
+        if (i == ui->PS) {
             qDebug() << "qweaponordertable: w, h: " << w << ", " << h;
         }
     }

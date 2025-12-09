@@ -49,14 +49,25 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
         weaponsTableDictionary[type] = defaultWeapon;
 
         // connections
-        connect(defaultWeapon, SIGNAL(enabledChanged()), this, SLOT(paintTable()));
+        connect(defaultWeapon, SIGNAL(enabledChanged(QWeaponTableSlot*,int)), this, SLOT(paintTableRow(QWeaponTableSlot*,int)));
 
         // set the fixed row height
         setRowHeight(tableRowCount, defaultWeapon->height());
 
+        // paint the row disabled
+        paintTableRow(defaultWeapon, false);
+
         // update table row iterator
         tableRowCount++;
     }
+
+    // paint all weapons
+    for (int i = 0; i < rowCount(); i++) {
+        QWeaponTableSlot * weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
+        qDebug() << "checking: " << weapon->getEnableChecked();
+    }
+
+    enabledWeaponsCount = 0;
 
     // paint the default table
     paintTable();
@@ -109,10 +120,25 @@ int QWeaponTableWidget::findTableWidgetIndex(const QWeaponTableSlot* weaponSlot)
 }
 
 // given a vector of weapons from the parser, update the table
-void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons) {
+void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons, QVector<int> enabledWeapons) {
+    // lock or else when we set the enable widget to off it'll signal that its been changed twice
+    lockWidgetSignals();
+
+    // reset table before reordering stuff for paint logic
+    resetTable();
+    qDebug() << "qweapontablewidget.cpp: table reset";
+
+    // we want to turn everything thats false false and then true for paint order logic
+
+    // go through all table slots EXCLUDING the known weapons and reset them
+    for (auto i : weaponsTableDictionary.keys()) {
+        if (enabledWeapons.contains(i)) continue;
+
+        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
+        currentWeapon->resetData();
+    }
 
     // go through parser weapons and set data!
-    QVector<int> knownWeapons; // used to track which weapons are set in the save file and its order
     for (auto i : parserWeapons) {
         if (i.type == 0x00) continue;
         // qDebug() << (int)i.type << ", " << (int)i.level << ", " << (int)i.energy << ", " << (int)i.maxAmmo << ", " << (int)i.currentAmmo;
@@ -120,30 +146,17 @@ void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> pars
         // get the weapon table slot pointer
         QWeaponTableSlot* currentWeapon = weaponsTableDictionary[(int)i.type];
         currentWeapon->setData(true, (int)i.level - 1, (int)i.energy, (int)i.maxAmmo, (int)i.currentAmmo);
-
-        // add to known weapons
-        knownWeapons.push_back((int)i.type);
     }
 
-    // go through all table slots EXCLUDING the known weapons and reset them
-    for (auto i : weaponsTableDictionary.keys()) {
-        if (knownWeapons.contains(i)) continue;
-
-        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
-        currentWeapon->resetData();
-    }
-
-    // set weapons table order to default and then reorder!
-    resetTable();
-    reorderTable(knownWeapons);
+    reorderTable(enabledWeapons);
+    unlockWidgetSignals();
 }
 
 // slots
 
 // used for sweeping table changes that means we need to repaint everything
 void QWeaponTableWidget::paintTable() {
-    qDebug() << "qweapontablewidget.cpp: need to paint table!";
-
+    return;
     enabledWeaponsCount = 0;
     for (int i = 0; i < rowCount(); i++) {
         QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
@@ -174,7 +187,34 @@ void QWeaponTableWidget::paintTable() {
     }
 }
 
+// connected with the enable check signal from widget in order to repaint specific row
+void QWeaponTableWidget::paintTableRow(QWeaponTableSlot* weapon, int enabledChanged) {
+    // update enabledChanged
+    enabledWeaponsCount += enabledChanged;
 
+    qDebug() << "qweapontablewidget.cpp: painting widget: " << weapon->getWeaponType() << ", " << enabledChanged << ", total count: " << enabledWeaponsCount;
+
+    // since weapon from parser function does false weapons before true, we will always paint correctly
+
+    // finally paint!
+    QString backgroundColor = disabledColor;
+
+    // check if we're enabled
+    if (weapon->getEnableChecked()) {
+        // if we have open slots
+        if (enabledWeaponsCount <= 5) {
+            backgroundColor = enabledColor;
+        }
+
+        // if we dont!
+        else {
+            backgroundColor = enabledButLeftBehindColor;
+        }
+    }
+
+    // set the color
+    weapon->setBackgroundColor(backgroundColor);
+}
 
 
 

@@ -20,6 +20,7 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
     lvlChanged(0);
     ammoMaxChanged(intMaxAmmo);
     initialMaxAmmo = intMaxAmmo;
+    enableChanged(false);
     // qDebug() << "qeapontableslot.cpp: weaponLvls: " << weaponLvls;
 
     // visual changes
@@ -71,6 +72,16 @@ QWeaponTableSlot::~QWeaponTableSlot()
     delete ui;
 }
 
+// set
+void QWeaponTableSlot::setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
+    enableChanged(iniEnabled);
+    lvlChanged(iniLvl);
+    xpChanged(iniEnergy);
+    ammoMaxChanged(iniMaxAmmo);
+    ammoChanged(iniCurrentAmmo);
+}
+
+
 // signal locks
 void QWeaponTableSlot::lockSignals() {
     // xp
@@ -110,17 +121,22 @@ void QWeaponTableSlot::unlockSignals() {
     ui->enableCheck->blockSignals(false);
 }
 
-// slots
+// // slots
 void QWeaponTableSlot::enableChanged(bool enable) {
-    lockSignals(); // lock
+    if (!enabledState && !enable) return; // ignore everything if F->F
 
-    qDebug() << "qweapontableslot.cpp: " << type << "enable changed to: " << enable;
+    int enableChanged = 0; // default is not to change to anything (T->T)
 
-    enableChecked = enable;
+    // only set enableChanged to something if T->F or F->T
+    if (!enabledState && enable) enableChanged = 1; // F->T
+    else if (enabledState && !enable) enableChanged = -1; // T->F
+
+    // upate enabledState and emit our signal to the table
+    enabledState = enable;
+    qDebug() << "qweapontableslot.cpp: setting weapon" << type << " enabled to: " << enable;
     ui->enableCheck->setChecked(enable);
-    emit enabledChanged();
 
-    unlockSignals(); // unlock!
+    emit enabledChanged(this, enableChanged);
 }
 
 void QWeaponTableSlot::xpChanged(int newXp) {

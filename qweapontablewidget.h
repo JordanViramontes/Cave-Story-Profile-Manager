@@ -17,7 +17,18 @@ public:
     const QHash<int, QWeaponTableSlot*> &getWeaponsTableDictionary() { return weaponsTableDictionary; }
 
     // set
-    void setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons);
+    void setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons, QVector<int> enabledWeapons);
+    void paintTable();
+    void lockWidgetSignals() {
+        for (int i = 0; i < rowCount(); i++) {
+            qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0))->lockSignals();
+        }
+    }
+    void unlockWidgetSignals() {
+        for (int i = 0; i < rowCount(); i++) {
+            qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0))->unlockSignals();
+        }
+    }
 
     // debug
     void printWeaponsTableDictionary() {
@@ -46,7 +57,6 @@ private:
     QString enabledColor = "lightblue";
     QString enabledButLeftBehindColor = "lightGray";
 
-
     // methods
     int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);
     void reorderTable(QVector<int> weapons);
@@ -54,7 +64,7 @@ private:
     QVector<QWeaponTableSlot*> getValidEnabledWidgets();
 
 public slots:
-    void paintTable();
+    void paintTableRow(QWeaponTableSlot* weapon, int enabled);
 
 protected:
     void dropEvent(QDropEvent* event) override {
