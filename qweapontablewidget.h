@@ -76,6 +76,32 @@ private:
     void reorderTable(QVector<int> weapons);
     void resetTable() { reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13}); };
     void paintEnabledRows();
+    int getGapRow(const QPoint &pos, int tol = 6) {
+        int rows = rowCount();
+        int y = pos.y();
+
+        // Before the first row
+        int firstTop = rowViewportPosition(0);
+        if (y < firstTop + tol)
+            return 0;
+
+        // Check internal gaps
+        for (int r = 0; r < rows - 1; r++) {
+            int bottom = rowViewportPosition(r) + rowHeight(r);
+            int nextTop = rowViewportPosition(r + 1);
+
+            if (y > bottom - tol && y < nextTop + tol)
+                return r + 1;
+        }
+
+        // After last row
+        int lastBottom = rowViewportPosition(rows - 1) + rowHeight(rows - 1);
+        if (y > lastBottom - tol)
+            return rows;
+
+        // Cursor is *inside* a row
+        return -1;
+    }
 
 signals:
     void weaponTableChanged(QVector<int> enabledWeapons);
@@ -84,6 +110,23 @@ public slots:
     void paintTable(QWeaponTableSlot* weapon, int enabled);
 
 protected:
+    // drag event
+    void dragMoveEvent(QDragMoveEvent* event) override {
+        // qDebug() << "drag event";
+
+        // get the item at mouse cursor
+        QPoint pos = event->position().toPoint();
+
+        // getGapRow detects if we are in between rows
+        if (getGapRow(pos) < 0) {
+            event->ignore();
+            return;
+        }
+
+        // if we're valid continue the event!
+        QTableWidget::dragMoveEvent(event);
+    }
+
     void dropEvent(QDropEvent* event) override {
         // the OG function!
         QTableWidget::dropEvent(event);
@@ -105,6 +148,7 @@ public:
     explicit QTableWidgetEventFilters(QObject *parent = nullptr) : QObject(parent) {}
 
 protected:
+    // events
     bool eventFilter(QObject *obj, QEvent *event) override {
         QTableWidget *table = qobject_cast<QTableWidget*>(obj->parent());
 
@@ -127,6 +171,7 @@ protected:
             if (QGuiApplication::mouseButtons() == Qt::NoButton) {
                 table->clearSelection();
                 table->setCurrentIndex(QModelIndex());
+                event->ignore();
                 return true;
             }
         }
