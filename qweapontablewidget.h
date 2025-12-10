@@ -109,9 +109,10 @@ protected:
         QTableWidget *table = qobject_cast<QTableWidget*>(obj->parent());
 
         // disable double clicking
-        if (event->type() == QEvent::MouseButtonDblClick) {
-            return true;
-        }
+        // if (event->type() == QEvent::MouseButtonDblClick) {
+        //     event->ignore();
+        //     return true;
+        // }
 
         // when releasing
         if (event->type() == QEvent::MouseButtonRelease) {
