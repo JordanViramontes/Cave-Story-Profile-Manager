@@ -5,6 +5,7 @@
 #include <QDrag>
 #include <QMimeData>
 #include <QPainter>
+#include <qapplication.h>
 
 #include "qweapontableslot.h"
 #include "profileloader.h"
@@ -119,17 +120,6 @@ protected:
             table->setCurrentIndex(QModelIndex());
             return true;
         }
-
-        // when releasing drop but not dropped!
-        // if (event->type() == QEvent::DragLeave) {
-        //     // we have no mouse button pressed = we must have dropped it on the same tab
-        //     if (QGuiApplication::mouseButtons() == Qt::NoButton) {
-        //         table->clearSelection();
-        //         table->setCurrentIndex(QModelIndex());
-        //         event->ignore();
-        //         return true;
-        //     }
-        // }
 
         // call the OG function to do the rest of the events
         return QObject::eventFilter(obj, event);

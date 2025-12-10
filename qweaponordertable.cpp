@@ -62,12 +62,15 @@ void QWeaponOrderTable::setSlot(int slot, int weapon) {
 
     if (label == nullptr) {
         qDebug() << "qweaponordertable.cpp: ERROR: label is null!" ;
+        return;
     }
 
     // set the image!
     QString imagePath = weaponImageDictionary[weapon];
     QPixmap p(imagePath);
-    label->setPixmap(p);
+    int w = label->width();
+    int h = label->height();
+    label->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
 }
 
 

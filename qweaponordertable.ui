@@ -621,8 +621,8 @@
             <widget class="QLabel" name="slot0">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="text">
@@ -670,8 +670,8 @@
             <widget class="QLabel" name="slot1">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="text">
@@ -719,8 +719,8 @@
             <widget class="QLabel" name="slot2">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="text">
@@ -768,8 +768,8 @@
             <widget class="QLabel" name="slot3">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="text">
@@ -817,8 +817,8 @@
             <widget class="QLabel" name="slot4">
              <property name="minimumSize">
               <size>
-               <width>30</width>
-               <height>30</height>
+               <width>32</width>
+               <height>32</height>
               </size>
              </property>
              <property name="text">

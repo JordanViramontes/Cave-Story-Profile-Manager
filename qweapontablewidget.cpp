@@ -264,7 +264,6 @@ void QWeaponTableWidget::startDrag(Qt::DropActions supportedActions) {
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = model()->mimeData(indexes);
     drag->setMimeData(mimeData);
-    // drag->setDragCursor(QCursor(Qt::ClosedHandCursor), Qt)
 
     // customize pixmap
     QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(indexes.first().row(), 0));
@@ -292,15 +291,17 @@ void QWeaponTableWidget::dragMoveEvent(QDragMoveEvent* event) {
     // getGapRow detects if we are in between rows
     int gap = getGapRow(pos);
 
-    if (gap >= 0) {
-        dropIndicatorGap = gap;
-        viewport()->update();
-    }
-    else {
+    // if we are on an object
+    if (gap < 0) {
         dropIndicatorGap = -1;
         viewport()->update();
         event->ignore();
         return;
+    }
+    else {
+        dropIndicatorGap = gap;
+        viewport()->update();
+        event->accept();
     }
 
     // if we're valid continue the event!
@@ -316,6 +317,9 @@ void QWeaponTableWidget::dragLeaveEvent(QDragLeaveEvent * event) {
 
 // drop event, used for clearing selections and painting rows
 void QWeaponTableWidget::dropEvent(QDropEvent* event) {
+    // cursor reset
+    QApplication::restoreOverrideCursor();
+
     // the OG function!
     QTableWidget::dropEvent(event);
 
