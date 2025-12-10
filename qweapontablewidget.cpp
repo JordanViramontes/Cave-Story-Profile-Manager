@@ -226,6 +226,175 @@ void QWeaponTableWidget::paintEnabledRows() {
 }
 
 
+// drag and drop related stuff!
+int QWeaponTableWidget::getGapRow(const QPoint &pos, int tol = 6) {
+    int rows = rowCount();
+    int y = pos.y();
+
+    // Before the first row
+    int firstTop = rowViewportPosition(0);
+    if (y < firstTop + tol)
+        return 0;
+
+    // Check internal gaps
+    for (int r = 0; r < rows - 1; r++) {
+        int bottom = rowViewportPosition(r) + rowHeight(r);
+        int nextTop = rowViewportPosition(r + 1);
+
+        if (y > bottom - tol && y < nextTop + tol)
+            return r + 1;
+    }
+
+    // After last row
+    int lastBottom = rowViewportPosition(rows - 1) + rowHeight(rows - 1);
+    if (y > lastBottom - tol)
+        return rows;
+
+    // Cursor is *inside* a row
+    return -1;
+}
+
+// start drag event, used for setting the drag preview thing
+void QWeaponTableWidget::startDrag(Qt::DropActions supportedActions) {
+    // check we're actually dragging something
+    QModelIndexList indexes = selectedIndexes();
+    if (indexes.isEmpty()) return;
+
+    // get the row
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = model()->mimeData(indexes);
+    drag->setMimeData(mimeData);
+    // drag->setDragCursor(QCursor(Qt::ClosedHandCursor), Qt)
+
+    // customize pixmap
+    QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(indexes.first().row(), 0));
+    // QString imagePath = getWeaponIcon()
+    QPixmap p(weapon->getWeaponIconPath());
+    int pixmapScale = 2;
+    int newW = p.width() * pixmapScale;
+    int newH = p.height() * pixmapScale;
+    p = p.scaled(newW, newH, Qt::KeepAspectRatio);
+    drag->setPixmap(p);
+
+    // sets the spot where the cursor holds onto the pixmap
+    drag->setHotSpot(QPoint(p.width()/-1.5, p.width()/10));
+
+    drag->exec(supportedActions);
+}
+
+// drag event, used for checking if our drop point is valid
+void QWeaponTableWidget::dragMoveEvent(QDragMoveEvent* event) {
+    // qDebug() << "drag event";
+
+    // get the item at mouse cursor
+    QPoint pos = event->position().toPoint();
+
+    // getGapRow detects if we are in between rows
+    int gap = getGapRow(pos);
+
+    if (gap >= 0) {
+        dropIndicatorGap = gap;
+        viewport()->update();
+    }
+    else {
+        dropIndicatorGap = -1;
+        viewport()->update();
+        event->ignore();
+        return;
+    }
+
+    // if we're valid continue the event!
+    QTableWidget::dragMoveEvent(event);
+}
+
+// if we're dragging but we havent left the og cell
+void QWeaponTableWidget::dragLeaveEvent(QDragLeaveEvent * event) {
+
+    // call OG!
+    QTableWidget::dragLeaveEvent(event);
+}
+
+// drop event, used for clearing selections and painting rows
+void QWeaponTableWidget::dropEvent(QDropEvent* event) {
+    // the OG function!
+    QTableWidget::dropEvent(event);
+
+    // reset painting stuff
+    dropIndicatorGap = -1;
+    viewport()->update();
+
+    // paint the correct colors on the table and emit our signal to the weapon preview widget
+    paintEnabledRows();
+    emit weaponTableChanged(getValidEnabledWidgets());
+
+    // deselect the row and cell
+    clearSelection();
+    setCurrentIndex(QModelIndex());
+}
+
+// used for painting the drop indicator line
+void QWeaponTableWidget::paintEvent(QPaintEvent *event) {
+    // call OG event!
+    QTableWidget::paintEvent(event);
+
+    // if we have an unset drop indicator
+    if (dropIndicatorGap < 0) return;
+
+    QPainter painter(viewport());
+    int topRowOffset = 2;
+
+    // set our pen to draw with!
+    QPen pen(Qt::black);
+    pen.setWidth(3);
+    painter.setPen(pen);
+
+    // we want y to be drawn usually on the top of the row unless its at the last row
+    int y;
+    if (dropIndicatorGap == rowCount()) {
+        QRect last = visualRect(model()->index(rowCount()-1, 0));
+        y = last.bottom();
+    }
+    else if (dropIndicatorGap == 0) {
+        QRect firstRect = visualRect(model()->index(0, 0));
+        y = firstRect.top() - topRowOffset;
+    }
+    else {
+        QRect r = visualRect(model()->index(dropIndicatorGap, 0));
+        y = r.top();
+    }
+
+    // draw our line!
+    painter.drawLine(0, y, viewport()->width(), y);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

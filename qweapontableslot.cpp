@@ -252,7 +252,10 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
 // set
 void QWeaponTableSlot::setBackgroundColor(QString backgroundColor) {
     QString color = "background: " + backgroundColor + ";";
-    setStyleSheet(color);
+
+    setStyleSheet(QString(R"(
+        QWidget { background-color: %1 }
+    )").arg(backgroundColor));
 }
 
 

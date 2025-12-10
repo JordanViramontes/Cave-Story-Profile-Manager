@@ -4,6 +4,7 @@
 #include <QTableWidget>
 #include <QDrag>
 #include <QMimeData>
+#include <QPainter>
 
 #include "qweapontableslot.h"
 #include "profileloader.h"
@@ -69,6 +70,7 @@ private:
     QVector<QWeaponTableSlot*> enabledWeapons;
     int totalWeapons = 10;
     int enabledWeaponsCount = 0;
+    int dropIndicatorGap = -1;
     QString disabledColor = "darkGray";
     QString enabledColor = "lightblue";
     QString enabledButLeftBehindColor = "lightGray";
@@ -78,32 +80,7 @@ private:
     void reorderTable(QVector<int> weapons);
     void resetTable() { reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13}); };
     void paintEnabledRows();
-    int getGapRow(const QPoint &pos, int tol = 6) {
-        int rows = rowCount();
-        int y = pos.y();
-
-        // Before the first row
-        int firstTop = rowViewportPosition(0);
-        if (y < firstTop + tol)
-            return 0;
-
-        // Check internal gaps
-        for (int r = 0; r < rows - 1; r++) {
-            int bottom = rowViewportPosition(r) + rowHeight(r);
-            int nextTop = rowViewportPosition(r + 1);
-
-            if (y > bottom - tol && y < nextTop + tol)
-                return r + 1;
-        }
-
-        // After last row
-        int lastBottom = rowViewportPosition(rows - 1) + rowHeight(rows - 1);
-        if (y > lastBottom - tol)
-            return rows;
-
-        // Cursor is *inside* a row
-        return -1;
-    }
+    int getGapRow(const QPoint &pos, int tol);
 
 signals:
     void weaponTableChanged(QVector<int> enabledWeapons);
@@ -112,63 +89,11 @@ public slots:
     void paintTable(QWeaponTableSlot* weapon, int enabled);
 
 protected:
-    // start drag event, used for setting the drag preview thing
-    void startDrag(Qt::DropActions supportedActions) override {
-        // check we're actually dragging something
-        QModelIndexList indexes = selectedIndexes();
-        if (indexes.isEmpty()) return;
-
-        // get the row
-        QDrag *drag = new QDrag(this);
-        QMimeData *mimeData = model()->mimeData(indexes);
-        drag->setMimeData(mimeData);
-
-        // customize pixmap
-        QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(indexes.first().row(), 0));
-        // QString imagePath = getWeaponIcon()
-        QPixmap p(weapon->getWeaponIconPath());
-        int pixmapScale = 2;
-        int newW = p.width() * pixmapScale;
-        int newH = p.height() * pixmapScale;
-        p = p.scaled(newW, newH, Qt::KeepAspectRatio);
-        drag->setPixmap(p);
-
-        // sets the spot where the cursor holds onto the pixmap
-        drag->setHotSpot(QPoint(p.width()/-1.5, p.width()/10));
-
-        drag->exec(supportedActions);
-    }
-
-    // drag event, used for checking if our drop point is valid
-    void dragMoveEvent(QDragMoveEvent* event) override {
-        // qDebug() << "drag event";
-
-        // get the item at mouse cursor
-        QPoint pos = event->position().toPoint();
-
-        // getGapRow detects if we are in between rows
-        if (getGapRow(pos) < 0) {
-            event->ignore();
-            return;
-        }
-
-        // if we're valid continue the event!
-        QTableWidget::dragMoveEvent(event);
-    }
-
-    // drop event, used for clearing selections and painting rows
-    void dropEvent(QDropEvent* event) override {
-        // the OG function!
-        QTableWidget::dropEvent(event);
-
-        // deselect everything
-        clearSelection();
-        setCurrentIndex(QModelIndex());
-
-        // printWeaponsTable();
-        paintEnabledRows();
-        emit weaponTableChanged(getValidEnabledWidgets());
-    }
+    void startDrag(Qt::DropActions supportedActions) override;
+    void dragMoveEvent(QDragMoveEvent* event) override;
+    void dragLeaveEvent(QDragLeaveEvent * event) override;
+    void dropEvent(QDropEvent* event) override;
+    void paintEvent(QPaintEvent *event) override;
 };
 
 // event filters
@@ -196,15 +121,15 @@ protected:
         }
 
         // when releasing drop but not dropped!
-        if (event->type() == QEvent::DragLeave) {
-            // we have no mouse button pressed = we must have dropped it on the same tab
-            if (QGuiApplication::mouseButtons() == Qt::NoButton) {
-                table->clearSelection();
-                table->setCurrentIndex(QModelIndex());
-                event->ignore();
-                return true;
-            }
-        }
+        // if (event->type() == QEvent::DragLeave) {
+        //     // we have no mouse button pressed = we must have dropped it on the same tab
+        //     if (QGuiApplication::mouseButtons() == Qt::NoButton) {
+        //         table->clearSelection();
+        //         table->setCurrentIndex(QModelIndex());
+        //         event->ignore();
+        //         return true;
+        //     }
+        // }
 
         // call the OG function to do the rest of the events
         return QObject::eventFilter(obj, event);
