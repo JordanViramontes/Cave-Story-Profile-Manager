@@ -51,6 +51,7 @@ private slots:
     void _onRunButton();
     void _onUpdateDirectoryButton();
     void _onSelectFile(QModelIndex);
+    void _onUpdateSelectWeaponChoices(QVector<int> weapons);
 };
 
 #endif // MAINWINDOW_H

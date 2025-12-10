@@ -34,12 +34,15 @@ private:
         {0x0C, ":/weaponImages/images/nemesis.png"},
         {0x0D, ":/weaponImages/images/spur.png"},
     };
+    QString colorFrameSelected = "#6495ED";
+
 
     // set
     void setSlot(int slot, int weapon);
 
 public slots:
     void weaponUiChanged(QVector<int> enabledWeapons);
+    void setHighlightedSlot(int slot);
 
 protected:
 };

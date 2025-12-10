@@ -170,6 +170,7 @@ void QWeaponTableSlot::xpChanged(int newXp) {
     lockSignals(); // lock
 
     // set values
+    if (newXp > maxXp) newXp = xp;
     xp = newXp;
 
     // update uis
@@ -186,6 +187,7 @@ void QWeaponTableSlot::xpChanged(int newXp) {
 void QWeaponTableSlot::ammoChanged(int newAmmo) {
     lockSignals(); // lock
 
+    if (newAmmo > maxAmmo) newAmmo = maxAmmo; // ensure we dont go past limit!
     ammo = newAmmo;
 
     // update uis

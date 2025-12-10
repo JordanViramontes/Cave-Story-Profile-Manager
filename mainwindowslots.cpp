@@ -106,13 +106,54 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
     // update the weapons table via parser information
     ui->weaponsTable->setWeaponsFromParser(parser.getWeapons(), enabledWeapons);
 
-
-
     // update weapons order table
     ui->weaponOrderTable->setAllSlots(enabledWeapons);
+
+    // update selected weapon
+    _onUpdateSelectWeaponChoices(ui->weaponsTable->getValidEnabledWidgets());
+    ui->selectedWeaponCombo->setCurrentIndex(parser.getCurrentWeapon());
 }
 
+// updating the select weapon stuff
+void MainWindow::_onUpdateSelectWeaponChoices(QVector<int> weapons) {
+    // dictionary for later
+    QHash<int, QString> weaponTextDictionary = {
+        {0x01, "Snake"},
+        {0x02, "Polar Star"},
+        {0x03, "Fireball"},
+        {0x04, "Machine Gun"},
+        {0x05, "Missile Launcher"},
+        {0x07, "Bubbler"},
+        {0x09, "Blade"},
+        {0x0A, "Super Missile Launcher"},
+        {0x0C, "Nemesis"},
+        {0x0D, "Spur"},
+    };
 
+    // get the combo box
+    QComboBox * combo = ui->selectedWeaponCombo;
+
+    // get the current selection
+    QString prevSelection = "";
+    if (combo->count() > 0) prevSelection = combo->currentText();
+
+    // resize combo box and add contents
+    combo->clear();
+    for (auto i : weapons) {
+        combo->addItem(weaponTextDictionary[i]);
+    }
+
+    // if prev selection is still here keep it!
+    for (int i = 0; i < combo->count(); i++) {
+        if (combo->itemText(i) == prevSelection) {
+            combo->setCurrentIndex(i);
+            break;
+        }
+    }
+
+    // change the color of the selected thing!
+    ui->weaponOrderTable->setHighlightedSlot(combo->currentIndex());
+}
 
 
 

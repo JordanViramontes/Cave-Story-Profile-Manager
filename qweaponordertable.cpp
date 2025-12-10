@@ -8,12 +8,13 @@ QWeaponOrderTable::QWeaponOrderTable(QWidget *parent)
     ui->setupUi(this);
 
     // test
-    ui->weaponCatalogueLabel->setVisible(false);
-    ui->weaponCatalogueContainer->setVisible(false);
+    // ui->weaponCatalogueLabel->setVisible(false);
+    // ui->weaponCatalogueContainer->setVisible(false);
 
     // set pixmaps
     for (auto i : {ui->slot0, ui->slot1, ui->slot2, ui->slot3, ui->slot4,
-        ui->EMPTY, ui->PS, ui->ML, ui->FB, ui->BB, ui->MG, ui->BL, ui->SN, ui->SML, ui->NS, ui->SP, }) {
+        // ui->EMPTY, ui->PS, ui->ML, ui->FB, ui->BB, ui->MG, ui->BL, ui->SN, ui->SML, ui->NS, ui->SP, }) {
+         }) {
 
         // get pixmap dimensions
         QPixmap p = i->pixmap();
@@ -73,6 +74,51 @@ void QWeaponOrderTable::setSlot(int slot, int weapon) {
     label->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
 }
 
+// set the highlighted slot
+void QWeaponOrderTable::setHighlightedSlot(int slot) {
+    // if nothing just reset everything
+    if (slot < 0) {
+        // change the color of the frames
+        for (auto i : {ui->frame, ui->frame_1, ui->frame_2, ui->frame_3, ui->frame_4}) {
+            i->setStyleSheet(QString(R"(
+            QWidget { background-color: %1 }
+            )").arg("none"));
+        }
+
+        return;
+    }
+
+    // get the correct frame to color
+    QFrame* frame = nullptr;
+    switch(slot) {
+    case(0): frame = ui->frame; break;
+    case(1): frame = ui->frame_1; break;
+    case(2): frame = ui->frame_2; break;
+    case(3): frame = ui->frame_3; break;
+    case(4): frame = ui->frame_4; break;
+    default: break;
+    }
+
+    if (frame == nullptr) { qDebug() << "ERROR WITH SELECTING WEAPON PREVIEW HIGHLIGHT!!"; return; }
+    // change the color of the frames
+    for (auto i : {ui->frame, ui->frame_1, ui->frame_2, ui->frame_3, ui->frame_4}) {
+        // if we're at the selected frame, set color to blue
+        if (i == frame) {
+            i->setStyleSheet(QString(R"(
+                QWidget { background-color: %1 }
+            )").arg(colorFrameSelected));
+        }
+
+        // else reset it
+        else {
+            i->setStyleSheet(QString(R"(
+                QWidget { background-color: %1 }
+            )").arg("none"));
+        }
+    }
+
+
+}
 
 // slots
 
