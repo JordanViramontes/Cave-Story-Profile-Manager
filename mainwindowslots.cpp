@@ -90,7 +90,7 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
     // qDebug() << "mainwindowslots.cpp: Parsing completed with no error";
 
     parser.printSaveData();
-    // parser.printBuffer();
+    parser.printBuffer();
 
     // update widgets
     ui->saveAsEdit->setText(QFileInfo(filePath).fileName());
