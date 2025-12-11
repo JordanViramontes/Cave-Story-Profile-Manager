@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "profileloader.h"
+// #include "qweapontableslot.h"
 // #include "ui_"
 
 #include <QFileDialog>
@@ -12,17 +13,39 @@
 
 // when you click on the run button
 void MainWindow::_onRunButton() {
-
     // write to the save file
     QString profilePath = gameDirectory;
     profilePath.chop(12);
     profilePath += "Profile.dat";
 
-    if (!parser.writeToFile(profilePath)) {
+    // get weapon data!
+    QVector<QWeaponTableSlot*> enabledWeapons = ui->weaponsTable->getValidEnabledWeaponPointers();
+    QVector<WeaponDataSlot> weaponDataSlots;
+    for (int i = 0; i < enabledWeapons.size(); i++) {
+        // iterate through the enabled weapons pointer and fill out a WeaponDataSlot
+        WeaponDataSlot weaponSlot;
+        weaponSlot.type = (char)enabledWeapons[i]->getWeaponType();
+        weaponSlot.level = (char)enabledWeapons[i]->getWeaponLevel();
+        weaponSlot.energy = (char)enabledWeapons[i]->getWeaponEnergy();
+        weaponSlot.maxAmmo = (char)enabledWeapons[i]->getWeaponMaxAmmo();
+        weaponSlot.currentAmmo = (char)enabledWeapons[i]->getWeaponAmmo();
+
+        weaponDataSlots.push_back(weaponSlot);;
+    }
+
+    if (!parser.writeToFile(profilePath, weaponDataSlots)) {
         qDebug() << "mainwindowslots.cpp: Writing to file DID NOT complete";
         return;
     }
-    // qDebug() << "mainwindowslots.cpp: Writing to file completed with no error";
+
+    // write to the game file!
+    qDebug() << gameDirectory + "/Profile.dat";
+    // writeToFile(save, )
+
+
+
+
+
 
     // launch game
     qDebug() << "mainwindowslots: launching game at: " << gameDirectory;

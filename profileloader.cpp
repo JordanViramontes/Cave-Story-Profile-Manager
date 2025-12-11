@@ -100,7 +100,7 @@ bool ProfileLoader::parseProfile(QString profilePath) {
     return true;
 }
 
-bool ProfileLoader::writeToFile(QString profilePath) {
+bool ProfileLoader::writeToFile(QString profilePath, QVector<WeaponDataSlot> weaponDataSlots) {
     qDebug() << "profileloader.cpp: writing to file " << profilePath;
 
     // check that the file is valid
@@ -137,9 +137,26 @@ bool ProfileLoader::writeToFile(QString profilePath) {
     buffer[0x036] = time[2];
 
     // set weapons
+    qDebug() << "profileloader.cpp: printing incoming weapons";
+    for (auto i : weaponDataSlots) {
+        qDebug() << "type: " << printHex(&i.type, 1) << ";\t"
+                 << "level: " << printHex(&i.level, 1) << ";\t"
+                 << "energy: " << printHex(&i.energy, 1) << ";\t"
+                 << "ammo: " << printHex(&i.currentAmmo, 1) << ";\t"
+                 << "maxAmmo: " << printHex(&i.maxAmmo, 1)  << ";\t";
+    }
+
     unsigned int weaponIt = 0x038;
-    for (unsigned int i = 0; i < weapons.size(); i++) {
-        WeaponDataSlot w = weapons[i];
+    for (unsigned int i = 0, weaponDataIt = 0; i < weapons.size(); i++) {
+        WeaponDataSlot w;
+
+        // if our weaponDataIt is inside the vector, set our weapon to set as the vector weapon
+        if (weaponDataIt < weaponDataSlots.size()) {
+            w = weaponDataSlots[weaponDataIt];
+            weaponDataIt++;
+            qDebug() << "check: " << printHex(&w.type, 1);
+        }
+
         buffer[weaponIt]        = w.type;
         buffer[weaponIt + 0x04] = w.level;
         buffer[weaponIt + 0x08] = w.energy;

@@ -162,6 +162,22 @@ QVector<int> QWeaponTableWidget::getValidEnabledWidgets() {
     return enabledWeaponsVector;
 }
 
+QVector<QWeaponTableSlot*> QWeaponTableWidget::getValidEnabledWeaponPointers() {
+    QVector<QWeaponTableSlot*> enabledWeaponsVector;
+
+    for (int i = 0; i < rowCount(); i++) {
+        QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
+        if (!weapon) return {}; // fail safe
+        if (!weapon->getEnableChecked()) continue;
+
+        enabledWeaponsVector.push_back(weapon);
+        if (enabledWeaponsVector.size() >= 5 || enabledWeaponsVector.size() == enabledWeaponsCount)
+            return enabledWeaponsVector;
+    }
+
+    return enabledWeaponsVector;
+}
+
 // QString QWeaponTableWidget::getWeaponIcon() {
 //     return ui->wea
 // }

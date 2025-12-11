@@ -20,6 +20,7 @@ public:
     // get
     const QHash<int, QWeaponTableSlot*> &getWeaponsTableDictionary() { return weaponsTableDictionary; }
     QVector<int> getValidEnabledWidgets();
+    QVector<QWeaponTableSlot*> getValidEnabledWeaponPointers();
     QString getWeaponIcon();
 
     // set

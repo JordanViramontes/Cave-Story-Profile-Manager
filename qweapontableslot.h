@@ -22,8 +22,16 @@ public:
     ~QWeaponTableSlot();
 
     // get
-    int getWeaponType() { return type; }
     bool getEnableChecked() { return enabledState; }
+    int getWeaponType() { return type; }
+    int getWeaponLevel() {
+        if (lvl > 2) lvl = 2;
+        return lvl;
+    }
+    int getWeaponEnergy() { return xp; }
+    int getWeaponMaxAmmo() { return maxAmmo; }
+    int getWeaponAmmo() { return ammo; }
+
     QString getWeaponIconPath() { return weaponLabelIconPath; };
 
     // set
