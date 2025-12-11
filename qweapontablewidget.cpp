@@ -281,6 +281,8 @@ void QWeaponTableWidget::startDrag(Qt::DropActions supportedActions) {
     QMimeData *mimeData = model()->mimeData(indexes);
     drag->setMimeData(mimeData);
 
+    // update vars
+    draggingFromRow = currentRow();
 
     // customize pixmap
     QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(indexes.first().row(), 0));
@@ -307,8 +309,8 @@ void QWeaponTableWidget::dragMoveEvent(QDragMoveEvent* event) {
     // getGapRow detects if we are in between rows
     int gap = getGapRow(pos);
 
-    // if we are on an object
-    if (gap < 0) {
+    // check if we arent INN in a cell, and that we aren't trying to drop between ourselves
+    if (gap < 0 || draggingFromRow == gap || draggingFromRow + 1 == gap) {
         dropIndicatorGap = -1;
         viewport()->update();
         event->ignore();
@@ -330,7 +332,6 @@ void QWeaponTableWidget::dragMoveEvent(QDragMoveEvent* event) {
 
 // if we're dragging but we havent left the og cell
 void QWeaponTableWidget::dragLeaveEvent(QDragLeaveEvent * event) {
-
     // call OG!
     QTableWidget::dragLeaveEvent(event);
 }
@@ -346,6 +347,7 @@ void QWeaponTableWidget::dropEvent(QDropEvent* event) {
     // reset painting stuff
     dropIndicatorGap = -1;
     viewport()->update();
+    draggingFromRow = -1;
 
     // paint the correct colors on the table and emit our signal to the weapon preview widget
     paintEnabledRows();

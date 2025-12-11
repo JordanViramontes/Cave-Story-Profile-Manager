@@ -77,7 +77,7 @@ private:
     QString enabledColor = "lightblue";
     QString enabledButLeftBehindColor = "lightGray";
     QPoint pressedEventPos;
-    bool dragging = false;
+    int draggingFromRow = -1;
 
     // methods
     int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);
