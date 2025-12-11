@@ -76,6 +76,8 @@ private:
     QString disabledColor = "darkGray";
     QString enabledColor = "lightblue";
     QString enabledButLeftBehindColor = "lightGray";
+    QPoint pressedEventPos;
+    bool dragging = false;
 
     // methods
     int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);
@@ -96,6 +98,8 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent * event) override;
     void dropEvent(QDropEvent* event) override;
     void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
 };
 
 // event filters

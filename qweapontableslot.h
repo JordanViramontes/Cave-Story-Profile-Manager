@@ -31,6 +31,7 @@ public:
     int getWeaponEnergy() { return xp; }
     int getWeaponMaxAmmo() { return maxAmmo; }
     int getWeaponAmmo() { return ammo; }
+    bool isValidGrabPos(QPoint pos);
 
     QString getWeaponIconPath() { return weaponLabelIconPath; };
 
