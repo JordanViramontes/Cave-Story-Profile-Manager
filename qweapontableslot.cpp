@@ -28,7 +28,6 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
     setAttribute(Qt::WA_StyledBackground, true);
 
 
-
     // set icon
 
 
@@ -57,6 +56,10 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
 
     // adjust size!
     adjustSize();
+
+    // update the grab icon
+    ui->grabHandleIcon->adjustSize();
+    ui->grabHandleFrame->adjustSize();
 
     // set the weapon label and resize it
     QHash<int, QString> weaponImageDictionary = { // only allocated once and then killed once function ends
@@ -260,7 +263,20 @@ void QWeaponTableSlot::setBackgroundColor(QString backgroundColor) {
     )").arg(backgroundColor));
 }
 
+// get
+bool QWeaponTableSlot::isValidGrabPos(QPoint pos) {
+    bool returnValue = false;
 
+    // check both the frame and icon
+    for (auto i : {qobject_cast<QWidget*>(ui->grabHandleFrame), qobject_cast<QWidget*>(ui->grabHandleIcon)}) {
+        // after mapping the point from the table to the grab handle coor system, check if its valid
+        QPoint local = i->mapFrom(parentWidget(), pos);
+        if (i->rect().contains(local))
+            returnValue = true;
+    }
+
+    return returnValue;
+}
 
 
 

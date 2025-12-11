@@ -162,6 +162,22 @@ QVector<int> QWeaponTableWidget::getValidEnabledWidgets() {
     return enabledWeaponsVector;
 }
 
+QVector<QWeaponTableSlot*> QWeaponTableWidget::getValidEnabledWeaponPointers() {
+    QVector<QWeaponTableSlot*> enabledWeaponsVector;
+
+    for (int i = 0; i < rowCount(); i++) {
+        QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
+        if (!weapon) return {}; // fail safe
+        if (!weapon->getEnableChecked()) continue;
+
+        enabledWeaponsVector.push_back(weapon);
+        if (enabledWeaponsVector.size() >= 5 || enabledWeaponsVector.size() == enabledWeaponsCount)
+            return enabledWeaponsVector;
+    }
+
+    return enabledWeaponsVector;
+}
+
 // QString QWeaponTableWidget::getWeaponIcon() {
 //     return ui->wea
 // }
@@ -265,9 +281,9 @@ void QWeaponTableWidget::startDrag(Qt::DropActions supportedActions) {
     QMimeData *mimeData = model()->mimeData(indexes);
     drag->setMimeData(mimeData);
 
+
     // customize pixmap
     QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(indexes.first().row(), 0));
-    // QString imagePath = getWeaponIcon()
     QPixmap p(weapon->getWeaponIconPath());
     int pixmapScale = 2;
     int newW = p.width() * pixmapScale;
@@ -299,10 +315,14 @@ void QWeaponTableWidget::dragMoveEvent(QDragMoveEvent* event) {
         return;
     }
     else {
+        // check that we are on the grab handle in the object
+
+
         dropIndicatorGap = gap;
         viewport()->update();
         event->accept();
     }
+
 
     // if we're valid continue the event!
     QTableWidget::dragMoveEvent(event);
@@ -371,8 +391,33 @@ void QWeaponTableWidget::paintEvent(QPaintEvent *event) {
     painter.drawLine(0, y, viewport()->width(), y);
 }
 
+// manual start drags!
+void QWeaponTableWidget::mousePressEvent(QMouseEvent* event) {
+    pressedEventPos = event->pos(); // set the position of the mouse press
+    QTableWidget::mousePressEvent(event);
+}
 
+void QWeaponTableWidget::mouseMoveEvent(QMouseEvent* event) {
+    // check left button press
+    if (!(event->buttons() & Qt::LeftButton)) return;
 
+    // check we have dragged enough with the cursor to start event
+    if ((event->pos() - pressedEventPos).manhattanLength() < QApplication::startDragDistance())
+        return;
+
+    // get the index of the pressed event in order to get our weapon
+    QModelIndex index = indexAt(pressedEventPos);
+    if (!index.isValid()) return;
+
+    QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(index.row(), 0));
+    if (!weapon) return;
+
+    // check if we're on the grab handle
+    if (!weapon->isValidGrabPos(pressedEventPos)) return;
+
+    // finall start the drag!
+    startDrag(Qt::MoveAction);
+}
 
 
 

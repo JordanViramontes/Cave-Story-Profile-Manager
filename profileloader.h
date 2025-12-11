@@ -47,7 +47,7 @@ private:
 public:
     ProfileLoader();
     bool parseProfile(QString profilePath);
-    bool writeToFile(QString profilePath);
+    bool writeToFile(QString profilePath, QVector<WeaponDataSlot> weaponDataSlots);
     // bool updateBuffer();
     // QVector<char> getBuffer();
 
