@@ -27,16 +27,16 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
 
         // ensure that only valid weapon type numbers make it through
         switch (type) {
-        case (0x01): hasAmmo = false; text = "SN"; weaponLvls = {30, 40, 16, 16}; break;
-        case (0x02): hasAmmo = false; text = "PS"; weaponLvls = {10, 20, 10, 10}; break;
-        case (0x03): hasAmmo = false; text = "FB"; weaponLvls = {10, 20, 20, 20}; break;
-        case (0x04): hasAmmo = true; text = "MG"; weaponLvls = {30, 40, 10, 10}; ammo = 100; break;
-        case (0x05): hasAmmo = true; text = "ML"; weaponLvls = {10, 20, 10, 10};  break;
-        case (0x07): hasAmmo = true; text = "BB"; weaponLvls = {10, 20, 5, 5}; ammo = 100; break;
-        case (0x09): hasAmmo = false; text = "BL"; weaponLvls = {30, 60, 0, 0}; break;
-        case (0x0A): hasAmmo = true; text = "SM"; weaponLvls = {30, 60, 10, 10};  break;
-        case (0x0C): hasAmmo = false; text = "NS"; weaponLvls = {1, 1, 1, 1}; break;
-        case (0x0D): hasAmmo = false; text = "SP"; weaponLvls = {40, 60, 200, 200}; break;
+        case (0x01): hasAmmo = false; text = "SN"; weaponLvls = {29, 39, 16, 16}; break;
+        case (0x02): hasAmmo = false; text = "PS"; weaponLvls = {9, 19, 10, 10}; break;
+        case (0x03): hasAmmo = false; text = "FB"; weaponLvls = {9, 19, 20, 20}; break;
+        case (0x04): hasAmmo = true; text = "MG"; weaponLvls = {29, 39, 10, 10}; ammo = 100; break;
+        case (0x05): hasAmmo = true; text = "ML"; weaponLvls = {9, 19, 10, 10};  break;
+        case (0x07): hasAmmo = true; text = "BB"; weaponLvls = {9, 19, 5, 5}; ammo = 100; break;
+        case (0x09): hasAmmo = false; text = "BL"; weaponLvls = {29, 59, 0, 0}; break;
+        case (0x0A): hasAmmo = true; text = "SM"; weaponLvls = {29, 59, 10, 10};  break;
+        case (0x0C): hasAmmo = false; text = "NS"; weaponLvls = {0, 0, 1, 1}; break;
+        case (0x0D): hasAmmo = false; text = "SP"; weaponLvls = {39, 59, 200, 200}; break;
         default: continue; break;
         }
 

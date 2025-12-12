@@ -25,7 +25,8 @@ void MainWindow::_onRunButton() {
         // iterate through the enabled weapons pointer and fill out a WeaponDataSlot
         WeaponDataSlot weaponSlot;
         weaponSlot.type = (char)enabledWeapons[i]->getWeaponType();
-        weaponSlot.level = (char)enabledWeapons[i]->getWeaponLevel();
+        qDebug() << "check type: " << enabledWeapons[i]->getWeaponType();
+        weaponSlot.level = (char)enabledWeapons[i]->getWeaponLevel() + 1;
         weaponSlot.energy = (char)enabledWeapons[i]->getWeaponEnergy();
         weaponSlot.maxAmmo = (char)enabledWeapons[i]->getWeaponMaxAmmo();
         weaponSlot.currentAmmo = (char)enabledWeapons[i]->getWeaponAmmo();
@@ -113,7 +114,7 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
     // qDebug() << "mainwindowslots.cpp: Parsing completed with no error";
 
     parser.printSaveData();
-    parser.printBuffer();
+    // parser.printBuffer();
 
     // update widgets
     ui->saveAsEdit->setText(QFileInfo(filePath).fileName());
