@@ -200,7 +200,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                  <item>
                   <widget class="QLabel" name="selectedWeaponLabel">
                    <property name="text">
-                    <string>Selected Weapon:</string>
+                    <string>Currently Selected Weapon:</string>
                    </property>
                   </widget>
                  </item>
@@ -343,7 +343,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item row="0" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>TEMP</string>
+                <string>In Development!</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
                </property>
               </widget>
              </item>

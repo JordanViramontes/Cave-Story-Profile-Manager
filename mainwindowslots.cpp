@@ -34,19 +34,19 @@ void MainWindow::_onRunButton() {
         weaponDataSlots.push_back(weaponSlot);;
     }
 
-    if (!parser.writeToFile(profilePath, weaponDataSlots)) {
+    int check = ui->selectedWeaponCombo->currentIndex();
+    char weaponCurrentlySelected = (char)ui->selectedWeaponCombo->currentIndex();
+    qDebug() << "check weaponCurrentlySelected count: " << check;
+
+    if (!parser.writeToFile(profilePath, weaponDataSlots, weaponCurrentlySelected)) {
         qDebug() << "mainwindowslots.cpp: Writing to file DID NOT complete";
         return;
     }
 
+
     // write to the game file!
     qDebug() << gameDirectory + "/Profile.dat";
     // writeToFile(save, )
-
-
-
-
-
 
     // launch game
     qDebug() << "mainwindowslots: launching game at: " << gameDirectory;

@@ -100,7 +100,7 @@ bool ProfileLoader::parseProfile(QString profilePath) {
     return true;
 }
 
-bool ProfileLoader::writeToFile(QString profilePath, QVector<WeaponDataSlot> weaponDataSlots) {
+bool ProfileLoader::writeToFile(QString profilePath, QVector<WeaponDataSlot> weaponDataSlots, char weaponCurrentlySelected) {
     qDebug() << "profileloader.cpp: writing to file " << profilePath;
 
     // check that the file is valid
@@ -129,7 +129,7 @@ bool ProfileLoader::writeToFile(QString profilePath, QVector<WeaponDataSlot> wea
     buffer[0x01E] = whimsicalSt;
     buffer[0x020] = currHp[0];
     buffer[0x021] = currHp[1];
-    buffer[0x024] = currWeapon;
+    buffer[0x024] = weaponCurrentlySelected; // current weapon
     buffer[0x02C] = equipIt[0];
     buffer[0x02D] = equipIt[1];
     buffer[0x034] = time[0];
