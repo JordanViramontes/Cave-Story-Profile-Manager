@@ -49,6 +49,7 @@ private:
 private slots:
     // buttons
     void _onRunButton();
+    void _onHelpButton();
     void _onUpdateDirectoryButton();
     void _onSelectFile(QModelIndex);
     void _onUpdateSelectWeaponChoices(QVector<int> weapons);

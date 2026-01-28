@@ -64,6 +64,7 @@ void MainWindow::loadSettings() {
 void MainWindow::setSignals() {
     // buttons
     connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(_onRunButton()));
+    connect(ui->HelpPushButton, SIGNAL(clicked(bool)), this, SLOT(_onHelpButton()));
     connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(_onUpdateDirectoryButton()));
 
     // file

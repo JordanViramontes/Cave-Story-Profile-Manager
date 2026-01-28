@@ -4,6 +4,11 @@
 #include <QDialog>
 #include <QHash>
 
+struct PageInfo {
+    int index;
+    QString header;
+};
+
 namespace Ui {
 class Dialog;
 }
@@ -22,10 +27,11 @@ public:
 private:
     Ui::Dialog *ui;
 
-    // hash table that maps page strings to the stacked widget page count
-    QHash<QString, int> stackedWidgetPageDictionary = {
-        {"directoryErrorBox", 0},
+    QHash<QString, PageInfo> stackedWidgetPageDictionary = {
+        {"directoryErrorBox", {0, "Error!"}},
+        {"helpScreen", {1, "Help!"}},
     };
+
 };
 
 #endif // DIALOG_H

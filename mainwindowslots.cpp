@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "profileloader.h"
+#include "helpscreen.h"
 // #include "qweapontableslot.h"
 // #include "ui_"
 
@@ -59,6 +60,13 @@ void MainWindow::_onRunButton() {
     QString gameExeFile = gameDirectory;
     process->setProgram(gameExeFile);
     process->start();
+}
+
+// when you click the help button
+void MainWindow::_onHelpButton() {
+    auto error_box = new Dialog(this);
+    error_box->setStackedWidgetPage("helpScreen");
+    error_box->show();
 }
 
 // when you click the update directory button
