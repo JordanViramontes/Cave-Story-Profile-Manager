@@ -204,6 +204,7 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
     lockSignals(); // lock
 
     maxAmmo = newAmmoMax;
+    if (ammo > maxAmmo) ammoChanged(maxAmmo);
 
     // update uis
     ui->ammoSlider->setMaximum(maxAmmo);
