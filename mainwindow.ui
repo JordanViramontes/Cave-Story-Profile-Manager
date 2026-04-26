@@ -354,6 +354,50 @@ li.checked::marker { content: &quot;\2612&quot;; }
            </widget>
           </widget>
          </item>
+         <item row="1" column="0">
+          <layout class="QGridLayout" name="healthGrBox">
+           <item row="0" column="1">
+            <widget class="QSlider" name="healthSlider">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Health:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QSpinBox" name="healthSpinBox"/>
+           </item>
+           <item row="0" column="4">
+            <widget class="QSpinBox" name="maxHealthSpinBox"/>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>/</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5">
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
         </layout>
        </widget>
       </item>
