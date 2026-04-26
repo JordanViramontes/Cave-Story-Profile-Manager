@@ -89,15 +89,48 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
     QString filePath = model->filePath(fileIndex);
 
     // update widgets
-    ui->saveAsEdit->setText(QFileInfo(filePath).fileName());
+    ui->saveAsEdit->setText(QFileInfo(filePath).fileName().chopped(4));
 
     // signal to the inventory our new file!
     emit profilePathUpdated(filePath);
 }
 
+void MainWindow::_onSaveAsNewFile() {
+    // get new file name
+    QString newFileName = ui->saveAsEdit->toPlainText();
 
+    // check that our customs folder exists
+    QDir customsDir(savesDirectory + "\\Custom\\");
+    if (!customsDir.exists()) {
+        qDebug() << "mainwindowslots.cpp: custom directory wasn't created, making a new one";
+        customsDir.mkpath(".");
+    }
 
+    // custom save file path
+    QString newFilePath = savesDirectory + "\\Custom\\" + newFileName + ".dat";
 
+    qDebug() << "mainwindowslots.cpp new path: " << newFilePath;
+
+    emit writeToProfile(newFilePath);
+    // create new file and fill with our new save data
+    // QFile file(newFilePath);
+    // if (file.open(QIODevice::WriteOnly)) {
+
+    //     file.close();
+    // }
+    // else qDebug() << "mainwindowslots.cpp: failed to create file at " + newFilePath;
+
+}
+
+// save as button
+void MainWindow::_onSaveAsButtonPressed() {
+    // get save file
+    QString profilePath = gameDirectory;
+    profilePath.chop(12);
+    profilePath += "Profile.dat";
+
+    emit writeToProfile(profilePath);
+}
 
 
 

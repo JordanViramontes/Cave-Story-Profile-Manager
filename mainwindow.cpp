@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "globals.h"
 #include "./ui_mainwindow.h"
-#include "qweapontableslot.h"
 
 #include <QFileSystemModel>
 
@@ -62,6 +61,8 @@ void MainWindow::setSignals() {
     connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(_onRunButton()));
     connect(ui->HelpPushButton, SIGNAL(clicked(bool)), this, SLOT(_onHelpButton()));
     connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(_onUpdateDirectoryButton()));
+    connect(ui->saveAsPushButton, SIGNAL(clicked(bool)), this, SLOT(_onSaveAsNewFile()));
+    connect(this, SIGNAL(applyButtonPressed(QString)), this, SLOT(_onSaveAsButtonPressed()));
 
     // file
     connect(ui->presetFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
@@ -69,7 +70,7 @@ void MainWindow::setSignals() {
 
     // inventory
     connect(this, SIGNAL(profilePathUpdated(QString)), ui->inventory, SLOT(_onSelectFile(QString)));
-    connect(this, SIGNAL(applyButtonPressed(QString)), ui->inventory, SLOT(_PushInventoryToProfile(QString)));
+    connect(this, SIGNAL(writeToProfile(QString)), ui->inventory, SLOT(_PushInventoryToProfile(QString)));
 }
 
 // set widgets

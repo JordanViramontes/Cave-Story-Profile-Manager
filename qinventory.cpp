@@ -9,6 +9,8 @@ QInventory::QInventory(QWidget *parent)
 
     // widgets
     ui->healthSlider->setMinimum(0);
+    ui->maxHealthSpinBox->setMinimum(1);
+    ui->maxHealthSpinBox->setValue(1);
 
     // connections to big widgets
     connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), ui->weaponOrderTable, SLOT(weaponUiChanged(QVector<int>)));
@@ -58,6 +60,7 @@ void QInventory::maxHealthChanged(int newMaxHp) {
     lockSignals(); // lock
 
     maxHp = newMaxHp;
+    if (hp > maxHp) healthChanged(maxHp);
 
     // update box
     ui->maxHealthSpinBox->setValue(maxHp);
@@ -77,7 +80,7 @@ void QInventory::_onSelectFile(QString filePath) {
     }
     // qDebug() << "mainwindowslots.cpp: Parsing completed with no error";
 
-    parser.printSaveData();
+    // parser.printSaveData();
     // parser.printBuffer();
 
     // get the enabled weapons!
@@ -105,11 +108,8 @@ void QInventory::_onSelectFile(QString filePath) {
     ui->selectedWeaponCombo->setCurrentIndex(parser.getCurrentWeapon());
 }
 
-void QInventory::_PushInventoryToProfile(QString gameDirectory) {
-    // write to the save file
-    QString profilePath = gameDirectory;
-    profilePath.chop(12);
-    profilePath += "Profile.dat";
+void QInventory::_PushInventoryToProfile(QString profilePath) {
+    qDebug() << "now pushing!";
 
     // get weapon data!
     QVector<QWeaponTableSlot*> enabledWeapons = ui->weaponsTable->getValidEnabledWeaponPointers();
@@ -127,6 +127,10 @@ void QInventory::_PushInventoryToProfile(QString gameDirectory) {
         weaponDataSlots.push_back(weaponSlot);;
     }
 
+    // pass health data to parser as a short, parser will convert to char
+    parser.setHealthData(static_cast<short>(hp), static_cast<short>(maxHp));
+
+
     int check = ui->selectedWeaponCombo->currentIndex();
     char weaponCurrentlySelected = (char)ui->selectedWeaponCombo->currentIndex();
     qDebug() << "check weaponCurrentlySelected count: " << check;
@@ -135,11 +139,6 @@ void QInventory::_PushInventoryToProfile(QString gameDirectory) {
         qDebug() << "mainwindowslots.cpp: Writing to file DID NOT complete";
         return;
     }
-
-
-    // write to the game file!
-    qDebug() << gameDirectory + "/Profile.dat";
-    // writeToFile(save, )
 }
 
 // communicating with weapon order table

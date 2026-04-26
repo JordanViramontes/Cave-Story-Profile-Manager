@@ -48,8 +48,7 @@ private:
 signals:
     void profilePathUpdated(QString profilePath);
     void applyButtonPressed(QString profilePath);
-    void newCustomSaveButtonPressed();
-
+    void writeToProfile(QString profilePath);
 
 private slots:
     // buttons
@@ -58,6 +57,8 @@ private slots:
     void _onHelpButton();
     void _onUpdateDirectoryButton();
     void _onSelectFile(QModelIndex);
+    void _onSaveAsNewFile();
+    void _onSaveAsButtonPressed();
 };
 
 #endif // MAINWINDOW_H

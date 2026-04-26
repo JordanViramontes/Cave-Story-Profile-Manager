@@ -78,6 +78,10 @@ public:
     // set
     void setWeapons(QVector<WeaponDataSlot> weapons);
     void setCurrentWeapon(int i) { currWeapon = static_cast<char>(i); }
+    void setHealthData(short newHp, short newMaxHp) {
+        std::memcpy(currHp, &newHp, sizeof(short));
+        std::memcpy(maxHp, &newMaxHp, sizeof(short));
+    }
 };
 
 #endif // PROFILELOADER_H
