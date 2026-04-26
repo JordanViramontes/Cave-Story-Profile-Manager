@@ -25,11 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
     // update state depending on valid path
     // gameDirectory = "";
     widgetLock(checkGameDirPath(gameDirectory));
-
-    // connections
-    connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), ui->weaponOrderTable, SLOT(weaponUiChanged(QVector<int>)));
-    connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), this, SLOT(_onUpdateSelectWeaponChoices(QVector<int>)));
-    connect(ui->selectedWeaponCombo, SIGNAL(currentIndexChanged(int)), ui->weaponOrderTable, SLOT(setHighlightedSlot(int)));
 }
 
 MainWindow::~MainWindow()

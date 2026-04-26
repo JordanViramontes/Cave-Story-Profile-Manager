@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include "profileloader.h"
-#include "qweaponordertable.h"
 
 #include <QMainWindow>
 #include <QSettings>
@@ -28,7 +27,7 @@ private:
     Ui::MainWindow *ui;
     QString gameDirectory;
     QString savesDirectory;
-    ProfileLoader parser;
+    // ProfileLoader parser;
 
     // save/load
     void saveSettings();
@@ -53,7 +52,6 @@ private slots:
     void _onHelpButton();
     void _onUpdateDirectoryButton();
     void _onSelectFile(QModelIndex);
-    void _onUpdateSelectWeaponChoices(QVector<int> weapons);
 };
 
 #endif // MAINWINDOW_H
