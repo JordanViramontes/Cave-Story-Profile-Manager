@@ -184,7 +184,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
-          <widget class="QInventory" name="widget" native="true"/>
+          <widget class="QInventory" name="inventory" native="true"/>
          </item>
         </layout>
        </widget>

@@ -29,8 +29,8 @@ void MainWindow::_onSimpleRunButton() {
 
 // when you click on the apply and run button
 void MainWindow::_onRunButton() {
-    // write to the save file
-
+    // request the inventory to update Profile
+    emit applyButtonPressed(gameDirectory);
 
     // launch game!
     _onSimpleRunButton();
@@ -90,6 +90,9 @@ void MainWindow::_onSelectFile(QModelIndex fileIndex) {
 
     // update widgets
     ui->saveAsEdit->setText(QFileInfo(filePath).fileName());
+
+    // signal to the inventory our new file!
+    emit profilePathUpdated(filePath);
 }
 
 

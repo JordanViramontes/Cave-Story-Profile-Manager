@@ -67,7 +67,9 @@ void MainWindow::setSignals() {
     connect(ui->presetFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
     connect(ui->customFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
 
-    // health bar
+    // inventory
+    connect(this, SIGNAL(profilePathUpdated(QString)), ui->inventory, SLOT(_onSelectFile(QString)));
+    connect(this, SIGNAL(applyButtonPressed(QString)), ui->inventory, SLOT(_PushInventoryToProfile(QString)));
 }
 
 // set widgets

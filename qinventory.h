@@ -21,8 +21,10 @@ private:
 
 public slots:
     void _onSelectFile(QString filePath);
+    void _PushInventoryToProfile(QString profilePath);
+
+private slots:
     void _onUpdateSelectWeaponChoices(QVector<int> weapons);
-    void _PushInventoryToProfile(QString gameDirectory);
 
 private:
     Ui::QInventory *ui;

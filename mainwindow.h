@@ -45,6 +45,12 @@ private:
     // helper functions
     bool checkGameDirPath(QString path);
 
+signals:
+    void profilePathUpdated(QString profilePath);
+    void applyButtonPressed(QString profilePath);
+    void newCustomSaveButtonPressed();
+
+
 private slots:
     // buttons
     void _onSimpleRunButton();
