@@ -18,6 +18,12 @@ public:
 
 private:
     ProfileLoader parser;
+    int hp = 0;
+    int maxHp = 0;
+
+    // locks used to avoid repeating functions
+    void lockSignals();
+    void unlockSignals();
 
 public slots:
     void _onSelectFile(QString filePath);
@@ -25,6 +31,10 @@ public slots:
 
 private slots:
     void _onUpdateSelectWeaponChoices(QVector<int> weapons);
+
+    // health bar
+    void healthChanged(int health);
+    void maxHealthChanged(int maxNewHp);
 
 private:
     Ui::QInventory *ui;

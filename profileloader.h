@@ -2,6 +2,7 @@
 #define PROFILELOADER_H
 
 #include <QVector>
+#include <cstring>
 
 // each item has a bit for isactive. If inventoryPos = -1, then it wasn't included in the base Profile and needs to be appended
 
@@ -66,6 +67,13 @@ public:
     // get
     QVector<WeaponDataSlot> &getWeapons() { return weapons; }
     int getCurrentWeapon() const { return static_cast<int>(currWeapon); }
+    QVector<int> getHealthData() {
+        short hp = 0, mHp = 0;
+        std::memcpy(&hp, currHp, sizeof(short));
+        std::memcpy(&mHp, maxHp, sizeof(short));
+        return QVector<int>(static_cast<int>(hp), static_cast<int>(mHp));
+    }
+
 
     // set
     void setWeapons(QVector<WeaponDataSlot> weapons);
@@ -73,3 +81,4 @@ public:
 };
 
 #endif // PROFILELOADER_H
+
