@@ -30,6 +30,7 @@ private:
     QHash<QString, PageInfo> stackedWidgetPageDictionary = {
         {"directoryErrorBox", {0, "Error!"}},
         {"helpScreen", {1, "Help!"}},
+        {"fileAlreadyExistsBox", {2, {"File Already Exists!"}}},
     };
 
 };

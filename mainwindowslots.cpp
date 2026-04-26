@@ -99,6 +99,9 @@ void MainWindow::_onSaveAsNewFile() {
     // get new file name
     QString newFileName = ui->saveAsEdit->toPlainText();
 
+    // custom save file path
+    QString newFilePath = savesDirectory + "\\Custom\\" + newFileName + ".dat";
+
     // check that our customs folder exists
     QDir customsDir(savesDirectory + "\\Custom\\");
     if (!customsDir.exists()) {
@@ -106,20 +109,20 @@ void MainWindow::_onSaveAsNewFile() {
         customsDir.mkpath(".");
     }
 
-    // custom save file path
-    QString newFilePath = savesDirectory + "\\Custom\\" + newFileName + ".dat";
+    // check that file already exists
+    if (QFile::exists(newFilePath)) {
+        Dialog error_box(this);
+        error_box.setStackedWidgetPage("fileAlreadyExistsBox");
+        int result = error_box.exec();
 
-    qDebug() << "mainwindowslots.cpp new path: " << newFilePath;
+        // in Dialog.cpp, clicking overwrite outputs rejected, so if we don't click, overwrite
+        if (result != QDialog::Rejected) {
+            return;
+        }
+    }
 
+    // actually create the new file
     emit writeToProfile(newFilePath);
-    // create new file and fill with our new save data
-    // QFile file(newFilePath);
-    // if (file.open(QIODevice::WriteOnly)) {
-
-    //     file.close();
-    // }
-    // else qDebug() << "mainwindowslots.cpp: failed to create file at " + newFilePath;
-
 }
 
 // save as button

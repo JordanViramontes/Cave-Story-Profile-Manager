@@ -9,6 +9,9 @@ Dialog::Dialog(QWidget *parent)
     , ui(new Ui::Dialog)
 {
     ui->setupUi(this);
+
+    // overwrite button for save as, if clicked output a reject
+    connect(ui->overwriteButton, &QPushButton::clicked, this, &QDialog::reject);
 }
 
 Dialog::~Dialog()
