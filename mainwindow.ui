@@ -404,16 +404,25 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <item>
        <layout class="QVBoxLayout" name="buttonsVLayout">
         <item>
+         <widget class="QPushButton" name="launchPushButton">
+          <property name="text">
+           <string>Launch Application</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="runPushButton">
           <property name="text">
-           <string>Apply and Run</string>
+           <string>Apply Profile
+and Launch</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="updateDirPushButton">
           <property name="text">
-           <string>Update Directory</string>
+           <string>Update Game
+File Directory</string>
           </property>
          </widget>
         </item>

@@ -12,7 +12,22 @@
 #include <qfilesystemmodel.h>
 #include <QProcess>
 
-// when you click on the run button
+// just running
+void MainWindow::_onSimpleRunButton() {
+    // launch game
+    qDebug() << "mainwindowslots: launching game at: " << gameDirectory;
+    if (!checkGameDirPath(gameDirectory)) {
+        qDebug() << "mainwindowslots: ERROR, game directory incorrect!";
+        return;
+    }
+
+    QProcess *process = new QProcess(this);
+    QString gameExeFile = gameDirectory;
+    process->setProgram(gameExeFile);
+    process->start();
+}
+
+// when you click on the apply and run button
 void MainWindow::_onRunButton() {
     // write to the save file
     QString profilePath = gameDirectory;
@@ -49,17 +64,9 @@ void MainWindow::_onRunButton() {
     qDebug() << gameDirectory + "/Profile.dat";
     // writeToFile(save, )
 
-    // launch game
-    qDebug() << "mainwindowslots: launching game at: " << gameDirectory;
-    if (!checkGameDirPath(gameDirectory)) {
-        qDebug() << "mainwindowslots: ERROR, game directory incorrect!";
-        return;
-    }
 
-    QProcess *process = new QProcess(this);
-    QString gameExeFile = gameDirectory;
-    process->setProgram(gameExeFile);
-    process->start();
+    // launch game!
+    _onSimpleRunButton();
 }
 
 // when you click the help button

@@ -48,6 +48,7 @@ private:
 
 private slots:
     // buttons
+    void _onSimpleRunButton();
     void _onRunButton();
     void _onHelpButton();
     void _onUpdateDirectoryButton();
