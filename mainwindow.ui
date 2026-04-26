@@ -69,7 +69,7 @@
               </attribute>
               <layout class="QGridLayout" name="gridLayout_5">
                <item row="0" column="0">
-                <widget class="QTreeView" name="presetFileTree">
+                <widget class="QProfileViewTree" name="presetFileTree">
                  <property name="alternatingRowColors">
                   <bool>true</bool>
                  </property>
@@ -89,7 +89,7 @@
               </attribute>
               <layout class="QGridLayout" name="gridLayout_4">
                <item row="0" column="0">
-                <widget class="QTreeView" name="customFileTree"/>
+                <widget class="QProfileViewTree" name="customFileTree"/>
                </item>
               </layout>
              </widget>
@@ -413,8 +413,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <item>
          <widget class="QPushButton" name="runPushButton">
           <property name="text">
-           <string>Apply Profile
-and Launch</string>
+           <string>Apply Profile</string>
           </property>
          </widget>
         </item>
@@ -522,6 +521,11 @@ File Directory</string>
    <extends>QWidget</extends>
    <header location="global">qweaponordertable.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QProfileViewTree</class>
+   <extends>QTreeView</extends>
+   <header>qprofileviewtree.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

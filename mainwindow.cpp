@@ -71,6 +71,8 @@ void MainWindow::setSignals() {
     // file
     connect(ui->presetFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
     connect(ui->customFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
+
+    // health bar
 }
 
 // set widgets
