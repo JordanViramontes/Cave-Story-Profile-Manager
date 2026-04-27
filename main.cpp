@@ -11,14 +11,21 @@ int main(int argc, char *argv[])
     // main application
     QApplication a(argc, argv);
 
+    // the application ICON
+    QIcon appIcon(":/weaponImages/images/iconLarge.ico");
+
     // set the visual style, get the application's palette and change it
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     QPalette p = setLightThemePalette();
 
-    // apply the pallette
+    // apply the pallette and icon
     a.setPalette(p);
+    a.setWindowIcon(appIcon);
 
+    // initialize main window
     MainWindow w;
+    w.setWindowIcon(appIcon);
+    w.setWindowTitle(QString("Cave Story Profile Manager"));
     w.show();
 
     return a.exec();

@@ -48,6 +48,13 @@ void MainWindow::widgetLock(bool enable) {
     }
 }
 
+void MainWindow::disableInventory(bool enable) {
+    // turn on / off inventory and apply button
+    isEnabled = enable;
+    ui->inventory->setEnabled(enable);
+    ui->runPushButton->setEnabled(enable);
+    ui->beginPromptLabel->setVisible(!enable);
+}
 
 
 

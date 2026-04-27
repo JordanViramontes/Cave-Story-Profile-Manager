@@ -13,5 +13,8 @@
         <file>images/polarStar.png</file>
         <file>images/snake.png</file>
         <file>images/spur.png</file>
+        <file>images/icon.png</file>
+        <file>images/iconLarge.ico</file>
     </qresource>
+    <qresource prefix="/applicationImages"/>
 </RCC>

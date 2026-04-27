@@ -70,6 +70,9 @@ void MainWindow::_onUpdateDirectoryButton() {
 
 // when you click on a file in the file tree
 void MainWindow::_onSelectFile(QModelIndex fileIndex) {
+    // enable stuff
+    if (!isEnabled) disableInventory(true);
+
     // get the file path
     auto tab = ui->filesTabWidget->currentIndex();
     QFileSystemModel* model = nullptr;

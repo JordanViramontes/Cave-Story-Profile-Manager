@@ -3,6 +3,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QFileSystemModel>
+#include <QSystemTrayIcon>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent)
     // update state depending on valid path
     // gameDirectory = "";
     widgetLock(checkGameDirPath(gameDirectory));
+
+    // disable inventory until a profile is selected
+    disableInventory(false);
 }
 
 MainWindow::~MainWindow()

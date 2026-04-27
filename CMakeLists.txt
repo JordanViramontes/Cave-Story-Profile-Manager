@@ -38,6 +38,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         images.qrc
         qprofileviewtree.h qprofileviewtree.cpp
         qinventory.h qinventory.cpp qinventory.ui
+        app_icon.rc
+
+
 
 
 

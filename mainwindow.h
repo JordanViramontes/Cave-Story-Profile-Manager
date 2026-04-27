@@ -35,6 +35,8 @@ private:
 
     // enable / disable states
     void widgetLock(bool);
+    void disableInventory(bool);
+    bool isEnabled = false;
 
     // constructors
     void setSignals();
