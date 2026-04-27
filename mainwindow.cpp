@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    savesDirectory = QCoreApplication::applicationDirPath() + "/saves";
+    savesDirectory = QCoreApplication::applicationDirPath() + "/Saves";
     qDebug() << "mainwindow.cpp: savesDirectory: " << savesDirectory;
 
     // set stuff
@@ -26,8 +26,15 @@ MainWindow::MainWindow(QWidget *parent)
     // gameDirectory = "";
     widgetLock(checkGameDirPath(gameDirectory));
 
-    // disable inventory until a profile is selected
-    disableInventory(false);
+    // load the profile at the game path
+    if (checkGameDirPath(gameDirectory)) {
+        // get the current save file
+        QString profilePath = gameDirectory;
+        profilePath.chop(12);
+        profilePath += "Profile.dat";
+
+        emit profilePathUpdated(profilePath);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -69,8 +76,8 @@ void MainWindow::setSignals() {
     connect(this, SIGNAL(applyButtonPressed(QString)), this, SLOT(_onSaveAsButtonPressed()));
 
     // file
-    connect(ui->presetFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
-    connect(ui->customFileTree, SIGNAL(clicked(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
+    connect(ui->presetFileTree, SIGNAL(pressed(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
+    connect(ui->customFileTree, SIGNAL(pressed(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
 
     // inventory
     connect(this, SIGNAL(profilePathUpdated(QString)), ui->inventory, SLOT(_onSelectFile(QString)));

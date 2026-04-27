@@ -93,7 +93,7 @@ void QInventory::_onSelectFile(QString filePath) {
 
     // get the health!
     QVector<int> healthStuff = parser.getHealthData();
-    qDebug() << "qinventory.cpp: new hp and maxHp: " << healthStuff[0] << ", " << healthStuff[1];
+    // qDebug() << "qinventory.cpp: new hp and maxHp: " << healthStuff[0] << ", " << healthStuff[1];
     maxHealthChanged(healthStuff[1]);
     healthChanged(healthStuff[0]);
 

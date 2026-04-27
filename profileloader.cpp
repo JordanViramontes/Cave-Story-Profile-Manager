@@ -64,6 +64,13 @@ bool ProfileLoader::parseProfile(QString profilePath) {
     time[1]     = buffer[0x035];
     time[2]     = buffer[0x036];
 
+    short hp = 0, mHp = 0;
+    std::memcpy(&hp, currHp, sizeof(short));
+    std::memcpy(&mHp, maxHp, sizeof(short));
+    qDebug() << "profileloader.cpp: loaded health: " << hp << ", " << mHp;
+
+
+
     // parse weapons
     unsigned int weaponIt = 0x038;
     for (unsigned int i = 0; i < weapons.size(); i++) {
@@ -109,6 +116,11 @@ bool ProfileLoader::writeToFile(QString profilePath, QVector<WeaponDataSlot> wea
         qDebug() << "profileloader.cpp: ERROR, file isnt open!";
         return false;
     }
+
+    short hp = 0, mHp = 0;
+    std::memcpy(&hp, currHp, sizeof(short));
+    std::memcpy(&mHp, maxHp, sizeof(short));
+    qDebug() << "profileloader.cpp: writing health: " << hp << ", " << mHp;
 
     // we need to set the buffer values with the updated stuff!
 

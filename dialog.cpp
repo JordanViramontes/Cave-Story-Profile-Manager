@@ -66,7 +66,14 @@ void Dialog::setStackedWidgetPage(QString pageName) {
 
     }
 
+    // resize
+    if (pageName == "helpScreen") {
+        resize(QSize(720, 400));
+    }
+    else {
+        resize(minimumSizeHint());
+    }
 
 
-    resize(minimumSizeHint());
+
 }

@@ -10,9 +10,9 @@ bool MainWindow::checkGameDirPath(QString path) {
     QFileInfo fileInfo(path);
     if (fileInfo.fileName() != "Doukutsu.exe") {
         qDebug() << "mainwindowmethods.cpp: The selected file is not Doukutsu.exe. It is:" << fileInfo.fileName();
-        auto error_box = new Dialog(this);
-        error_box->setStackedWidgetPage("directoryErrorBox");
-        error_box->show();
+        Dialog error_box(this);
+        error_box.setStackedWidgetPage("directoryErrorBox");
+        error_box.exec();
 
         return false;
     }

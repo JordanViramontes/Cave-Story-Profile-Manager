@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>720</width>
-    <height>554</height>
+    <height>671</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -227,6 +227,19 @@ Special Thanks:</string>
                   </layout>
                  </widget>
                 </item>
+                <item row="3" column="0">
+                 <spacer name="verticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
                 <item row="0" column="0">
                  <widget class="QGroupBox" name="groupBox_6">
                   <property name="title">
@@ -288,19 +301,6 @@ Special Thanks:</string>
                   </layout>
                  </widget>
                 </item>
-                <item row="3" column="0">
-                 <spacer name="verticalSpacer">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
                </layout>
               </widget>
               <widget class="QWidget" name="help2Inventory">
@@ -308,19 +308,6 @@ Special Thanks:</string>
                 <string>Inventory Help</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_19">
-                <item row="3" column="0">
-                 <spacer name="verticalSpacer_2">
-                  <property name="orientation">
-                   <enum>Qt::Orientation::Vertical</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>20</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
                 <item row="1" column="0">
                  <widget class="QGroupBox" name="groupBox_3">
                   <property name="sizePolicy">
@@ -564,8 +551,8 @@ Special Thanks:</string>
                   </layout>
                  </widget>
                 </item>
-                <item row="4" column="0">
-                 <spacer name="verticalSpacer_3">
+                <item row="3" column="0">
+                 <spacer name="verticalSpacer_2">
                   <property name="orientation">
                    <enum>Qt::Orientation::Vertical</enum>
                   </property>
@@ -581,7 +568,7 @@ Special Thanks:</string>
               </widget>
               <widget class="QWidget" name="help3Buttons">
                <attribute name="title">
-                <string>Launching, and More Help</string>
+                <string>Launching Help</string>
                </attribute>
                <layout class="QGridLayout" name="gridLayout_21">
                 <item row="0" column="0">
@@ -749,6 +736,99 @@ Special Thanks:</string>
                 </item>
                 <item row="3" column="0">
                  <spacer name="verticalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Orientation::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="help4Troubleshoot">
+               <attribute name="title">
+                <string>Troubleshooting</string>
+               </attribute>
+               <layout class="QGridLayout" name="gridLayout_27">
+                <item row="0" column="0">
+                 <widget class="QGroupBox" name="groupBox_14">
+                  <property name="title">
+                   <string>Profile Loading and Directories</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_28">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_37">
+                     <property name="text">
+                      <string>•</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                     </property>
+                     <property name="wordWrap">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLabel" name="label_38">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>The &quot;Preset Saves&quot; and &quot;Custom Saves&quot; folders are located in a &quot;Saves&quot; folder located in the same directory as the Cave Story Profile Manager executable.</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                     </property>
+                     <property name="wordWrap">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_40">
+                     <property name="text">
+                      <string>•</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                     </property>
+                     <property name="wordWrap">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLabel" name="label_39">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="text">
+                      <string>If the &quot;Saves&quot; folder is not found in the same directory as the executable, the Cave Story Profile Manager will not automatically load the &quot;Preset Saves&quot; and &quot;Custom Saves&quot; folders into the Profiles section on startup. If the &quot;Profiles&quot; section is empty, please double check that you have a valid &quot;Saves&quot; folder.</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+                     </property>
+                     <property name="wordWrap">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <spacer name="verticalSpacer_3">
                   <property name="orientation">
                    <enum>Qt::Orientation::Vertical</enum>
                   </property>

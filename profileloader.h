@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <cstring>
+#include <qdebug.h>
 
 // each item has a bit for isactive. If inventoryPos = -1, then it wasn't included in the base Profile and needs to be appended
 
@@ -71,7 +72,7 @@ public:
         short hp = 0, mHp = 0;
         std::memcpy(&hp, currHp, sizeof(short));
         std::memcpy(&mHp, maxHp, sizeof(short));
-        return QVector<int>(static_cast<int>(hp), static_cast<int>(mHp));
+        return {(int)(hp), (int)(mHp)}; // return as a vector
     }
 
 
@@ -81,6 +82,11 @@ public:
     void setHealthData(short newHp, short newMaxHp) {
         std::memcpy(currHp, &newHp, sizeof(short));
         std::memcpy(maxHp, &newMaxHp, sizeof(short));
+
+        // short hp = 0, mHp = 0;
+        // std::memcpy(&hp, currHp, sizeof(short));
+        // std::memcpy(&mHp, maxHp, sizeof(short));
+        // qDebug() << "profileloader.h: set health to: " << hp << ", " << mHp;
     }
 };
 

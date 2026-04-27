@@ -14,9 +14,11 @@ protected:
     // disable being able to highlight files while holding mouse button over them
     void mouseMoveEvent(QMouseEvent *event) override {
         return;
-        qDebug() << "qprofileviewtree.h: testing mouse move";
+    }
 
-        QTreeView::mouseMoveEvent(event);
+    // can't let go and select a file
+    void mouseReleaseEvent(QMouseEvent *event) override {
+        return;
     }
 
 

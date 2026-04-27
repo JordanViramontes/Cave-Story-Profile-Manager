@@ -38,9 +38,9 @@ void MainWindow::_onRunButton() {
 
 // when you click the help button
 void MainWindow::_onHelpButton() {
-    auto error_box = new Dialog(this);
-    error_box->setStackedWidgetPage("helpScreen");
-    error_box->show();
+    Dialog error_box(this);
+    error_box.setStackedWidgetPage("helpScreen");
+    error_box.exec();
 }
 
 // when you click the update directory button
