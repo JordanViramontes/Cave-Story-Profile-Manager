@@ -32,6 +32,7 @@ public:
     int getWeaponMaxAmmo() { return maxAmmo; }
     int getWeaponAmmo() { return ammo; }
     bool isValidGrabPos(QPoint pos);
+    Ui::QWeaponTableSlot* getUi() const { return ui; }
 
     QString getWeaponIconPath() { return weaponLabelIconPath; };
 
