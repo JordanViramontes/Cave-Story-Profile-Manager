@@ -14,7 +14,6 @@ ProfilesSelection::ProfilesSelection(QWidget *parent)
     connect(ui->presetFileTree, SIGNAL(pressed(QModelIndex)), this, SLOT(onPressedFile(QModelIndex)));
     connect(ui->customFileTree, SIGNAL(pressed(QModelIndex)), this, SLOT(onPressedFile(QModelIndex)));
     connect(ui->saveAsPushButton, SIGNAL(clicked(bool)), this, SLOT(onSaveAsButtonPressed()));
-    connect(ui->collapseButton, SIGNAL(clicked(bool)), this, SLOT(onCollapsedButtonPressed()));
 
     // etc
     ui->presetFileTree->setFocusPolicy(Qt::NoFocus);
@@ -116,30 +115,7 @@ void ProfilesSelection::widgetLock(bool enable) {
     ui->customFileTree->setMouseTracking(enable);
 }
 
-void ProfilesSelection::onCollapsedButtonPressed() {
-    qDebug() << "profileselection.cpp: Collapsing profiles!";
-
-    // check if we're expanding or collapsing
-    if (!collapsed) { // we're collapsing
-        ui->collapseButton->setText(">\n>\n>");
-        collapsed = true;
-
-        // update profilesGroup
-        ui->profilesGroup->setMaximumWidth(0);
-        ui->profilesGroup->setVisible(false);
-    }
-    else { // we're expanding
-        ui->collapseButton->setText("<\n<\n<");
-        collapsed = false;
-
-        // update profilesGroup
-        ui->profilesGroup->setMaximumWidth(16777215);
-        ui->profilesGroup->setVisible(true);
-    }
-
-    // update widgets
-    ui->profilesGroup->adjustSize();
-
-    // emit to mainwindow that we're changing sizes
-    emit profilesCollapsed(collapsed);
+// get
+QWidget* ProfilesSelection::getProfilesGroup() {
+    return ui->profilesGroup;
 }

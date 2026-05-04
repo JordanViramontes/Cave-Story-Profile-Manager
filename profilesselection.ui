@@ -35,36 +35,6 @@
    <property name="horizontalSpacing">
     <number>4</number>
    </property>
-   <item row="0" column="1">
-    <widget class="QPushButton" name="collapseButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>15</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="toolTip">
-      <string>Collapse Profiles</string>
-     </property>
-     <property name="text">
-      <string>&lt;
-&lt;
-&lt;</string>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>12</width>
-       <height>12</height>
-      </size>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QWidget" name="profilesGroup" native="true">
      <layout class="QGridLayout" name="gridLayout">

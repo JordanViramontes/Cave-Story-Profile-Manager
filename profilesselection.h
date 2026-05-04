@@ -21,6 +21,9 @@ public:
     // set
     void setSavesDirectory(QString);
 
+    // get
+    QWidget* getProfilesGroup();
+
 private:
     Ui::ProfilesSelection *ui;
     QString savesDirectory = "";
@@ -30,12 +33,11 @@ signals:
     // void saveAsButtonPressed();
     void saveFilePressed(QString);
     void saveAsButtonPressed(QString);
-    void profilesCollapsed(bool collapsed);
+    // void profilesCollapsed(bool collapsed);
 
 private slots:
     void onPressedFile(QModelIndex);
     void onSaveAsButtonPressed();
-    void onCollapsedButtonPressed();
 };
 
 #endif // PROFILESSELECTION_H
