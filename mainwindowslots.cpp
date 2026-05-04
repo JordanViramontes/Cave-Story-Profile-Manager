@@ -75,17 +75,6 @@ void MainWindow::onUpdateDirectoryButtonPressed() {
     saveSettings();
 }
 
-// // save as button uses this
-// void MainWindow::onApplyButtonPressed() {
-//     return;
-//     // get save file
-//     QString profilePath = gameDirectory;
-//     profilePath.chop(12);
-//     profilePath += "Profile.dat";
-
-//     emit writeToProfile(profilePath);
-// }
-
 // signal to signal handlers
 void MainWindow::onProfilesSaveFilePressed(QString profilePath) {
     emit profilePathUpdated(profilePath);
@@ -94,3 +83,34 @@ void MainWindow::onProfilesSaveFilePressed(QString profilePath) {
 void MainWindow::onProfilesSaveAsButtonPressed(QString savePath) {
     emit writeToProfile(savePath);
 }
+
+// from other widgets
+void MainWindow::onProfilesCollapsed(bool collapsed) {
+    qDebug() << "mainwindowslots.cpp: collapsing: " << collapsed;
+
+    if (collapsed) { // collapsing
+        ui->profilesGrBox->setMaximumWidth(50);
+    }
+    else { // expanding
+        ui->profilesGrBox->setMaximumWidth(16777215);
+    }
+
+    ui->profiles->adjustSize();
+    ui->profilesGrBox->adjustSize();
+
+    qDebug() << "mainwindow.cpp: testing dimensions: profiles:" << ui->profiles->width() << ", " << ui->profiles->height() << ", profilesGr: " << ui->profilesGrBox->width() << ui->profilesGrBox->height();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

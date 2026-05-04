@@ -62,6 +62,9 @@ private slots:
     // signal to signal handlers
     void onProfilesSaveFilePressed(QString);
     void onProfilesSaveAsButtonPressed(QString);
+
+    // from widgets
+    void onProfilesCollapsed(bool collapsed);
 };
 
 #endif // MAINWINDOW_H

@@ -34,7 +34,7 @@ void MainWindow::widgetLock(bool enable) {
 
     // enables
     ui->runPushButton->setEnabled(enable);
-    ui->profilesGrBox->setEnabled(enable);
+    // ui->profilesGrBox->setEnabled(enable);
     ui->inventoryGrBox->setEnabled(enable);
 
     // ui elements

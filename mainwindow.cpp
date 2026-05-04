@@ -85,6 +85,7 @@ void MainWindow::setSignals() {
     // profile selections
     connect(ui->profiles, SIGNAL(saveFilePressed(QString)), this, SLOT(onProfilesSaveFilePressed(QString)));
     connect(ui->profiles, SIGNAL(saveAsButtonPressed(QString)), this, SLOT(onProfilesSaveAsButtonPressed(QString))); // the signal from the profiles signals our signal which will go to the inventory
+    connect(ui->profiles, SIGNAL(profilesCollapsed(bool)), this, SLOT(onProfilesCollapsed(bool)));
 
     // inventory
     connect(this, SIGNAL(profilePathUpdated(QString)), ui->inventory, SLOT(_onSelectFile(QString)));
