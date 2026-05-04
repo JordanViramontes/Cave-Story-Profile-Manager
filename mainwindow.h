@@ -1,13 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "profileloader.h"
-
 #include <QMainWindow>
 #include <QSettings>
 #include <QFileInfo>
 #include <QModelIndex>
 #include <QTableWidget>
+#include <QParallelAnimationGroup>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -40,9 +39,8 @@ private:
 
     // constructors
     void setSignals();
-
-    // set up widgets
     void createFileTrees();
+    // void createProfilesAnimation();
 
     // helper functions
     bool checkGameDirPath(QString path);
@@ -62,9 +60,6 @@ private slots:
     // signal to signal handlers
     void onProfilesSaveFilePressed(QString);
     void onProfilesSaveAsButtonPressed(QString);
-
-    // from widgets
-    void onProfilesCollapsed(bool collapsed);
 };
 
 #endif // MAINWINDOW_H

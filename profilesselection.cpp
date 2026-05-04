@@ -3,6 +3,7 @@
 #include "dialog.h"
 
 #include <QFileSystemModel>
+#include <QPropertyAnimation>
 
 ProfilesSelection::ProfilesSelection(QWidget *parent)
     : QWidget(parent)
@@ -14,14 +15,50 @@ ProfilesSelection::ProfilesSelection(QWidget *parent)
     connect(ui->presetFileTree, SIGNAL(pressed(QModelIndex)), this, SLOT(onPressedFile(QModelIndex)));
     connect(ui->customFileTree, SIGNAL(pressed(QModelIndex)), this, SLOT(onPressedFile(QModelIndex)));
     connect(ui->saveAsPushButton, SIGNAL(clicked(bool)), this, SLOT(onSaveAsButtonPressed()));
-    connect(ui->collapseButton, SIGNAL(clicked(bool)), this, SLOT(onCollapsedButtonPressed()));
+    connect(ui->collapseButton, SIGNAL(clicked(bool)), this, SLOT(onCollapseButtonPressed()));
 
     // etc
     ui->presetFileTree->setFocusPolicy(Qt::NoFocus);
     ui->customFileTree->setFocusPolicy(Qt::NoFocus);
 
     // variables
-    collapsed = false; // should start fully opened
+    profilesCollapsed = false;
+
+    /*
+    The following code modified from: https://github.com/MichaelVoelkel/qt-collapsible-section/tree/master
+    Specifically for expanding and collapsing a widget
+    */
+
+    // add animations, all of these will run together in parallel
+    profilesAnimation = new QParallelAnimationGroup(this);
+    profilesAnimation->addAnimation(new QPropertyAnimation(this, "maximumWidth"));
+    profilesAnimation->addAnimation(new QPropertyAnimation(this, "minimumWidth"));
+    auto subAnimation = new QPropertyAnimation(ui->profilesContent, "maximumWidth");
+    profilesAnimation->addAnimation(subAnimation);
+
+    // constants
+    int animationDuration = 300;
+    int mainCollapsedWidth = 45;
+    int mainContentWidth = width();
+    ui->profilesContent->adjustSize(); // set size before getting width so we get the right constant
+    int subWidth = ui->profilesContent->width();
+
+    // set up all animations except for the sub animation, assuming its going from collapsed->expanded
+    for (int i = 0; i < profilesAnimation->animationCount() - 1; ++i)
+    {
+        QPropertyAnimation* SectionAnimation = static_cast<QPropertyAnimation *>(profilesAnimation->animationAt(i));
+        SectionAnimation->setDuration(animationDuration);
+        SectionAnimation->setStartValue(mainCollapsedWidth);
+        SectionAnimation->setEndValue(mainContentWidth);
+    }
+
+    // set the values for the subanimation
+    subAnimation->setDuration(animationDuration);
+    subAnimation->setStartValue(0);
+    subAnimation->setEndValue(subWidth);
+
+    // when an animation finishes, hide the sub content
+    connect(profilesAnimation, SIGNAL(finished()), this, SLOT(animationFinished()));
 }
 
 ProfilesSelection::~ProfilesSelection()
@@ -111,35 +148,36 @@ void ProfilesSelection::onSaveAsButtonPressed() {
     emit saveAsButtonPressed(newFilePath);
 }
 
+void ProfilesSelection::onCollapseButtonPressed() {
+    // make sub content visible if needed
+    if (profilesCollapsed) ui->profilesContent->setVisible(true);
+
+    // run animation
+    profilesAnimation->setDirection(profilesCollapsed ? QAbstractAnimation::Forward : QAbstractAnimation::Backward);
+    profilesAnimation->start();
+
+    // change button stuff
+    ui->collapseButton->setText(profilesCollapsed ? "<\n<\n<" : ">\n>\n>");
+    ui->collapseButton->setToolTip(profilesCollapsed ? "Collapse Profiles Section" : "Expand Profiles Section");
+
+    // update the collapsed bool
+    profilesCollapsed = !profilesCollapsed;
+}
+
 void ProfilesSelection::widgetLock(bool enable) {
     ui->presetFileTree->setMouseTracking(enable);
     ui->customFileTree->setMouseTracking(enable);
 }
 
-void ProfilesSelection::onCollapsedButtonPressed() {
-    qDebug() << "profileselection.cpp: Collapsing profiles!";
-
-    // check if we're expanding or collapsing
-    if (!collapsed) { // we're collapsing
-        ui->collapseButton->setText(">\n>\n>");
-        collapsed = true;
-
-        // update profilesGroup
-        ui->profilesGroup->setMaximumWidth(0);
-        ui->profilesGroup->setVisible(false);
-    }
-    else { // we're expanding
-        ui->collapseButton->setText("<\n<\n<");
-        collapsed = false;
-
-        // update profilesGroup
-        ui->profilesGroup->setMaximumWidth(16777215);
-        ui->profilesGroup->setVisible(true);
+// slots
+void ProfilesSelection::animationFinished() {
+    // if we're fully collapsed, make the sub contents invisible so that the button is fully centered
+    if (profilesCollapsed) {
+        ui->profilesContent->setVisible(false);
     }
 
-    // update widgets
-    ui->profilesGroup->adjustSize();
-
-    // emit to mainwindow that we're changing sizes
-    emit profilesCollapsed(collapsed);
+    // debug
+    // qDebug() << "profilesselection.cpp: check widths after animation: " << width() << ", sub: " << ui->profilesContent->width() << ", button: " << ui->collapseButton->width();
 }
+
+

@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "profileloader.h"
 #include "dialog.h"
 // #include "qweapontableslot.h"
 // #include "ui_"
@@ -83,25 +82,6 @@ void MainWindow::onProfilesSaveFilePressed(QString profilePath) {
 void MainWindow::onProfilesSaveAsButtonPressed(QString savePath) {
     emit writeToProfile(savePath);
 }
-
-// from other widgets
-void MainWindow::onProfilesCollapsed(bool collapsed) {
-    qDebug() << "mainwindowslots.cpp: collapsing: " << collapsed;
-
-    if (collapsed) { // collapsing
-        ui->profilesGrBox->setMaximumWidth(50);
-    }
-    else { // expanding
-        ui->profilesGrBox->setMaximumWidth(16777215);
-    }
-
-    ui->profiles->adjustSize();
-    ui->profilesGrBox->adjustSize();
-
-    qDebug() << "mainwindow.cpp: testing dimensions: profiles:" << ui->profiles->width() << ", " << ui->profiles->height() << ", profilesGr: " << ui->profilesGrBox->width() << ui->profilesGrBox->height();
-}
-
-
 
 
 
