@@ -170,6 +170,11 @@ void QWeaponTableSlot::enableChanged(bool enable) {
 }
 
 void QWeaponTableSlot::xpChanged(int newXp) {
+    if (newXp < 0) {
+        qDebug() << "qweapontableslot.cpp: ERROR incoming XP too low";
+        return;
+    }
+
     lockSignals(); // lock
 
     // set values
@@ -188,6 +193,11 @@ void QWeaponTableSlot::xpChanged(int newXp) {
 }
 
 void QWeaponTableSlot::ammoChanged(int newAmmo) {
+    if (newAmmo < 0) {
+        qDebug() << "qweapontableslot.cpp: ERROR incoming Ammo too low";
+        return;
+    }
+
     lockSignals(); // lock
 
     if (newAmmo > maxAmmo) newAmmo = maxAmmo; // ensure we dont go past limit!
@@ -201,6 +211,11 @@ void QWeaponTableSlot::ammoChanged(int newAmmo) {
 }
 
 void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
+    if (newAmmoMax < 0) {
+        qDebug() << "qweapontableslot.cpp: ERROR incoming AmmoMax too low";
+        return;
+    }
+
     lockSignals(); // lock
 
     maxAmmo = newAmmoMax;
@@ -225,6 +240,13 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
 }
 
 void QWeaponTableSlot::lvlChanged(int newlvl) {
+    // bounds check
+    if (newlvl < 0 || newlvl > 3) {
+        qDebug() << "qweapontableslot.cpp: ERROR incoming level too low";
+        return;
+    }
+
+
     lockSignals(); // lock
 
     // set values

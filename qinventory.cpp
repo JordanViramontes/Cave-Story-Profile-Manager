@@ -109,8 +109,6 @@ void QInventory::_onSelectFile(QString filePath) {
 }
 
 void QInventory::_PushInventoryToProfile(QString profilePath) {
-    qDebug() << "now pushing!";
-
     // get weapon data!
     QVector<QWeaponTableSlot*> enabledWeapons = ui->weaponsTable->getValidEnabledWeaponPointers();
     QVector<WeaponDataSlot> weaponDataSlots;

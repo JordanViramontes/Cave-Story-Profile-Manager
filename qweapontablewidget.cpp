@@ -1,5 +1,6 @@
 #include "qweapontablewidget.h"
 #include <qheaderview.h>
+#include <qdebug.h>
 
 QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
     : QTableWidget(parent)
@@ -135,7 +136,7 @@ void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> pars
     // go through parser weapons and set data!
     for (auto i : parserWeapons) {
         if (i.type == 0x00) continue;
-        // qDebug() << (int)i.type << ", " << (int)i.level << ", " << (int)i.energy << ", " << (int)i.maxAmmo << ", " << (int)i.currentAmmo;
+        // qDebug() << "qweapontablewidget.cpp: testing weapon: " << (int)i.type << ", " << (int)i.level << ", " << (int)i.energy << ", " << (int)i.maxAmmo << ", " << (int)i.currentAmmo;
 
         // get the weapon table slot pointer
         QWeaponTableSlot* currentWeapon = weaponsTableDictionary[(int)i.type];

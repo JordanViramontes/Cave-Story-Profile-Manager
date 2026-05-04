@@ -33,6 +33,15 @@ MainWindow::MainWindow(QWidget *parent)
         profilePath.chop(12);
         profilePath += "Profile.dat";
 
+        // check if the file exists
+        QFile checkFile(profilePath);
+        if (!checkFile.isOpen()) {
+            qDebug() << "mainwindow.cpp: coudln't open the current profile on startup";
+        }
+        else {
+            emit profilePathUpdated(profilePath);
+        }
+
         emit profilePathUpdated(profilePath);
     }
 }

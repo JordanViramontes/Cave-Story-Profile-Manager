@@ -67,9 +67,7 @@ bool ProfileLoader::parseProfile(QString profilePath) {
     short hp = 0, mHp = 0;
     std::memcpy(&hp, currHp, sizeof(short));
     std::memcpy(&mHp, maxHp, sizeof(short));
-    qDebug() << "profileloader.cpp: loaded health: " << hp << ", " << mHp;
-
-
+    // qDebug() << "profileloader.cpp: loaded health: " << hp << ", " << mHp;
 
     // parse weapons
     unsigned int weaponIt = 0x038;
