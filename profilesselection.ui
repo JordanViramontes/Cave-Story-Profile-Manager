@@ -264,7 +264,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </layout>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="0" column="0">
        <widget class="QPushButton" name="collapseButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">

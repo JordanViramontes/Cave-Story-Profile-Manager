@@ -176,8 +176,8 @@ void ProfilesSelection::animationFinished() {
         ui->profilesContent->setVisible(false);
     }
 
-    //
-    qDebug() << "profilesselection.cpp: check widths after animation: " << width() << ", sub: " << ui->profilesContent->width() << ", button: " << ui->collapseButton->width();
+    // debug
+    // qDebug() << "profilesselection.cpp: check widths after animation: " << width() << ", sub: " << ui->profilesContent->width() << ", button: " << ui->collapseButton->width();
 }
 
 

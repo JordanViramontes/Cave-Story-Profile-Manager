@@ -45,10 +45,6 @@ private:
     // helper functions
     bool checkGameDirPath(QString path);
 
-    // animation widgets
-    // QParallelAnimationGroup* profilesAnimation;
-    // bool profilesCollapsed;
-
 signals:
     void profilePathUpdated(QString profilePath);
     void applyButtonPressed(QString profilePath);
@@ -64,9 +60,6 @@ private slots:
     // signal to signal handlers
     void onProfilesSaveFilePressed(QString);
     void onProfilesSaveAsButtonPressed(QString);
-
-    // from widgets
-    // void onProfilesCollapsed();
 };
 
 #endif // MAINWINDOW_H

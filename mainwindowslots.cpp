@@ -83,29 +83,6 @@ void MainWindow::onProfilesSaveAsButtonPressed(QString savePath) {
     emit writeToProfile(savePath);
 }
 
-// from other widgets
-// void MainWindow::onProfilesCollapsed() {
-//     qDebug() << "mainwindowslots.cpp: collapsing: " << profilesCollapsed;
-
-//     if (profilesCollapsed) { // expanding
-//         profilesAnimation->setDirection(QAbstractAnimation::Forward);
-//         profilesAnimation->start();
-
-//         profilesCollapsed = false;
-//     }
-//     else {
-//         profilesAnimation->setDirection(QAbstractAnimation::Backward);
-//         profilesAnimation->start();
-
-//         profilesCollapsed = true;
-//     }
-
-
-//     qDebug() << "mainwindow.cpp: testing dimensions: profiles:" << ui->profiles->width() << ", " << ui->profiles->height() << ", profilesGr: " << ui->profilesGrBox->width() << ui->profilesGrBox->height();
-// }
-
-
-
 
 
 
