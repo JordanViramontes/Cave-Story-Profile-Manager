@@ -30,9 +30,7 @@ bool MainWindow::checkGameDirPath(QString path) {
 // if enable is true, enable widgets, if false, disable widgets
 void MainWindow::widgetLock(bool enable) {
     // file systems
-    ui->presetFileTree->setMouseTracking(enable);
-    ui->customFileTree->setMouseTracking(enable);
-    ui->presetFileTree->setFocusPolicy(Qt::NoFocus);
+    ui->profiles->widgetLock(enable);
 
     // enables
     ui->runPushButton->setEnabled(enable);

@@ -77,16 +77,14 @@ void MainWindow::loadSettings() {
 
 void MainWindow::setSignals() {
     // buttons
-    connect(ui->launchPushButton, SIGNAL(clicked(bool)), this, SLOT(_onSimpleRunButton()));
-    connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(_onRunButton()));
-    connect(ui->HelpPushButton, SIGNAL(clicked(bool)), this, SLOT(_onHelpButton()));
-    connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(_onUpdateDirectoryButton()));
-    connect(ui->saveAsPushButton, SIGNAL(clicked(bool)), this, SLOT(_onSaveAsNewFile()));
-    connect(this, SIGNAL(applyButtonPressed(QString)), this, SLOT(_onSaveAsButtonPressed()));
+    connect(ui->launchPushButton, SIGNAL(clicked(bool)), this, SLOT(onSimpleRunButtonPressed()));
+    connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(onRunButtonPressed()));
+    connect(ui->HelpPushButton, SIGNAL(clicked(bool)), this, SLOT(onHelpButtonPressed()));
+    connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(onUpdateDirectoryButtonPressed()));
 
-    // file
-    connect(ui->presetFileTree, SIGNAL(pressed(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
-    connect(ui->customFileTree, SIGNAL(pressed(QModelIndex)), this, SLOT(_onSelectFile(QModelIndex)));
+    // profile selections
+    connect(ui->profiles, SIGNAL(saveFilePressed(QString)), this, SLOT(onProfilesSaveFilePressed(QString)));
+    connect(ui->profiles, SIGNAL(saveAsButtonPressed(QString)), this, SLOT(onProfilesSaveAsButtonPressed(QString))); // the signal from the profiles signals our signal which will go to the inventory
 
     // inventory
     connect(this, SIGNAL(profilePathUpdated(QString)), ui->inventory, SLOT(_onSelectFile(QString)));
@@ -95,26 +93,7 @@ void MainWindow::setSignals() {
 
 // set widgets
 void MainWindow::createFileTrees() {
-    // initialize file system
-    QFileSystemModel* presetProfileModel = new QFileSystemModel(this);
-    presetProfileModel->setRootPath(QDir::rootPath()); // default path
-
-    // update to correct saves file if it exists
-    if (QDir(savesDirectory).exists()) presetProfileModel->setRootPath(savesDirectory);
-    else qDebug() << "mainwindow.cpp: ERROR, path to saves folder incorrect, setting to root";
-
-    // set preset and column tabs
-    for (auto i : {ui->presetFileTree, ui->customFileTree}) {
-        i->setModel(presetProfileModel);
-        i->hideColumn(1);
-        i->hideColumn(2);
-        i->hideColumn(3);
-        i->setHeaderHidden(true);
-        if (i == ui->presetFileTree)
-            i->setRootIndex(presetProfileModel->index(savesDirectory + "\\Presets"));
-        else
-            i->setRootIndex(presetProfileModel->index(savesDirectory + "\\Custom"));
-    }
+    ui->profiles->setSavesDirectory(savesDirectory);
 }
 
 

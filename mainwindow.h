@@ -54,13 +54,14 @@ signals:
 
 private slots:
     // buttons
-    void _onSimpleRunButton();
-    void _onRunButton();
-    void _onHelpButton();
-    void _onUpdateDirectoryButton();
-    void _onSelectFile(QModelIndex);
-    void _onSaveAsNewFile();
-    void _onSaveAsButtonPressed();
+    void onSimpleRunButtonPressed();
+    void onRunButtonPressed();
+    void onHelpButtonPressed();
+    void onUpdateDirectoryButtonPressed();
+
+    // signal to signal handlers
+    void onProfilesSaveFilePressed(QString);
+    void onProfilesSaveAsButtonPressed(QString);
 };
 
 #endif // MAINWINDOW_H

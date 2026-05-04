@@ -171,7 +171,7 @@ void QWeaponTableSlot::enableChanged(bool enable) {
 
 void QWeaponTableSlot::xpChanged(int newXp) {
     if (newXp < 0) {
-        qDebug() << "qweapontableslot.cpp: ERROR incoming XP too low";
+        qDebug() << "qweapontableslot.cpp: ERROR incoming XP too low: " << newXp;
         return;
     }
 

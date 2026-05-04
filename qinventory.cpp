@@ -43,6 +43,12 @@ void QInventory::unlockSignals() {
 
 // updating health bar
 void QInventory::healthChanged(int newHp) {
+    // check bounds
+    if (newHp < 0) {
+        qDebug() << "qinventory.cpp: ERROR incoming new health too low";
+        return;
+    }
+
     lockSignals(); // lock
 
     // set values
@@ -57,6 +63,11 @@ void QInventory::healthChanged(int newHp) {
 }
 
 void QInventory::maxHealthChanged(int newMaxHp) {
+    // check bounds
+    if (newMaxHp < 0) {
+        qDebug() << "qinventory.cpp: ERROR incoming new max health too low";
+        return;
+    }
     lockSignals(); // lock
 
     maxHp = newMaxHp;
