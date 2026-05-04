@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // set widgets
     createFileTrees();
-    createProfilesAnimation();
+    // createProfilesAnimation();
 
     // update state depending on valid path
     widgetLock(checkGameDirPath(gameDirectory));
@@ -82,7 +82,7 @@ void MainWindow::setSignals() {
     connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(onRunButtonPressed()));
     connect(ui->HelpPushButton, SIGNAL(clicked(bool)), this, SLOT(onHelpButtonPressed()));
     connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(onUpdateDirectoryButtonPressed()));
-    connect(ui->profilesCollapseButton, SIGNAL(clicked(bool)), this, SLOT(onProfilesCollapsed()));
+    // connect(ui->profilesCollapseButton, SIGNAL(clicked(bool)), this, SLOT(onProfilesCollapsed()));
 
     // profile selections
     connect(ui->profiles, SIGNAL(saveFilePressed(QString)), this, SLOT(onProfilesSaveFilePressed(QString)));
@@ -103,35 +103,35 @@ void MainWindow::createFileTrees() {
 Code modified from: https://github.com/MichaelVoelkel/qt-collapsible-section/tree/master
 Specifically for expanding and collapsing a widget
 */
-void MainWindow::createProfilesAnimation() {
-    // set bool
-    profilesCollapsed = false;
+// void MainWindow::createProfilesAnimation() {
+//     // set bool
+//     profilesCollapsed = false;
 
-    // add animations
-    profilesAnimation = new QParallelAnimationGroup(this);
-    profilesAnimation->addAnimation(new QPropertyAnimation(ui->profilesGrBox, "maximumWidth"));
-    profilesAnimation->addAnimation(new QPropertyAnimation(ui->profilesGrBox, "minimumWidth"));
-    profilesAnimation->addAnimation(new QPropertyAnimation(ui->profiles->getProfilesGroup(), "maximumWidth"));
+//     // add animations
+//     profilesAnimation = new QParallelAnimationGroup(this);
+//     profilesAnimation->addAnimation(new QPropertyAnimation(ui->profilesGrBox, "maximumWidth"));
+//     profilesAnimation->addAnimation(new QPropertyAnimation(ui->profilesGrBox, "minimumWidth"));
+//     profilesAnimation->addAnimation(new QPropertyAnimation(ui->profiles->getProfilesGroup(), "maximumWidth"));
 
-    // constants
-    int animationDuration = 500;
-    int collapsedWidth = 50;
-    int contentWidth = ui->profilesGrBox->width();
+//     // constants
+//     int animationDuration = 500;
+//     int collapsedWidth = 50;
+//     int contentWidth = ui->profilesGrBox->width();
 
-    qDebug() << "check widths: " << contentWidth << ", real: " << ui->profiles->width();
+//     qDebug() << "check widths: " << contentWidth << ", real: " << ui->profiles->width();
 
-    // iterate through animations and set values
-    for (int i = 0; i < profilesAnimation->animationCount() - 1; ++i)
-    {
-        QPropertyAnimation* SectionAnimation = static_cast<QPropertyAnimation *>(profilesAnimation->animationAt(i));
-        SectionAnimation->setDuration(animationDuration);
-        SectionAnimation->setStartValue(collapsedWidth);
-        SectionAnimation->setEndValue(contentWidth);
-    }
+//     // iterate through animations and set values
+//     for (int i = 0; i < profilesAnimation->animationCount() - 1; ++i)
+//     {
+//         QPropertyAnimation* SectionAnimation = static_cast<QPropertyAnimation *>(profilesAnimation->animationAt(i));
+//         SectionAnimation->setDuration(animationDuration);
+//         SectionAnimation->setStartValue(collapsedWidth);
+//         SectionAnimation->setEndValue(contentWidth);
+//     }
 
-    // set the values for the content animation
-    QPropertyAnimation* contentAnimation = static_cast<QPropertyAnimation *>(profilesAnimation->animationAt(profilesAnimation->animationCount() - 1));
-    contentAnimation->setDuration(animationDuration);
-    contentAnimation->setStartValue(0);
-    contentAnimation->setEndValue(contentWidth);
-}
+//     // set the values for the content animation
+//     QPropertyAnimation* contentAnimation = static_cast<QPropertyAnimation *>(profilesAnimation->animationAt(profilesAnimation->animationCount() - 1));
+//     contentAnimation->setDuration(animationDuration);
+//     contentAnimation->setStartValue(0);
+//     contentAnimation->setEndValue(contentWidth);
+// }

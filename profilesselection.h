@@ -2,6 +2,7 @@
 #define PROFILESSELECTION_H
 
 #include <QWidget>
+#include <QParallelAnimationGroup>
 
 namespace Ui {
 class ProfilesSelection;
@@ -21,13 +22,13 @@ public:
     // set
     void setSavesDirectory(QString);
 
-    // get
-    QWidget* getProfilesGroup();
-
 private:
     Ui::ProfilesSelection *ui;
     QString savesDirectory = "";
-    bool collapsed;
+
+    // animation widgets
+    QParallelAnimationGroup* profilesAnimation;
+    bool profilesCollapsed;
 
 signals:
     // void saveAsButtonPressed();
@@ -38,6 +39,8 @@ signals:
 private slots:
     void onPressedFile(QModelIndex);
     void onSaveAsButtonPressed();
+    void onCollapseButtonPressed();
+    void animationFinished();
 };
 
 #endif // PROFILESSELECTION_H

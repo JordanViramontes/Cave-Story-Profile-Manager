@@ -40,14 +40,14 @@ private:
     // constructors
     void setSignals();
     void createFileTrees();
-    void createProfilesAnimation();
+    // void createProfilesAnimation();
 
     // helper functions
     bool checkGameDirPath(QString path);
 
     // animation widgets
-    QParallelAnimationGroup* profilesAnimation;
-    bool profilesCollapsed;
+    // QParallelAnimationGroup* profilesAnimation;
+    // bool profilesCollapsed;
 
 signals:
     void profilePathUpdated(QString profilePath);
@@ -66,7 +66,7 @@ private slots:
     void onProfilesSaveAsButtonPressed(QString);
 
     // from widgets
-    void onProfilesCollapsed();
+    // void onProfilesCollapsed();
 };
 
 #endif // MAINWINDOW_H
