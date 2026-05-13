@@ -31,9 +31,10 @@ private:
     void saveSettings();
 
     // enable / disable states
-    void widgetLock(bool);
-    void disableInventory(bool);
+    void setUIfromEnabled(bool state);
     bool isEnabled = false;
+    bool initialStartup = true;
+    QVector<QWidget*> importantWidgets;
 
     // helper functions
     bool checkGameDirPath(QString path);
@@ -46,8 +47,7 @@ signals:
 private slots:
     // buttons
     void onSimpleRunButtonPressed();
-    void onRunButtonPressed();
-    // void onHelpButtonPressed();
+    void onApplyAndRunButtonPressed();
     void onUpdateDirectoryButtonPressed();
 
     // signal to signal handlers

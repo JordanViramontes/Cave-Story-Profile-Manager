@@ -75,7 +75,6 @@ public:
         return {(int)(hp), (int)(mHp)}; // return as a vector
     }
 
-
     // set
     void setWeapons(QVector<WeaponDataSlot> weapons);
     void setCurrentWeapon(int i) { currWeapon = static_cast<char>(i); }

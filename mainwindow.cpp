@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "globals.h"
 #include "./ui_mainwindow.h"
-#include "dialog.h"
 #include "widgetfunctions.h"
 
 #include <QFileSystemModel>
@@ -34,18 +33,21 @@ MainWindow::MainWindow(QWidget *parent)
 
         QString tryDirectory = settings.value("gameDirectory").toString();
 
-        // double check file directory
-        if (!checkGameDirPath(tryDirectory)) return;
+        // test
+        tryDirectory = "";
 
-        // if our dir is good!
-        qDebug() << "mainwindow.cpp: Settings loaded, gameDirectory =" << gameDirectory;
+        // double check file directory
+        isEnabled = checkGameDirPath(tryDirectory);
+
+        if (isEnabled) { qDebug() << "mainwindow.cpp: Settings loaded, gameDirectory =" << gameDirectory; }
+        else           { qDebug() << "mainwindow.cpp: Settings NOT loaded"; }
     }
 
     // Connections
     {
         // buttons
         connect(ui->launchPushButton, SIGNAL(clicked(bool)), this, SLOT(onSimpleRunButtonPressed()));
-        connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(onRunButtonPressed()));
+        connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(onApplyAndRunButtonPressed()));
         connect(ui->HelpPushButton, &QPushButton::clicked, this, [this]() { runDialogBox(this, "helpScreen"); });
         connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(onUpdateDirectoryButtonPressed()));
 
@@ -60,12 +62,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     // set widgets
     ui->profiles->setSavesDirectory(savesDirectory);
+    importantWidgets = {
+        ui->runPushButton,
+        ui->launchPushButton,
+        ui->inventoryGrBox,
+        ui->profiles,
+        ui->inventory,
+    };
 
     // update state depending on valid path
-    widgetLock(checkGameDirPath(gameDirectory));
+    setUIfromEnabled(isEnabled);
 
     // load the profile at the game path
-    if (checkGameDirPath(gameDirectory)) {
+    if (isEnabled) {
         // get the current save file
         QString profilePath = gameDirectory;
         profilePath.chop(12);
@@ -79,9 +88,10 @@ MainWindow::MainWindow(QWidget *parent)
         else {
             emit profilePathUpdated(profilePath);
         }
-
-        emit profilePathUpdated(profilePath);
     }
+
+    // update that we're done with this!
+    initialStartup = false;
 }
 
 MainWindow::~MainWindow()
@@ -106,7 +116,7 @@ bool MainWindow::checkGameDirPath(QString path) {
     QFileInfo fileInfo(path);
     if (fileInfo.fileName() != "Doukutsu.exe") {
         qDebug() << "mainwindowmethods.cpp: The selected file is not Doukutsu.exe. It is:" << fileInfo.fileName();
-        runDialogBox(this, "directoryErrorBox");
+        if (!initialStartup) runDialogBox(this, "directoryErrorBox");
 
         return false;
     }
@@ -115,38 +125,21 @@ bool MainWindow::checkGameDirPath(QString path) {
     // qDebug() << "mainwindowmethods.cpp: The selected file is a valid Doukutsu.exe.";
     gameDirectory = path;
 
-
-
-
     return true;
 }
 
+void MainWindow::setUIfromEnabled(bool state) {
+    // update states
+    isEnabled = state;
+    widgetLock(isEnabled, importantWidgets);
 
-// if enable is true, enable widgets, if false, disable widgets
-void MainWindow::widgetLock(bool enable) {
-    // file systems
-    ui->profiles->widgetLock(enable);
-
-    // enables
-    ui->runPushButton->setEnabled(enable);
-    // ui->profilesGrBox->setEnabled(enable);
-    ui->inventoryGrBox->setEnabled(enable);
-
-    // ui elements
-    if (enable) {
+    // upate ui
+    if (isEnabled) {
         ui->exeDirLabel->setText("exe directory: " + gameDirectory);
     }
     else {
         ui->exeDirLabel->setText("No Doukutsu.exe path set!");
     }
-}
-
-void MainWindow::disableInventory(bool enable) {
-    // turn on / off inventory and apply button
-    isEnabled = enable;
-    ui->inventory->setEnabled(enable);
-    ui->runPushButton->setEnabled(enable);
-    ui->beginPromptLabel->setVisible(!enable);
 }
 
 //====================================
@@ -169,7 +162,7 @@ void MainWindow::onSimpleRunButtonPressed() {
 }
 
 // when you click on the apply and run button
-void MainWindow::onRunButtonPressed() {
+void MainWindow::onApplyAndRunButtonPressed() {
     // get save file and tell the inventory to push new data
     QString profilePath = gameDirectory;
     profilePath.chop(12);
@@ -200,7 +193,7 @@ void MainWindow::onUpdateDirectoryButtonPressed() {
     }
 
     // update game state
-    widgetLock(true);
+    setUIfromEnabled(true);
 
     // save game
     saveSettings();
