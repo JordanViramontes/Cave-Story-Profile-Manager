@@ -40,6 +40,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         qinventory.h qinventory.cpp qinventory.ui
         app_icon.rc
         profilesselection.h profilesselection.cpp profilesselection.ui
+        widgetfunctions.cpp
+        widgetfunctions.h
 
 
 

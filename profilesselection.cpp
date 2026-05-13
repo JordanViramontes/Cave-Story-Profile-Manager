@@ -1,6 +1,7 @@
 #include "profilesselection.h"
 #include "ui_profilesselection.h"
 #include "dialog.h"
+#include "widgetfunctions.h"
 
 #include <QFileSystemModel>
 #include <QPropertyAnimation>
@@ -134,9 +135,7 @@ void ProfilesSelection::onSaveAsButtonPressed() {
 
     // check that file already exists
     if (QFile::exists(newFilePath)) {
-        Dialog error_box(this);
-        error_box.setStackedWidgetPage("fileAlreadyExistsBox");
-        int result = error_box.exec();
+        int result = runDialogBox(this, "fileAlreadyExistsBox");
 
         // in Dialog.cpp, clicking overwrite outputs rejected, so if we don't click, overwrite
         if (result != QDialog::Rejected) {

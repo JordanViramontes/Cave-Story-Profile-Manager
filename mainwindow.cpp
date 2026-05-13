@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "./ui_mainwindow.h"
 #include "dialog.h"
+#include "widgetfunctions.h"
 
 #include <QFileSystemModel>
 #include <QSystemTrayIcon>
@@ -45,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
         // buttons
         connect(ui->launchPushButton, SIGNAL(clicked(bool)), this, SLOT(onSimpleRunButtonPressed()));
         connect(ui->runPushButton, SIGNAL(clicked(bool)), this, SLOT(onRunButtonPressed()));
-        connect(ui->HelpPushButton, SIGNAL(clicked(bool)), this, SLOT(onHelpButtonPressed()));
+        connect(ui->HelpPushButton, &QPushButton::clicked, this, [this]() { runDialogBox(this, "helpScreen"); });
         connect(ui->updateDirPushButton, SIGNAL(clicked(bool)), this, SLOT(onUpdateDirectoryButtonPressed()));
 
         // profile selections
@@ -105,9 +106,7 @@ bool MainWindow::checkGameDirPath(QString path) {
     QFileInfo fileInfo(path);
     if (fileInfo.fileName() != "Doukutsu.exe") {
         qDebug() << "mainwindowmethods.cpp: The selected file is not Doukutsu.exe. It is:" << fileInfo.fileName();
-        Dialog error_box(this);
-        error_box.setStackedWidgetPage("directoryErrorBox");
-        error_box.exec();
+        runDialogBox(this, "directoryErrorBox");
 
         return false;
     }
@@ -171,9 +170,6 @@ void MainWindow::onSimpleRunButtonPressed() {
 
 // when you click on the apply and run button
 void MainWindow::onRunButtonPressed() {
-    // request the inventory to update Profile
-    // emit applyButtonPressed(gameDirectory);
-
     // get save file and tell the inventory to push new data
     QString profilePath = gameDirectory;
     profilePath.chop(12);
@@ -183,13 +179,6 @@ void MainWindow::onRunButtonPressed() {
 
     // launch game!
     onSimpleRunButtonPressed();
-}
-
-// when you click the help button
-void MainWindow::onHelpButtonPressed() {
-    Dialog error_box(this);
-    error_box.setStackedWidgetPage("helpScreen");
-    error_box.exec();
 }
 
 // when you click the update directory button

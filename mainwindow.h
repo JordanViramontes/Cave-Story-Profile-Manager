@@ -47,7 +47,7 @@ private slots:
     // buttons
     void onSimpleRunButtonPressed();
     void onRunButtonPressed();
-    void onHelpButtonPressed();
+    // void onHelpButtonPressed();
     void onUpdateDirectoryButtonPressed();
 
     // signal to signal handlers
