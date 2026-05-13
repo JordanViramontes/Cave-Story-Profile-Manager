@@ -1,6 +1,7 @@
 #include "qinventory.h"
 #include "ui_qinventory.h"
 #include "widgetfunctions.h"
+#include <QFile>
 
 QInventory::QInventory(QWidget *parent)
     : QWidget(parent)
@@ -86,69 +87,206 @@ void QInventory::maxHealthChanged(int newMaxHp) {
 
 // communicating with main window
 void QInventory::onSelectFile(QString filePath) {
-    if (!parser.parseProfile(filePath)) {
-        qDebug() << "mainwindowslots.cpp: Parsing DID NOT complete";
+    // check that the file is valid
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "qinventory.cpp: ERROR, parsing file isnt open!";
         return;
     }
-    // qDebug() << "mainwindowslots.cpp: Parsing completed with no error";
-
-    // parser.printSaveData();
-    // parser.printBuffer();
-
-    // get the enabled weapons!
-    QVector<int> enabledWeapons;
-    for (auto i : parser.getWeapons()) {
-        if (i.type == 0x00) continue;
-        // add to known weapons
-        enabledWeapons.push_back((int)i.type);
+    if (file.size() != 1540) {
+        qDebug() << "qinventory.cpp: ERROR, parsing file size isn't correct for profile!";
+        return;
     }
 
-    // get the health!
-    QVector<int> healthStuff = parser.getHealthData();
-    // qDebug() << "qinventory.cpp: new hp and maxHp: " << healthStuff[0] << ", " << healthStuff[1];
-    maxHealthChanged(healthStuff[1]);
-    healthChanged(healthStuff[0]);
+    // set variables for later
+    QVector<int> enabledWeapons;
 
-    // update the weapons table via parser information
-    ui->weaponsTable->setWeaponsFromParser(parser.getWeapons(), enabledWeapons);
+    // reset weapons table
+    ui->weaponsTable->resetAllWeapons();
+
+    // parse profile
+    qDebug() << "qinventory.cpp: parsing " << filePath;
+
+    // set buffer and parse!
+    buffer = file.readAll();
+    file.close();
+
+    // parse easy bytes
+    map         = buffer[0x008];
+    song        = buffer[0x00C];
+    horizPos[0] = buffer[0x010];
+    horizPos[1] = buffer[0x011];
+    horizPos[2] = buffer[0x012];
+    horizPos[3] = buffer[0x013];
+    vertPos[0]  = buffer[0x014];
+    vertPos[1]  = buffer[0x015];
+    vertPos[2]  = buffer[0x016];
+    vertPos[3]  = buffer[0x017];
+    facingDir   = buffer[0x018];
+    whimsicalSt = buffer[0x01E];
+    currWeapon  = buffer[0x024];
+    equipIt[0]  = buffer[0x02C];
+    equipIt[1]  = buffer[0x02D];
+    time[0]     = buffer[0x034];
+    time[1]     = buffer[0x035];
+    time[2]     = buffer[0x036];
+
+    // convert health arrays into a short, set health
+    char maxHp[2] =  {buffer[0x01C], buffer[0x01D]}; // 01C-01D
+    char currHp[2] = {buffer[0x020], buffer[0x021]}; // 020-021
+    short hp = 0, mHp = 0;
+    std::memcpy(&hp, currHp, sizeof(short));
+    std::memcpy(&mHp, maxHp, sizeof(short));
+    maxHealthChanged((int)mHp);
+    healthChanged((int)hp);
+
+    // parse weapons
+    unsigned int weaponIt = 0x038;
+    for (unsigned int i = 0; i < 8; i++) {
+        char type = buffer[weaponIt];
+        char level = buffer[weaponIt+0x04];
+        char energy = buffer[weaponIt+0x08];
+        char maxAmmo = buffer[weaponIt+0x0C];
+        char currentAmmo = buffer[weaponIt+0x10];
+
+        // apply to weapon
+        if (type == 0x00) continue;
+
+        // update our widgets with weapon data
+        enabledWeapons.push_back((int)type);
+        ui->weaponsTable->setWeaponFromParser(type, true, level, energy, maxAmmo, currentAmmo);
+
+        // update iterator
+        weaponIt += 0x14;
+    }
 
     // update weapons order table
     ui->weaponOrderTable->setAllSlots(enabledWeapons);
 
-    // update selected weapon
+    // update selected weapon combo box
     onUpdateSelectWeaponChoices(ui->weaponsTable->getValidEnabledWidgets());
-    ui->selectedWeaponCombo->setCurrentIndex(parser.getCurrentWeapon());
+    ui->selectedWeaponCombo->setCurrentIndex((int)currWeapon);
+
+    // parse items
+    // unsigned int itemIt = 0x0D8;
+    // for (unsigned int i = 0; i < items.size(); i++) {
+    //     items[i] = buffer[itemIt];
+    //     itemIt += 0x04;
+    // }
+
+    // parse teleporter
+    // unsigned int teleportIt = 0x158;
+    // for (unsigned int i = 0; i < teleporters.size(); i++) {
+    //     TeleportDataSlot t;
+    //     t.menu = buffer[teleportIt];
+    //     t.location[0] = buffer[teleportIt + 0x05];
+    //     t.location[1] = buffer[teleportIt + 0x06];
+
+    //     teleporters[i] = t;
+    //     teleportIt += 0x08;
+    // }
 }
 
 void QInventory::PushInventoryToProfile(QString profilePath) {
-    // get weapon data!
-    QVector<QWeaponTableSlot*> enabledWeapons = ui->weaponsTable->getValidEnabledWeaponPointers();
-    QVector<WeaponDataSlot> weaponDataSlots;
-    for (int i = 0; i < enabledWeapons.size(); i++) {
-        // iterate through the enabled weapons pointer and fill out a WeaponDataSlot
-        WeaponDataSlot weaponSlot;
-        weaponSlot.type = (char)enabledWeapons[i]->getWeaponType();
-        qDebug() << "check type: " << enabledWeapons[i]->getWeaponType();
-        weaponSlot.level = (char)enabledWeapons[i]->getWeaponLevel() + 1;
-        weaponSlot.energy = (char)enabledWeapons[i]->getWeaponEnergy();
-        weaponSlot.maxAmmo = (char)enabledWeapons[i]->getWeaponMaxAmmo();
-        weaponSlot.currentAmmo = (char)enabledWeapons[i]->getWeaponAmmo();
+    // new
+    qDebug() << "profileloader.cpp: writing to file " << profilePath;
 
-        weaponDataSlots.push_back(weaponSlot);;
-    }
-
-    // pass health data to parser as a short, parser will convert to char
-    parser.setHealthData(static_cast<short>(hp), static_cast<short>(maxHp));
-
-
-    int check = ui->selectedWeaponCombo->currentIndex();
-    char weaponCurrentlySelected = (char)ui->selectedWeaponCombo->currentIndex();
-    qDebug() << "check weaponCurrentlySelected count: " << check;
-
-    if (!parser.writeToFile(profilePath, weaponDataSlots, weaponCurrentlySelected)) {
-        qDebug() << "mainwindowslots.cpp: Writing to file DID NOT complete";
+    // check that the file is valid
+    QFile file(profilePath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        qDebug() << "qinventory.cpp: ERROR, file isnt open!";
         return;
     }
+
+    // convert health back to char array
+    char charHp[2] = {0};
+    char charMaxHp[2] = {0};
+    std::memcpy(charHp, &hp, sizeof(short));
+    std::memcpy(charMaxHp, &maxHp, sizeof(short));
+
+    // set easy bytes
+    buffer[0x008] = map;
+    buffer[0x00C] = song;
+    buffer[0x010] = horizPos[0];
+    buffer[0x011] = horizPos[1];
+    buffer[0x012] = horizPos[2];
+    buffer[0x013] = horizPos[3];
+    buffer[0x014] = vertPos[0];
+    buffer[0x015] = vertPos[1];
+    buffer[0x016] = vertPos[2];
+    buffer[0x017] = vertPos[3];
+    buffer[0x018] = facingDir;
+    buffer[0x01C] = charMaxHp[0];
+    buffer[0x01D] = charMaxHp[1];
+    buffer[0x01E] = whimsicalSt;
+    buffer[0x020] = charHp[0];
+    buffer[0x021] = charHp[1];
+    buffer[0x024] = (char)ui->selectedWeaponCombo->currentIndex(); // current weapon
+    buffer[0x02C] = equipIt[0];
+    buffer[0x02D] = equipIt[1];
+    buffer[0x034] = time[0];
+    buffer[0x035] = time[1];
+    buffer[0x036] = time[2];
+
+    // get our weapon table data
+    QVector<QWeaponTableSlot*> enabledWeapons = ui->weaponsTable->getValidEnabledWeaponPointers();
+
+    // iterate through all known weapons AND the buffer weapon iterator
+    for (
+        unsigned int weaponsIt = 0, parserIt = 0x038;
+        parserIt < 0x0D4;
+        weaponsIt++, parserIt += 0x14
+        )
+    {
+        // set our initial data
+        char newType = 0x00;
+        char newLevel = 0x00;
+        char newEnergy = 0x00;
+        char newMaxAmmo = 0x00;
+        char newAmmo = 0x00;
+
+        // if we still have valid weapons to iterate throuhg, update data
+        if (weaponsIt < enabledWeapons.size()) {
+            newType = (char)enabledWeapons[weaponsIt]->getWeaponType();
+            newLevel = (char)enabledWeapons[weaponsIt]->getWeaponLevel() + 1;
+            newEnergy = (char)enabledWeapons[weaponsIt]->getWeaponEnergy();
+            newMaxAmmo = (char)enabledWeapons[weaponsIt]->getWeaponMaxAmmo();
+            newAmmo = (char)enabledWeapons[weaponsIt]->getWeaponAmmo();
+
+            // qDebug() << "check type: " << enabledWeapons[weaponsIt]->getWeaponType();
+        }
+
+        // update buffer
+        buffer[parserIt]        = newType;
+        buffer[parserIt + 0x04] = newLevel;
+        buffer[parserIt + 0x08] = newEnergy;
+        buffer[parserIt + 0x0C] = newMaxAmmo;
+        buffer[parserIt + 0x10] = newAmmo;
+    }
+
+    // set items
+    // unsigned int itemIt = 0x0D8;
+    // for (unsigned int i = 0; i < items.size(); i++) {
+    //     buffer[itemIt] = items[i];
+    //     itemIt += 0x04;
+    // }
+
+    // set teleporter
+    // unsigned int teleportIt = 0x158;
+    // for (unsigned int i = 0; i < teleporters.size(); i++) {
+    //     TeleportDataSlot t = teleporters[i];
+    //     buffer[teleportIt]        = t.menu;
+    //     buffer[teleportIt + 0x05] = t.location[0];
+    //     buffer[teleportIt + 0x06] = t.location[1];
+
+    //     teleportIt += 0x08;
+    // }
+
+    // write buffer to file
+    file.resize(0);
+    file.write(buffer);
+
+    file.close();
 }
 
 // communicating with weapon order table
@@ -191,3 +329,5 @@ void QInventory::onUpdateSelectWeaponChoices(QVector<int> weapons) {
     // change the color of the selected thing!
     ui->weaponOrderTable->setHighlightedSlot(combo->currentIndex());
 }
+
+

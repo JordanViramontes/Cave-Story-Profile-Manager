@@ -147,6 +147,19 @@ void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> pars
     unlockWidgetSignals();
 }
 
+void QWeaponTableWidget::setWeaponFromParser(int type, bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
+    QWeaponTableSlot* currentWeapon = weaponsTableDictionary[type];
+    currentWeapon->setData(iniEnabled, iniLvl, iniEnergy, iniMaxAmmo, iniCurrentAmmo);
+}
+
+// reset the whole weapons table
+void QWeaponTableWidget::resetAllWeapons() {
+    for (auto i : weaponsTableDictionary.keys()) {
+        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
+        currentWeapon->resetData();
+    }
+}
+
 // get
 QVector<int> QWeaponTableWidget::getValidEnabledWidgets() {
     QVector<int> enabledWeaponsVector;

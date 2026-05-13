@@ -31,7 +31,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
         dialog.h dialog.cpp dialog.ui
 
-        profileloader.h profileloader.cpp
+
         qweapontableslot.h qweapontableslot.cpp qweapontableslot.ui
         qweapontablewidget.h qweapontablewidget.cpp
         qweaponordertable.h qweaponordertable.cpp qweaponordertable.ui

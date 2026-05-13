@@ -8,7 +8,6 @@
 #include <qapplication.h>
 
 #include "qweapontableslot.h"
-#include "profileloader.h"
 
 
 class QWeaponTableWidget : public QTableWidget
@@ -24,6 +23,10 @@ public:
     QString getWeaponIcon();
 
     // set
+    void resetAllWeapons();
+    void setWeaponFromParser(int type, bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo);
+
+
     void setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons, QVector<int> enabledWeapons);
     void lockWidgetSignals() {
         for (int i = 0; i < rowCount(); i++) {
@@ -57,18 +60,6 @@ public:
 private:
     // variables
     QHash<int, QWeaponTableSlot*> weaponsTableDictionary;
-    QHash<int, bool> weaponsEnabledDictionary = {
-        {0x01, false},
-        {0x02, false},
-        {0x03, false},
-        {0x04, false},
-        {0x05, false},
-        {0x07, false},
-        {0x09, false},
-        {0x0A, false},
-        {0x0C, false},
-        {0x0D, false},
-    };
     QVector<QWeaponTableSlot*> enabledWeapons;
     int totalWeapons = 10;
     int enabledWeaponsCount = 0;
@@ -112,12 +103,6 @@ protected:
     // events
     bool eventFilter(QObject *obj, QEvent *event) override {
         QTableWidget *table = qobject_cast<QTableWidget*>(obj->parent());
-
-        // disable double clicking
-        // if (event->type() == QEvent::MouseButtonDblClick) {
-        //     event->ignore();
-        //     return true;
-        // }
 
         // when releasing
         if (event->type() == QEvent::MouseButtonRelease) {
