@@ -26,21 +26,14 @@ private:
     Ui::MainWindow *ui;
     QString gameDirectory;
     QString savesDirectory;
-    // ProfileLoader parser;
 
     // save/load
     void saveSettings();
-    void loadSettings();
 
     // enable / disable states
     void widgetLock(bool);
     void disableInventory(bool);
     bool isEnabled = false;
-
-    // constructors
-    void setSignals();
-    void createFileTrees();
-    // void createProfilesAnimation();
 
     // helper functions
     bool checkGameDirPath(QString path);
