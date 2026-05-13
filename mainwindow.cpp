@@ -19,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    savesDirectory = QCoreApplication::applicationDirPath() + "/Saves";
     qDebug() << "mainwindow.cpp: savesDirectory: " << savesDirectory;
 
     // Load Settings
@@ -34,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
         QString tryDirectory = settings.value("gameDirectory").toString();
 
         // test
-        tryDirectory = "";
+        // tryDirectory = "";
 
         // double check file directory
         isEnabled = checkGameDirPath(tryDirectory);
@@ -61,7 +60,6 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     // set widgets
-    ui->profiles->setSavesDirectory(savesDirectory);
     importantWidgets = {
         ui->runPushButton,
         ui->launchPushButton,
