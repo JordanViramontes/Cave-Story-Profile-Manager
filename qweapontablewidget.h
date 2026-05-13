@@ -19,7 +19,6 @@ public:
     // get
     QVector<int> getValidEnabledWidgets();
     QVector<QWeaponTableSlot*> getValidEnabledWeaponPointers();
-    QString getWeaponIcon();
 
     // set
     void resetAllWeapons();
@@ -27,22 +26,8 @@ public:
     void reorderTable(QVector<int> weapons);
 
     // debug
-    void printWeaponsTableDictionary() {
-        qDebug() << "qweapontablewidget.h: print all weapon table dicitonary entries: ";
-        for (auto i : weaponsTableDictionary.keys()) {
-            QWeaponTableSlot* weapon = weaponsTableDictionary[i];
-            qDebug() << i << ":" << weapon->getWeaponType();
-        }
-    }
-    void printWeaponsTable() {
-        qDebug() << "qweapontablewidget.h: print all weapon table row entries: ";
-        for (int i = 0; i < rowCount(); i++) {
-            if (cellWidget(i, 0) == nullptr) continue;
-
-            QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i,0));
-            qDebug() << "row: " << i << " has weapon: " << weapon->getWeaponType();
-        }
-    }
+    void printWeaponsTableDictionary();
+    void printWeaponsTable();
 
 private:
     // variables
@@ -58,9 +43,7 @@ private:
     int draggingFromRow = -1;
 
     // methods
-    int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);
     void paintEnabledRows();
-    int getGapRow(const QPoint &pos, int tol);
 
 signals:
     void weaponTableChanged(QVector<int> enabledWeapons);
@@ -69,6 +52,7 @@ public slots:
     void paintTable(QWeaponTableSlot* weapon, int enabled);
 
 protected:
+    // all of these are for custom drag and drop events
     void startDrag(Qt::DropActions supportedActions) override;
     void dragMoveEvent(QDragMoveEvent* event) override;
     void dragLeaveEvent(QDragLeaveEvent * event) override;
@@ -76,30 +60,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
-};
-
-// event filters
-class QTableWidgetEventFilters : public QObject
-{
-public:
-    explicit QTableWidgetEventFilters(QObject *parent = nullptr) : QObject(parent) {}
-
-protected:
-    // events
-    bool eventFilter(QObject *obj, QEvent *event) override {
-        QTableWidget *table = qobject_cast<QTableWidget*>(obj->parent());
-
-        // when releasing
-        if (event->type() == QEvent::MouseButtonRelease) {
-            // Clear selection and then remove the focus
-            table->clearSelection();
-            table->setCurrentIndex(QModelIndex());
-            return true;
-        }
-
-        // call the OG function to do the rest of the events
-        return QObject::eventFilter(obj, event);
-    }
+    void mouseReleaseEvent(QMouseEvent *event) override;
 };
 
 #endif // QWEAPONTABLEWIDGET_H

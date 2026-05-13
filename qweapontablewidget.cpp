@@ -1,5 +1,4 @@
 #include "qweapontablewidget.h"
-#include "widgetfunctions.h"
 #include <qheaderview.h>
 #include <qdebug.h>
 
@@ -9,10 +8,6 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
 
     setRowCount(totalWeapons);
     setColumnCount(1);
-
-    // set event filters
-    QTableWidgetEventFilters* tableWidgetFilters = new QTableWidgetEventFilters(this);
-    viewport()->installEventFilter(tableWidgetFilters);
 
     // set header settings
     QHeaderView* horizHeader = horizontalHeader();
@@ -70,69 +65,10 @@ QWeaponTableWidget::QWeaponTableWidget(QWidget *parent)
     enabledWeaponsCount = 0;
 }
 
-// given a vector of weapons in the order we want in the table, reorder the table!
-void QWeaponTableWidget::reorderTable(QVector<int> weapons) {
-    // insert weapons.size amount of new rows at the top (will be filled later)
-    int newRowAmount = weapons.size();
-    for (int i = 0; i < newRowAmount; i++) { insertRow(i); }
+//================================
+// GET
+//================================
 
-    // move the rows from where they were to where they need to be
-    int rowIt = 0;
-    for (auto i : weapons) {
-        // qDebug() << "mainwindowmethods.cpp: reordering: " << i;
-
-        // get row index of the widget
-        QWeaponTableSlot* weapon = weaponsTableDictionary[i];
-        int index = findTableWidgetIndex(weapon);
-
-        if (index < 0) {
-            qDebug() << "mainwindowmethods.cpp: ERROR, INDEX OF OLD ROW DOESNT EXIST!!";
-            return;
-        }
-
-        // set the cell and then remove the old row
-        setCellWidget(rowIt, 0, weapon);
-        removeRow(index);
-
-        // update ui stuff
-        setRowHeight(rowIt, weapon->sizeHint().height());
-        weapon->clearFocus();
-
-        rowIt++;
-    }
-
-    viewport()->update();
-    updateGeometry();
-}
-
-// given a weapon table slot, find the index of the table where its living
-int QWeaponTableWidget::findTableWidgetIndex(const QWeaponTableSlot* weaponSlot) {
-    for (int i = 0; i < rowCount(); i++) {
-        if (cellWidget(i, 0) == weaponSlot) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-void QWeaponTableWidget::setWeaponFromParser(int type, bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
-    QWeaponTableSlot* currentWeapon = weaponsTableDictionary[type];
-    currentWeapon->setData(iniEnabled, iniLvl, iniEnergy, iniMaxAmmo, iniCurrentAmmo);
-}
-
-// reset the whole weapons table
-void QWeaponTableWidget::resetAllWeapons() {
-    for (auto i : weaponsTableDictionary.keys()) {
-        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
-        currentWeapon->resetData();
-    }
-
-    // reorder table
-    reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13});
-}
-
-// get
 QVector<int> QWeaponTableWidget::getValidEnabledWidgets() {
     QVector<int> enabledWeaponsVector;
     for (int i = 0; i < rowCount(); i++) {
@@ -164,12 +100,88 @@ QVector<QWeaponTableSlot*> QWeaponTableWidget::getValidEnabledWeaponPointers() {
     return enabledWeaponsVector;
 }
 
-// QString QWeaponTableWidget::getWeaponIcon() {
-//     return ui->wea
-// }
+//================================
+// SET
+//================================
 
+// reset the whole weapons table
+void QWeaponTableWidget::resetAllWeapons() {
+    for (auto i : weaponsTableDictionary.keys()) {
+        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
+        currentWeapon->resetData();
+    }
 
-// slots
+    // reorder table
+    reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13});
+}
+
+// update the data of 1 weapon from qinventory
+void QWeaponTableWidget::setWeaponFromParser(int type, bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
+    QWeaponTableSlot* currentWeapon = weaponsTableDictionary[type];
+    currentWeapon->setData(iniEnabled, iniLvl, iniEnergy, iniMaxAmmo, iniCurrentAmmo);
+}
+
+// given a vector of weapons in the order we want in the table, reorder the table!
+void QWeaponTableWidget::reorderTable(QVector<int> weapons) {
+    // insert weapons.size amount of new rows at the top (will be filled later)
+    int newRowAmount = weapons.size();
+    for (int i = 0; i < newRowAmount; i++) { insertRow(i); }
+
+    // move the rows from where they were to where they need to be
+    int rowIt = 0;
+    for (auto i : weapons) {
+        // qDebug() << "mainwindowmethods.cpp: reordering: " << i;
+
+        // get row index of the widget
+        QWeaponTableSlot* weapon = weaponsTableDictionary[i];
+        int index = -1;
+        for (int i = 0; i < rowCount(); i++) {
+            if (cellWidget(i, 0) == weapon) {
+                index = i;
+            }
+        }
+
+        if (index < 0) {
+            qDebug() << "mainwindowmethods.cpp: ERROR, INDEX OF OLD ROW DOESNT EXIST!!";
+            return;
+        }
+
+        // set the cell and then remove the old row
+        setCellWidget(rowIt, 0, weapon);
+        removeRow(index);
+
+        // update ui stuff
+        setRowHeight(rowIt, weapon->sizeHint().height());
+        weapon->clearFocus();
+
+        rowIt++;
+    }
+
+    viewport()->update();
+    updateGeometry();
+}
+
+// paint all of the rows in the table
+void QWeaponTableWidget::paintEnabledRows() {
+    int checkWeaponCount = 0;
+    for (int i = 0; i < rowCount(); i++) {
+        QWeaponTableSlot * enabledWeapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
+        if (!enabledWeapon->getEnableChecked()) continue;
+
+        if (checkWeaponCount < 5) {
+            enabledWeapon->setBackgroundColor(enabledColor);
+            checkWeaponCount++;
+        }
+        else {
+            enabledWeapon->setBackgroundColor(enabledButLeftBehindColor);
+        }
+    }
+}
+
+//================================
+// SLOTS
+//================================
+
 // connected with the enable check signal from widget in order to repaint specific row
 void QWeaponTableWidget::paintTable(QWeaponTableSlot* weapon, int enabledChanged) {
     // update enabledChanged
@@ -211,50 +223,9 @@ void QWeaponTableWidget::paintTable(QWeaponTableSlot* weapon, int enabledChanged
     weapon->setBackgroundColor(backgroundColor);
 }
 
-void QWeaponTableWidget::paintEnabledRows() {
-    int checkWeaponCount = 0;
-    for (int i = 0; i < rowCount(); i++) {
-        QWeaponTableSlot * enabledWeapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
-        if (!enabledWeapon->getEnableChecked()) continue;
-
-        if (checkWeaponCount < 5) {
-            enabledWeapon->setBackgroundColor(enabledColor);
-            checkWeaponCount++;
-        }
-        else {
-            enabledWeapon->setBackgroundColor(enabledButLeftBehindColor);
-        }
-    }
-}
-
-
-// drag and drop related stuff!
-int QWeaponTableWidget::getGapRow(const QPoint &pos, int tol = 6) {
-    int rows = rowCount();
-    int y = pos.y();
-
-    // Before the first row
-    int firstTop = rowViewportPosition(0);
-    if (y < firstTop + tol)
-        return 0;
-
-    // Check internal gaps
-    for (int r = 0; r < rows - 1; r++) {
-        int bottom = rowViewportPosition(r) + rowHeight(r);
-        int nextTop = rowViewportPosition(r + 1);
-
-        if (y > bottom - tol && y < nextTop + tol)
-            return r + 1;
-    }
-
-    // After last row
-    int lastBottom = rowViewportPosition(rows - 1) + rowHeight(rows - 1);
-    if (y > lastBottom - tol)
-        return rows;
-
-    // Cursor is *inside* a row
-    return -1;
-}
+//================================
+// USER INPUT OVERRIDES
+//================================
 
 // start drag event, used for setting the drag preview thing
 void QWeaponTableWidget::startDrag(Qt::DropActions supportedActions) {
@@ -293,7 +264,30 @@ void QWeaponTableWidget::dragMoveEvent(QDragMoveEvent* event) {
     QPoint pos = event->position().toPoint();
 
     // getGapRow detects if we are in between rows
-    int gap = getGapRow(pos);
+    int gap = [this, pos]() -> int
+    {
+        int tol = 6; // offset for detecting valid drop points
+        int rows = rowCount();
+        int y = pos.y();
+
+        int firstTop = rowViewportPosition(0);
+        if (y < firstTop + tol)
+            return 0;
+
+        for (int r = 0; r < rows - 1; r++) {
+            int bottom = rowViewportPosition(r) + rowHeight(r);
+            int nextTop = rowViewportPosition(r + 1);
+
+            if (y > bottom - tol && y < nextTop + tol)
+                return r + 1;
+        }
+
+        int lastBottom = rowViewportPosition(rows - 1) + rowHeight(rows - 1);
+        if (y > lastBottom - tol)
+            return rows;
+
+        return -1;
+    }();
 
     // check if we arent INN in a cell, and that we aren't trying to drop between ourselves
     if (gap < 0 || draggingFromRow == gap || draggingFromRow + 1 == gap) {
@@ -407,7 +401,35 @@ void QWeaponTableWidget::mouseMoveEvent(QMouseEvent* event) {
     startDrag(Qt::MoveAction);
 }
 
+// when releasing the mouse
+void QWeaponTableWidget::mouseReleaseEvent(QMouseEvent *event) {
+    QTableWidget::mouseReleaseEvent(event);
 
+    // Clear selection and remove focus
+    clearSelection();
+    setCurrentIndex(QModelIndex());
+}
+
+//================================
+// DEBUG PRINTS
+//================================
+
+void QWeaponTableWidget::printWeaponsTableDictionary() {
+    qDebug() << "qweapontablewidget.h: print all weapon table dicitonary entries: ";
+    for (auto i : weaponsTableDictionary.keys()) {
+        QWeaponTableSlot* weapon = weaponsTableDictionary[i];
+        qDebug() << i << ":" << weapon->getWeaponType();
+    }
+}
+void QWeaponTableWidget::printWeaponsTable() {
+    qDebug() << "qweapontablewidget.h: print all weapon table row entries: ";
+    for (int i = 0; i < rowCount(); i++) {
+        if (cellWidget(i, 0) == nullptr) continue;
+
+        QWeaponTableSlot* weapon = qobject_cast<QWeaponTableSlot*>(cellWidget(i,0));
+        qDebug() << "row: " << i << " has weapon: " << weapon->getWeaponType();
+    }
+}
 
 
 
