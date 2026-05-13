@@ -1,5 +1,6 @@
 #include "qinventory.h"
 #include "ui_qinventory.h"
+#include "widgetfunctions.h"
 
 QInventory::QInventory(QWidget *parent)
     : QWidget(parent)
@@ -11,10 +12,14 @@ QInventory::QInventory(QWidget *parent)
     ui->healthSlider->setMinimum(0);
     ui->maxHealthSpinBox->setMinimum(1);
     ui->maxHealthSpinBox->setValue(1);
+    importantWidgets = {
+        ui->healthSlider,
+        ui->healthSpinBox,
+    };
 
     // connections to big widgets
     connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), ui->weaponOrderTable, SLOT(weaponUiChanged(QVector<int>)));
-    connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), this, SLOT(_onUpdateSelectWeaponChoices(QVector<int>)));
+    connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), this, SLOT(onUpdateSelectWeaponChoices(QVector<int>)));
     connect(ui->selectedWeaponCombo, SIGNAL(currentIndexChanged(int)), ui->weaponOrderTable, SLOT(setHighlightedSlot(int)));
 
     // connections to health bars
@@ -28,18 +33,9 @@ QInventory::~QInventory()
     delete ui;
 }
 
-// signal locks
-void QInventory::lockSignals() {
-    // xp
-    ui->healthSlider->blockSignals(true);
-    ui->healthSpinBox->blockSignals(true);
-}
-
-void QInventory::unlockSignals() {
-    // xp
-    ui->healthSlider->blockSignals(false);
-    ui->healthSpinBox->blockSignals(false);
-}
+//=============================
+// HEALTH BAR
+//=============================
 
 // updating health bar
 void QInventory::healthChanged(int newHp) {
@@ -49,7 +45,7 @@ void QInventory::healthChanged(int newHp) {
         return;
     }
 
-    lockSignals(); // lock
+    signalLock(false, importantWidgets); // lock
 
     // set values
     if (newHp > maxHp) newHp = maxHp;
@@ -59,7 +55,7 @@ void QInventory::healthChanged(int newHp) {
     ui->healthSlider->setValue(hp);
     ui->healthSpinBox->setValue(hp);
 
-    unlockSignals(); // unlock!
+    signalLock(true, importantWidgets); // unlock
 }
 
 void QInventory::maxHealthChanged(int newMaxHp) {
@@ -68,7 +64,8 @@ void QInventory::maxHealthChanged(int newMaxHp) {
         qDebug() << "qinventory.cpp: ERROR incoming new max health too low";
         return;
     }
-    lockSignals(); // lock
+
+    signalLock(false, importantWidgets); // lock
 
     maxHp = newMaxHp;
     if (hp > maxHp) healthChanged(maxHp);
@@ -80,11 +77,15 @@ void QInventory::maxHealthChanged(int newMaxHp) {
     ui->healthSlider->setMaximum(maxHp);
 
 
-    unlockSignals(); // unlock!
+    signalLock(true, importantWidgets); // unlock
 }
 
+//====================================
+// METHODS
+//=====================================
+
 // communicating with main window
-void QInventory::_onSelectFile(QString filePath) {
+void QInventory::onSelectFile(QString filePath) {
     if (!parser.parseProfile(filePath)) {
         qDebug() << "mainwindowslots.cpp: Parsing DID NOT complete";
         return;
@@ -115,11 +116,11 @@ void QInventory::_onSelectFile(QString filePath) {
     ui->weaponOrderTable->setAllSlots(enabledWeapons);
 
     // update selected weapon
-    _onUpdateSelectWeaponChoices(ui->weaponsTable->getValidEnabledWidgets());
+    onUpdateSelectWeaponChoices(ui->weaponsTable->getValidEnabledWidgets());
     ui->selectedWeaponCombo->setCurrentIndex(parser.getCurrentWeapon());
 }
 
-void QInventory::_PushInventoryToProfile(QString profilePath) {
+void QInventory::PushInventoryToProfile(QString profilePath) {
     // get weapon data!
     QVector<QWeaponTableSlot*> enabledWeapons = ui->weaponsTable->getValidEnabledWeaponPointers();
     QVector<WeaponDataSlot> weaponDataSlots;
@@ -151,7 +152,7 @@ void QInventory::_PushInventoryToProfile(QString profilePath) {
 }
 
 // communicating with weapon order table
-void QInventory::_onUpdateSelectWeaponChoices(QVector<int> weapons) {
+void QInventory::onUpdateSelectWeaponChoices(QVector<int> weapons) {
     // dictionary for later
     QHash<int, QString> weaponTextDictionary = {
         {0x01, "Snake"},

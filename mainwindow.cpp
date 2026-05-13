@@ -55,8 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->profiles, SIGNAL(saveAsButtonPressed(QString)), this, SLOT(onProfilesSaveAsButtonPressed(QString))); // the signal from the profiles signals our signal which will go to the inventory
 
         // inventory
-        connect(this, SIGNAL(profilePathUpdated(QString)), ui->inventory, SLOT(_onSelectFile(QString)));
-        connect(this, SIGNAL(writeToProfile(QString)), ui->inventory, SLOT(_PushInventoryToProfile(QString)));
+        connect(this, SIGNAL(profilePathUpdated(QString)), ui->inventory, SLOT(onSelectFile(QString)));
+        connect(this, SIGNAL(writeToProfile(QString)), ui->inventory, SLOT(PushInventoryToProfile(QString)));
     }
 
     // set widgets

@@ -18,19 +18,18 @@ public:
 
 private:
     ProfileLoader parser;
+
+    // HP bar stuff
+    QVector<QWidget*> importantWidgets;
     int hp = 0;
     int maxHp = 0;
 
-    // locks used to avoid repeating functions
-    void lockSignals();
-    void unlockSignals();
-
 public slots:
-    void _onSelectFile(QString filePath);
-    void _PushInventoryToProfile(QString profilePath);
+    void onSelectFile(QString filePath);
+    void PushInventoryToProfile(QString profilePath);
 
 private slots:
-    void _onUpdateSelectWeaponChoices(QVector<int> weapons);
+    void onUpdateSelectWeaponChoices(QVector<int> weapons);
 
     // health bar
     void healthChanged(int health);
