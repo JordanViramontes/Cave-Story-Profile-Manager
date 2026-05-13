@@ -25,9 +25,8 @@ public:
     // set
     void resetAllWeapons();
     void setWeaponFromParser(int type, bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo);
+    void reorderTable(QVector<int> weapons);
 
-
-    void setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons, QVector<int> enabledWeapons);
     void lockWidgetSignals() {
         for (int i = 0; i < rowCount(); i++) {
             qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0))->lockSignals();
@@ -72,8 +71,6 @@ private:
 
     // methods
     int findTableWidgetIndex(const QWeaponTableSlot* weaponSlot);
-    void reorderTable(QVector<int> weapons);
-    void resetTable() { reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13}); };
     void paintEnabledRows();
     int getGapRow(const QPoint &pos, int tol);
 

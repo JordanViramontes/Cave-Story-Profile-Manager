@@ -160,6 +160,9 @@ void QInventory::onSelectFile(QString filePath) {
         weaponIt += 0x14;
     }
 
+    // update weapon widget table order
+    ui->weaponsTable->reorderTable(enabledWeapons);
+
     // update weapons order table
     ui->weaponOrderTable->setAllSlots(enabledWeapons);
 

@@ -115,38 +115,6 @@ int QWeaponTableWidget::findTableWidgetIndex(const QWeaponTableSlot* weaponSlot)
     return -1;
 }
 
-// given a vector of weapons from the parser, update the table
-void QWeaponTableWidget::setWeaponsFromParser(const QVector<WeaponDataSlot> parserWeapons, QVector<int> enabledWeapons) {
-    // lock or else when we set the enable widget to off it'll signal that its been changed twice
-    lockWidgetSignals();
-
-    // reset table before reordering stuff for paint logic
-    resetTable();
-
-    // we want to turn everything thats false false and then true for paint order logic
-
-    // go through all table slots EXCLUDING the known weapons and reset them
-    for (auto i : weaponsTableDictionary.keys()) {
-        if (enabledWeapons.contains(i)) continue;
-
-        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
-        currentWeapon->resetData();
-    }
-
-    // go through parser weapons and set data!
-    for (auto i : parserWeapons) {
-        if (i.type == 0x00) continue;
-        // qDebug() << "qweapontablewidget.cpp: testing weapon: " << (int)i.type << ", " << (int)i.level << ", " << (int)i.energy << ", " << (int)i.maxAmmo << ", " << (int)i.currentAmmo;
-
-        // get the weapon table slot pointer
-        QWeaponTableSlot* currentWeapon = weaponsTableDictionary[(int)i.type];
-        currentWeapon->setData(true, (int)i.level - 1, (int)i.energy, (int)i.maxAmmo, (int)i.currentAmmo);
-    }
-
-    reorderTable(enabledWeapons);
-    unlockWidgetSignals();
-}
-
 void QWeaponTableWidget::setWeaponFromParser(int type, bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
     QWeaponTableSlot* currentWeapon = weaponsTableDictionary[type];
     currentWeapon->setData(iniEnabled, iniLvl, iniEnergy, iniMaxAmmo, iniCurrentAmmo);
@@ -158,6 +126,9 @@ void QWeaponTableWidget::resetAllWeapons() {
         QWeaponTableSlot* currentWeapon = weaponsTableDictionary[i];
         currentWeapon->resetData();
     }
+
+    // reorder table
+    reorderTable({1, 2, 3, 4, 5, 7, 9, 10, 12, 13});
 }
 
 // get
