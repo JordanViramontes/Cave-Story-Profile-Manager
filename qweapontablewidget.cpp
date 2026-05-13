@@ -1,4 +1,5 @@
 #include "qweapontablewidget.h"
+#include "widgetfunctions.h"
 #include <qheaderview.h>
 #include <qdebug.h>
 

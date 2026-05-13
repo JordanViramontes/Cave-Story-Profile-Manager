@@ -1,5 +1,6 @@
 #include "qweapontableslot.h"
 #include "ui_qweapontableslot.h"
+#include "widgetfunctions.h"
 
 QWeaponTableSlot::QWeaponTableSlot(QWidget *parent)
     : QWidget(parent)
@@ -23,22 +24,35 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
     enableChanged(false);
     // qDebug() << "qeapontableslot.cpp: weaponLvls: " << weaponLvls;
 
+    // these widgets will be locked and unlocked
+    signalWidgets = {
+        //xp
+        ui->xpSlider,
+        ui->xpCurrentSpin,
+
+        // ammo
+        ui->ammoSlider,
+        ui->ammoCurrentSpin,
+
+        // ammoMax
+        ui->ammoMaxSpin,
+
+        // lvl
+        ui->lvlComboBox,
+
+        // check
+        ui->enableCheck,
+    };
+
     // visual changes
-    // ui->weaponIconLabel->setText(text);
     setAttribute(Qt::WA_StyledBackground, true);
-
-
-    // set icon
-
 
     // event filters
     QWeaponLvlComboBoxEventFilters * filters = new QWeaponLvlComboBoxEventFilters(this);
     ui->lvlComboBox->installEventFilter(filters);
 
-
     // ammo UI bool
     if (!hasAmmo) {
-
         ui->ammoCurrentSpin->setEnabled(false);
         ui->ammoMaxSpin->setEnabled(false);
         ui->ammoSlider->setEnabled(false);
@@ -62,40 +76,44 @@ QWeaponTableSlot::QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QS
     ui->grabHandleFrame->adjustSize();
 
     // set the weapon label and resize it
-    QHash<int, QString> weaponImageDictionary = { // only allocated once and then killed once function ends
-     {-1, ":/weaponImages/images/empty.png"},
-     {0x01, ":/weaponImages/images/snake.png"},
-     {0x02, ":/weaponImages/images/polarStar.png"},
-     {0x03, ":/weaponImages/images/fireball.png"},
-     {0x04, ":/weaponImages/images/machineGun.png"},
-     {0x05, ":/weaponImages/images/missile.png"},
-     {0x07, ":/weaponImages/images/bubble.png"},
-     {0x09, ":/weaponImages/images/blade.png"},
-     {0x0A, ":/weaponImages/images/missileSuper.png"},
-     {0x0C, ":/weaponImages/images/nemesis.png"},
-     {0x0D, ":/weaponImages/images/spur.png"},
-    };
-    weaponLabelIconPath = weaponImageDictionary[type];
+    {
+        QHash<int, QString> weaponImageDictionary = { // only allocated once and then killed once function ends
+         {-1, ":/weaponImages/images/empty.png"},
+         {0x01, ":/weaponImages/images/snake.png"},
+         {0x02, ":/weaponImages/images/polarStar.png"},
+         {0x03, ":/weaponImages/images/fireball.png"},
+         {0x04, ":/weaponImages/images/machineGun.png"},
+         {0x05, ":/weaponImages/images/missile.png"},
+         {0x07, ":/weaponImages/images/bubble.png"},
+         {0x09, ":/weaponImages/images/blade.png"},
+         {0x0A, ":/weaponImages/images/missileSuper.png"},
+         {0x0C, ":/weaponImages/images/nemesis.png"},
+         {0x0D, ":/weaponImages/images/spur.png"},
+        };
+        weaponLabelIconPath = weaponImageDictionary[type];
 
-    QLabel * weaponIconLabel = ui->weaponIconLabel;
-    QPixmap p(weaponLabelIconPath);
-    int w = weaponIconLabel->width();
-    int h = weaponIconLabel->height();
-    weaponIconLabel->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
-    weaponIconLabel->setScaledContents(false); // turns off stretching
+        QLabel * weaponIconLabel = ui->weaponIconLabel;
+        QPixmap p(weaponLabelIconPath);
+        int w = weaponIconLabel->width();
+        int h = weaponIconLabel->height();
+        weaponIconLabel->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
+        weaponIconLabel->setScaledContents(false); // turns off stretching
+    }
 
     // connections
-    connect(ui->xpSlider, SIGNAL(valueChanged(int)), this, SLOT(xpChanged(int)));
-    connect(ui->xpCurrentSpin, SIGNAL(valueChanged(int)), this, SLOT(xpChanged(int)));
+    {
+        connect(ui->xpSlider, SIGNAL(valueChanged(int)), this, SLOT(xpChanged(int)));
+        connect(ui->xpCurrentSpin, SIGNAL(valueChanged(int)), this, SLOT(xpChanged(int)));
 
-    connect(ui->ammoSlider, SIGNAL(valueChanged(int)), this, SLOT(ammoChanged(int)));
-    connect(ui->ammoCurrentSpin, SIGNAL(valueChanged(int)), this, SLOT(ammoChanged(int)));
+        connect(ui->ammoSlider, SIGNAL(valueChanged(int)), this, SLOT(ammoChanged(int)));
+        connect(ui->ammoCurrentSpin, SIGNAL(valueChanged(int)), this, SLOT(ammoChanged(int)));
 
-    connect(ui->ammoMaxSpin, SIGNAL(valueChanged(int)), this, SLOT(ammoMaxChanged(int)));
+        connect(ui->ammoMaxSpin, SIGNAL(valueChanged(int)), this, SLOT(ammoMaxChanged(int)));
 
-    connect(ui->lvlComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(lvlChanged(int)));
+        connect(ui->lvlComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(lvlChanged(int)));
 
-    connect(ui->enableCheck, SIGNAL(toggled(bool)), this, SLOT(enableChanged(bool)));
+        connect(ui->enableCheck, SIGNAL(toggled(bool)), this, SLOT(enableChanged(bool)));
+    }
 }
 
 QWeaponTableSlot::~QWeaponTableSlot()
@@ -103,7 +121,10 @@ QWeaponTableSlot::~QWeaponTableSlot()
     delete ui;
 }
 
-// set
+//========================================
+// SETTING AND UPDATING WEAPON DATA
+//========================================
+
 void QWeaponTableSlot::setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
     enableChanged(iniEnabled);
     lvlChanged(iniLvl);
@@ -112,46 +133,7 @@ void QWeaponTableSlot::setData(bool iniEnabled, int iniLvl, int iniEnergy, int i
     ammoChanged(iniCurrentAmmo);
 }
 
-// signal locks
-void QWeaponTableSlot::lockSignals() {
-    // xp
-    ui->xpSlider->blockSignals(true);
-    ui->xpCurrentSpin->blockSignals(true);
-
-    // ammo
-    ui->ammoSlider->blockSignals(true);
-    ui->ammoCurrentSpin->blockSignals(true);
-
-    // ammoMax
-    ui->ammoMaxSpin->blockSignals(true);
-
-    // lvl
-    ui->lvlComboBox->blockSignals(true);
-
-    // check
-    ui->enableCheck->blockSignals(true);
-}
-
-void QWeaponTableSlot::unlockSignals() {
-    // xp
-    ui->xpSlider->blockSignals(false);
-    ui->xpCurrentSpin->blockSignals(false);
-
-    // ammo
-    ui->ammoSlider->blockSignals(false);
-    ui->ammoCurrentSpin->blockSignals(false);
-
-    // ammoMax
-    ui->ammoMaxSpin->blockSignals(false);
-
-    // lvl
-    ui->lvlComboBox->blockSignals(false);
-
-    // check
-    ui->enableCheck->blockSignals(false);
-}
-
-// // slots
+// slots
 void QWeaponTableSlot::enableChanged(bool enable) {
     if (!enabledState && !enable) return; // ignore everything if F->F
 
@@ -175,7 +157,7 @@ void QWeaponTableSlot::xpChanged(int newXp) {
         return;
     }
 
-    lockSignals(); // lock
+    signalLock(false, signalWidgets); // lock
 
     // set values
     if (newXp > maxXp) newXp = xp;
@@ -189,7 +171,7 @@ void QWeaponTableSlot::xpChanged(int newXp) {
     if (lvl == 2 && xp >= maxXp) ui->lvlComboBox->setCurrentIndex(3);
     else if (lvl == 2) ui->lvlComboBox->setCurrentIndex(2);
 
-    unlockSignals(); // unlock!
+    signalLock(true, signalWidgets); // unlock
 }
 
 void QWeaponTableSlot::ammoChanged(int newAmmo) {
@@ -198,7 +180,7 @@ void QWeaponTableSlot::ammoChanged(int newAmmo) {
         return;
     }
 
-    lockSignals(); // lock
+    signalLock(false, signalWidgets); // lock
 
     if (newAmmo > maxAmmo) newAmmo = maxAmmo; // ensure we dont go past limit!
     ammo = newAmmo;
@@ -207,7 +189,7 @@ void QWeaponTableSlot::ammoChanged(int newAmmo) {
     ui->ammoSlider->setValue(ammo);
     ui->ammoCurrentSpin->setValue(ammo);
 
-    unlockSignals(); // unlock!
+    signalLock(true, signalWidgets); // unlock
 }
 
 void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
@@ -216,7 +198,7 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
         return;
     }
 
-    lockSignals(); // lock
+    signalLock(false, signalWidgets); // lock
 
     maxAmmo = newAmmoMax;
     if (ammo > maxAmmo) ammoChanged(maxAmmo);
@@ -236,7 +218,7 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
         ui->ammoCurrentSpin->setEnabled(true);
     }
 
-    unlockSignals(); // unlock!
+    signalLock(true, signalWidgets); // unlock
 }
 
 void QWeaponTableSlot::lvlChanged(int newlvl) {
@@ -247,7 +229,7 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
     }
 
 
-    lockSignals(); // lock
+    signalLock(false, signalWidgets); // lock
 
     // set values
     double ogXpRatio = (1.0 * xp) / (1.0 * maxXp);
@@ -274,7 +256,7 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
     // change xp if needed!
     xpChanged(xp);
 
-    unlockSignals(); // unlock!
+    signalLock(true, signalWidgets); // unlock
 }
 
 // set

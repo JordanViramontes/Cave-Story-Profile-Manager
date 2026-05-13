@@ -17,7 +17,6 @@ public:
     QWeaponTableWidget(QWidget *parent = nullptr);
 
     // get
-    const QHash<int, QWeaponTableSlot*> &getWeaponsTableDictionary() { return weaponsTableDictionary; }
     QVector<int> getValidEnabledWidgets();
     QVector<QWeaponTableSlot*> getValidEnabledWeaponPointers();
     QString getWeaponIcon();
@@ -26,17 +25,6 @@ public:
     void resetAllWeapons();
     void setWeaponFromParser(int type, bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo);
     void reorderTable(QVector<int> weapons);
-
-    void lockWidgetSignals() {
-        for (int i = 0; i < rowCount(); i++) {
-            qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0))->lockSignals();
-        }
-    }
-    void unlockWidgetSignals() {
-        for (int i = 0; i < rowCount(); i++) {
-            qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0))->unlockSignals();
-        }
-    }
 
     // debug
     void printWeaponsTableDictionary() {
