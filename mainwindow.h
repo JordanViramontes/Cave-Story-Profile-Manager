@@ -26,21 +26,15 @@ private:
     Ui::MainWindow *ui;
     QString gameDirectory;
     QString savesDirectory;
-    // ProfileLoader parser;
 
     // save/load
     void saveSettings();
-    void loadSettings();
 
     // enable / disable states
-    void widgetLock(bool);
-    void disableInventory(bool);
+    void setUIfromEnabled(bool state);
     bool isEnabled = false;
-
-    // constructors
-    void setSignals();
-    void createFileTrees();
-    // void createProfilesAnimation();
+    bool initialStartup = true;
+    QVector<QWidget*> importantWidgets;
 
     // helper functions
     bool checkGameDirPath(QString path);
@@ -53,8 +47,7 @@ signals:
 private slots:
     // buttons
     void onSimpleRunButtonPressed();
-    void onRunButtonPressed();
-    void onHelpButtonPressed();
+    void onApplyAndRunButtonPressed();
     void onUpdateDirectoryButtonPressed();
 
     // signal to signal handlers

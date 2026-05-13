@@ -109,7 +109,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QWeaponTableWidget" name="weaponsTable">
+          <widget class="QWeaponTable" name="weaponsTable">
            <property name="frameShape">
             <enum>QFrame::Shape::StyledPanel</enum>
            </property>
@@ -248,15 +248,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QWeaponTableWidget</class>
-   <extends>QTableWidget</extends>
-   <header>qweapontablewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>QWeaponOrderTable</class>
    <extends>QWidget</extends>
    <header location="global">qweaponordertable.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QWeaponTable</class>
+   <extends>QTableWidget</extends>
+   <header>qweapontable.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

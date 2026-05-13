@@ -21,6 +21,10 @@ public:
     explicit QWeaponTableSlot(int intType, int intMaxAmmo, bool hasAmmo, QString text, QVector<int> iniWeaponLvls, QWidget *parent = nullptr);
     ~QWeaponTableSlot();
 
+    // UI stuff
+    bool isValidGrabPos(QPoint pos);
+    Ui::QWeaponTableSlot* getUi() const { return ui; } // used specifically for the help manu
+
     // get
     bool getEnableChecked() { return enabledState; }
     int getWeaponType() { return type; }
@@ -31,19 +35,13 @@ public:
     int getWeaponEnergy() { return xp; }
     int getWeaponMaxAmmo() { return maxAmmo; }
     int getWeaponAmmo() { return ammo; }
-    bool isValidGrabPos(QPoint pos);
-    Ui::QWeaponTableSlot* getUi() const { return ui; }
-
     QString getWeaponIconPath() { return weaponLabelIconPath; };
+    QVector<QWidget*> getSignalWidgets() { return signalWidgets; };
 
     // set
     void setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo);
     void resetData() { setData(false, 0, 0, initialMaxAmmo, 0); }
     void setBackgroundColor(QString color);
-
-    // locks used to avoid repeating functions
-    void lockSignals();
-    void unlockSignals();
 
 private:
     Ui::QWeaponTableSlot *ui;
@@ -63,6 +61,9 @@ private:
     // debug
     bool testLvlChangeXpRatio = true;
 
+    // signal stuff
+    QVector<QWidget*> signalWidgets;
+
 signals:
     bool enabledChanged(QWeaponTableSlot* myself, int enableChanged);
 
@@ -74,7 +75,7 @@ private slots:
     void lvlChanged(int lvl);
 };
 
-// event filters
+// event filter for combo box scrolling
 class QWeaponLvlComboBoxEventFilters : public QObject
 {
 public:

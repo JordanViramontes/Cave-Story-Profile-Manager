@@ -28,18 +28,20 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
 
-        mainwindowslots.cpp
+
         dialog.h dialog.cpp dialog.ui
-        mainwindowmethods.cpp
-        profileloader.h profileloader.cpp
+
+
         qweapontableslot.h qweapontableslot.cpp qweapontableslot.ui
-        qweapontablewidget.h qweapontablewidget.cpp
+        qweapontable.h qweapontable.cpp
         qweaponordertable.h qweaponordertable.cpp qweaponordertable.ui
         images.qrc
         qprofileviewtree.h qprofileviewtree.cpp
         qinventory.h qinventory.cpp qinventory.ui
         app_icon.rc
         profilesselection.h profilesselection.cpp profilesselection.ui
+        widgetfunctions.cpp
+        widgetfunctions.h
 
 
 
