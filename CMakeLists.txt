@@ -33,7 +33,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
 
 
         qweapontableslot.h qweapontableslot.cpp qweapontableslot.ui
-        qweapontablewidget.h qweapontablewidget.cpp
+        qweapontable.h qweapontable.cpp
         qweaponordertable.h qweaponordertable.cpp qweaponordertable.ui
         images.qrc
         qprofileviewtree.h qprofileviewtree.cpp

@@ -1,5 +1,5 @@
-#ifndef QWEAPONTABLEWIDGET_H
-#define QWEAPONTABLEWIDGET_H
+#ifndef QWEAPONTABLE_H
+#define QWEAPONTABLE_H
 
 #include <QTableWidget>
 #include <QDrag>
@@ -10,11 +10,11 @@
 #include "qweapontableslot.h"
 
 
-class QWeaponTableWidget : public QTableWidget
+class QWeaponTable : public QTableWidget
 {
     Q_OBJECT
 public:
-    QWeaponTableWidget(QWidget *parent = nullptr);
+    QWeaponTable(QWidget *parent = nullptr);
 
     // get
     QVector<int> getValidEnabledWidgets();
@@ -63,4 +63,4 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 };
 
-#endif // QWEAPONTABLEWIDGET_H
+#endif // QWEAPONTABLE_H
