@@ -227,7 +227,8 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
 
     // set values
     lvl = newlvl;
-    double ogXpRatio = (1.0 * xp) / (1.0 * maxXp);
+    double ogXpRatio = 1;
+    if (maxXp != 0)  ogXpRatio = (1.0 * xp) / (1.0 * maxXp);
     maxXp = weaponLvls[lvl];
 
     // update UI
