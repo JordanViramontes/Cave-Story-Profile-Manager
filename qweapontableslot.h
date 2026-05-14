@@ -39,7 +39,7 @@ public:
     QVector<QWidget*> getSignalWidgets() { return signalWidgets; };
 
     // set
-    void setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo);
+    void setData(const bool iniEnabled, const int iniLvl, const int iniEnergy, const int iniMaxAmmo, const int iniCurrentAmmo);
     void resetData() { setData(false, 0, 0, initialMaxAmmo, 0); }
     void setBackgroundColor(QString color);
 
@@ -92,7 +92,7 @@ protected:
                 int delta = wheel->angleDelta().y();
 
                 // if we're at max AND we're scrolling up
-                if (combo->currentIndex() == 3 & delta > 0) {
+                if (combo->currentIndex() == 3 && delta > 0) {
                     combo->setCurrentIndex(1);
                     return true;
                 }

@@ -61,7 +61,6 @@ ProfilesSelection::ProfilesSelection(QWidget *parent)
         profilesAnimation->addAnimation(subAnimation);
 
         // constants
-        int animationDuration = 300;
         int mainCollapsedWidth = 45;
         int mainContentWidth = width();
         ui->profilesContent->adjustSize(); // set size before getting width so we get the right constant

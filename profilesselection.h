@@ -23,6 +23,7 @@ private:
     // animation widgets
     QParallelAnimationGroup* profilesAnimation;
     bool profilesCollapsed;
+    int animationDuration = 150;
 
 signals:
     void saveFilePressed(QString);

@@ -10,16 +10,9 @@ int runDialogBox(QWidget* parent, const QString& page) {
 }
 
 // widget locks
-void widgetLock(const bool enable, const QVector<QWidget*> widgets) {
+void widgetLock(const bool enable, const QVector<QWidget*>& widgets) {
     for (auto i : widgets) {
         i->setEnabled(enable);
-    }
-}
-
-void signalLock(const bool enable, const QVector<QWidget*> widgets) {
-    // in this context, enable = true means the signals are enabled
-    for (auto i : widgets) {
-        i->blockSignals(!enable);
     }
 }
 

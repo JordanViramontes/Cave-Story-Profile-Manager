@@ -19,6 +19,7 @@ public:
     // get
     QVector<int> getValidEnabledWidgets();
     QVector<QWeaponTableSlot*> getValidEnabledWeaponPointers();
+    QVector<QWidget*> getAllWeaponSlots();
 
     // set
     void resetAllWeapons();

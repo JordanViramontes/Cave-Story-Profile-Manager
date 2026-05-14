@@ -13,6 +13,7 @@ class QInventory : public QWidget
     Q_OBJECT
 
 public:
+    void extracted(QVector<QWidget *> &weaponSlots);
     explicit QInventory(QWidget *parent = nullptr);
     ~QInventory();
 
@@ -29,7 +30,7 @@ private:
     char time[3] = {0};         // 034-036
 
     // HP bar stuff
-    QVector<QWidget*> importantWidgets;
+    QVector<QWidget*> signalBlockWidgets;
     int hp = 0;
     int maxHp = 0;
 
@@ -41,7 +42,9 @@ public slots:
     void PushInventoryToProfile(QString profilePath);
 
 private slots:
+    // weapon order table
     void onUpdateSelectWeaponChoices(QVector<int> weapons);
+    void onUpdateCurrentWeapon(int);
 
     // health bar
     void healthChanged(int health);
