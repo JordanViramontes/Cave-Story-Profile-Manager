@@ -7,27 +7,15 @@ QWeaponOrderTable::QWeaponOrderTable(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // test
-    // ui->weaponCatalogueLabel->setVisible(false);
-    // ui->weaponCatalogueContainer->setVisible(false);
+    // set defaults
+    setAllSlots({-1, -1, -1, -1, -1});
 
-    // set pixmaps
-    for (auto i : {ui->slot0, ui->slot1, ui->slot2, ui->slot3, ui->slot4,
-        // ui->EMPTY, ui->PS, ui->ML, ui->FB, ui->BB, ui->MG, ui->BL, ui->SN, ui->SML, ui->NS, ui->SP, }) {
-         }) {
-
-        // get pixmap dimensions
-        QPixmap p = i->pixmap();
-        int w = i->width();
-        int h = i->height();
-
-        // set pixmap aspect ratio!
-        i->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
-
-        // if (i == ui->PS) {
-        //     qDebug() << "qweaponordertable: w, h: " << w << ", " << h;
-        // }
-    }
+    // connections
+    connect(ui->slot0, &QPushButton::clicked, this, [this]() {emit slotPressed(0); });
+    connect(ui->slot1, &QPushButton::clicked, this, [this]() {emit slotPressed(1); });
+    connect(ui->slot2, &QPushButton::clicked, this, [this]() {emit slotPressed(2); });
+    connect(ui->slot3, &QPushButton::clicked, this, [this]() {emit slotPressed(3); });
+    connect(ui->slot4, &QPushButton::clicked, this, [this]() {emit slotPressed(4); });
 }
 
 QWeaponOrderTable::~QWeaponOrderTable()
@@ -51,7 +39,7 @@ void QWeaponOrderTable::setAllSlots(QVector<int> weapons) {
 
 void QWeaponOrderTable::setSlot(int slot, int weapon) {
     // find the label we need to change
-    QLabel * label = nullptr;
+    QPushButton * label = nullptr;
     switch(slot) {
     case(0): label = ui->slot0; break;
     case(1): label = ui->slot1; break;
@@ -69,15 +57,25 @@ void QWeaponOrderTable::setSlot(int slot, int weapon) {
     // set the image!
     QString imagePath = weaponImageDictionary[weapon];
     QPixmap p(imagePath);
-    int w = label->width();
-    int h = label->height();
-    label->setPixmap(p.scaled(w,h,Qt::KeepAspectRatio));
+    int w = width;
+    int h = width;
+    label->setIcon(QIcon(p.scaled(w,h,Qt::KeepAspectRatio)));
+    label->setIconSize(QSize(w, h));
+
+    // disable button if default
+    if (weapon == -1) {
+        // make it unclickable
+        label->setAttribute(Qt::WA_TransparentForMouseEvents);
+    }
+    else {
+        label->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    }
 }
 
 // set the highlighted slot
 void QWeaponOrderTable::setHighlightedSlot(int slot) {
     // if nothing just reset everything
-    if (slot < 0) {
+    if (slot < 0 || slot  > 5) {
         // change the color of the frames
         for (auto i : {ui->frame, ui->frame_1, ui->frame_2, ui->frame_3, ui->frame_4}) {
             i->setStyleSheet(QString(R"(
@@ -116,11 +114,11 @@ void QWeaponOrderTable::setHighlightedSlot(int slot) {
             )").arg("none"));
         }
     }
-
-
 }
 
-// slots
+//============================================
+// SLOTS
+//============================================
 
 // used for changing the UI icons
 void QWeaponOrderTable::weaponUiChanged(QVector<int> enabledWeapons) {

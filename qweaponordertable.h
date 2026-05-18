@@ -36,15 +36,18 @@ private:
     };
     QString colorFrameSelected = "#6495ED";
 
+    int width = 32;
+
 
     // set
     void setSlot(int slot, int weapon);
 
+signals:
+    void slotPressed(int);
+
 public slots:
     void weaponUiChanged(QVector<int> enabledWeapons);
     void setHighlightedSlot(int slot);
-
-protected:
 };
 
 #endif // QWEAPONORDERTABLE_H

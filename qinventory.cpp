@@ -13,15 +13,26 @@ QInventory::QInventory(QWidget *parent)
     ui->healthSlider->setMinimum(0);
     ui->maxHealthSpinBox->setMinimum(1);
     ui->maxHealthSpinBox->setValue(1);
-    importantWidgets = {
+
+    // get all widgets we're gonna signal block including all the weapon table slots
+    signalBlockWidgets = {
         ui->healthSlider,
         ui->healthSpinBox,
+        ui->maxHealthSpinBox,
+        ui->weaponOrderTable,
+        ui->weaponsTable,
+        ui->selectedWeaponCombo,
     };
+    QVector<QWidget*> weaponSlots = ui->weaponsTable->getAllWeaponSlots();
+    for (auto i : std::as_const(weaponSlots)) { signalBlockWidgets.push_back(i); }
 
     // connections to big widgets
     connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), ui->weaponOrderTable, SLOT(weaponUiChanged(QVector<int>)));
     connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), this, SLOT(onUpdateSelectWeaponChoices(QVector<int>)));
-    connect(ui->selectedWeaponCombo, SIGNAL(currentIndexChanged(int)), ui->weaponOrderTable, SLOT(setHighlightedSlot(int)));
+
+    // weapon order table
+    connect(ui->selectedWeaponCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(onUpdateCurrentWeapon(int)));
+    connect(ui->weaponOrderTable, SIGNAL(slotPressed(int)), this, SLOT(onUpdateCurrentWeapon(int)));
 
     // connections to health bars
     connect(ui->healthSlider, SIGNAL(valueChanged(int)), this, SLOT(healthChanged(int)));
@@ -46,7 +57,7 @@ void QInventory::healthChanged(int newHp) {
         return;
     }
 
-    signalLock(false, importantWidgets); // lock
+    SignalLocker locker(signalBlockWidgets); // lock signals
 
     // set values
     if (newHp > maxHp) newHp = maxHp;
@@ -55,8 +66,6 @@ void QInventory::healthChanged(int newHp) {
     // update uis
     ui->healthSlider->setValue(hp);
     ui->healthSpinBox->setValue(hp);
-
-    signalLock(true, importantWidgets); // unlock
 }
 
 void QInventory::maxHealthChanged(int newMaxHp) {
@@ -66,7 +75,7 @@ void QInventory::maxHealthChanged(int newMaxHp) {
         return;
     }
 
-    signalLock(false, importantWidgets); // lock
+    SignalLocker locker(signalBlockWidgets); // lock signals
 
     maxHp = newMaxHp;
     if (hp > maxHp) healthChanged(maxHp);
@@ -76,9 +85,6 @@ void QInventory::maxHealthChanged(int newMaxHp) {
 
     // update slider
     ui->healthSlider->setMaximum(maxHp);
-
-
-    signalLock(true, importantWidgets); // unlock
 }
 
 //====================================
@@ -97,6 +103,9 @@ void QInventory::onSelectFile(QString filePath) {
         qDebug() << "qinventory.cpp: ERROR, parsing file size isn't correct for profile!";
         return;
     }
+
+    // disable the signals from everything while we manually parse and set data
+    SignalLocker locker(signalBlockWidgets); // lock signals
 
     // set variables for later
     QVector<int> enabledWeapons;
@@ -160,13 +169,13 @@ void QInventory::onSelectFile(QString filePath) {
         weaponIt += 0x14;
     }
 
-    // update weapon widget table order
+    // // update weapon widget table order
     ui->weaponsTable->reorderTable(enabledWeapons);
 
-    // update weapons order table
+    // // update weapons order table
     ui->weaponOrderTable->setAllSlots(enabledWeapons);
 
-    // update selected weapon combo box
+    // // update selected weapon combo box
     onUpdateSelectWeaponChoices(ui->weaponsTable->getValidEnabledWidgets());
     ui->selectedWeaponCombo->setCurrentIndex((int)currWeapon);
 
@@ -333,4 +342,12 @@ void QInventory::onUpdateSelectWeaponChoices(QVector<int> weapons) {
     ui->weaponOrderTable->setHighlightedSlot(combo->currentIndex());
 }
 
+void QInventory::onUpdateCurrentWeapon(int slot) {
+    SignalLocker locker(signalBlockWidgets); // lock signals
 
+    // set the weapon order table
+    ui->weaponOrderTable->setHighlightedSlot(slot);
+
+    // set weapon combo box
+    ui->selectedWeaponCombo->setCurrentIndex(slot);
+}

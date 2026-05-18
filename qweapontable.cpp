@@ -5,7 +5,6 @@
 QWeaponTable::QWeaponTable(QWidget *parent)
     : QTableWidget(parent)
 {
-
     setRowCount(totalWeapons);
     setColumnCount(1);
 
@@ -98,6 +97,18 @@ QVector<QWeaponTableSlot*> QWeaponTable::getValidEnabledWeaponPointers() {
     }
 
     return enabledWeaponsVector;
+}
+
+// get every weapon in the table
+QVector<QWidget*> QWeaponTable::getAllWeaponSlots() {
+    QVector<QWidget*> widgets;
+    for (int i = 0; i < rowCount(); i++) {
+        QWidget* weapon = cellWidget(i, 0);
+        QWeaponTableSlot * weaponTest = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
+        widgets.push_back(weapon);
+    }
+
+    return widgets;
 }
 
 //================================

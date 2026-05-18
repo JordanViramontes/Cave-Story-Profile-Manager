@@ -125,7 +125,7 @@ QWeaponTableSlot::~QWeaponTableSlot()
 // SETTING AND UPDATING WEAPON DATA
 //========================================
 
-void QWeaponTableSlot::setData(bool iniEnabled, int iniLvl, int iniEnergy, int iniMaxAmmo, int iniCurrentAmmo) {
+void QWeaponTableSlot::setData(const bool iniEnabled, const int iniLvl, const int iniEnergy, const int iniMaxAmmo, const int iniCurrentAmmo) {
     enableChanged(iniEnabled);
     lvlChanged(iniLvl);
     xpChanged(iniEnergy);
@@ -148,6 +148,7 @@ void QWeaponTableSlot::enableChanged(bool enable) {
     // qDebug() << "qweapontableslot.cpp: setting weapon" << type << " enabled to: " << enable;
     ui->enableCheck->setChecked(enable);
 
+    // emit if we can!
     emit enabledChanged(this, enableChanged);
 }
 
@@ -157,7 +158,7 @@ void QWeaponTableSlot::xpChanged(int newXp) {
         return;
     }
 
-    signalLock(false, signalWidgets); // lock
+    SignalLocker locker(signalWidgets); // lock signals
 
     // set values
     if (newXp > maxXp) newXp = xp;
@@ -170,8 +171,6 @@ void QWeaponTableSlot::xpChanged(int newXp) {
     // check if we've hit max and update the combo box if we have
     if (lvl == 2 && xp >= maxXp) ui->lvlComboBox->setCurrentIndex(3);
     else if (lvl == 2) ui->lvlComboBox->setCurrentIndex(2);
-
-    signalLock(true, signalWidgets); // unlock
 }
 
 void QWeaponTableSlot::ammoChanged(int newAmmo) {
@@ -180,7 +179,7 @@ void QWeaponTableSlot::ammoChanged(int newAmmo) {
         return;
     }
 
-    signalLock(false, signalWidgets); // lock
+    SignalLocker locker(signalWidgets); // lock signals
 
     if (newAmmo > maxAmmo) newAmmo = maxAmmo; // ensure we dont go past limit!
     ammo = newAmmo;
@@ -188,8 +187,6 @@ void QWeaponTableSlot::ammoChanged(int newAmmo) {
     // update uis
     ui->ammoSlider->setValue(ammo);
     ui->ammoCurrentSpin->setValue(ammo);
-
-    signalLock(true, signalWidgets); // unlock
 }
 
 void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
@@ -198,7 +195,7 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
         return;
     }
 
-    signalLock(false, signalWidgets); // lock
+    SignalLocker locker(signalWidgets); // lock signals
 
     maxAmmo = newAmmoMax;
     if (ammo > maxAmmo) ammoChanged(maxAmmo);
@@ -217,8 +214,6 @@ void QWeaponTableSlot::ammoMaxChanged(int newAmmoMax) {
         ui->ammoSliderLabel->setEnabled(true);
         ui->ammoCurrentSpin->setEnabled(true);
     }
-
-    signalLock(true, signalWidgets); // unlock
 }
 
 void QWeaponTableSlot::lvlChanged(int newlvl) {
@@ -229,11 +224,12 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
     }
 
 
-    signalLock(false, signalWidgets); // lock
+    SignalLocker locker(signalWidgets); // lock signals
 
     // set values
-    double ogXpRatio = (1.0 * xp) / (1.0 * maxXp);
     lvl = newlvl;
+    double ogXpRatio = 1;
+    if (maxXp != 0)  ogXpRatio = (1.0 * xp) / (1.0 * maxXp);
     maxXp = weaponLvls[lvl];
 
     // update UI
@@ -243,7 +239,8 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
     ui->lvlComboBox->setCurrentIndex(lvl);
 
     // change xp value if needed
-    if (testLvlChangeXpRatio) xp = maxXp * ogXpRatio;
+    if (maxXp == 0) { xp = 0; } // case for if maxXp = 0, outlier from nemesis levels
+    else if (testLvlChangeXpRatio) xp = maxXp * ogXpRatio;
     else if (xp > maxXp) xp = maxXp; // we aren't using the ratio AND xp is higher than max
 
     // check if we're at max and set xp to max, move lvl back to 2!
@@ -256,7 +253,6 @@ void QWeaponTableSlot::lvlChanged(int newlvl) {
     // change xp if needed!
     xpChanged(xp);
 
-    signalLock(true, signalWidgets); // unlock
 }
 
 // set
