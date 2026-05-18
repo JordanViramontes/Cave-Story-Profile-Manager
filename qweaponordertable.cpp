@@ -75,7 +75,7 @@ void QWeaponOrderTable::setSlot(int slot, int weapon) {
 // set the highlighted slot
 void QWeaponOrderTable::setHighlightedSlot(int slot) {
     // if nothing just reset everything
-    if (slot < 0) {
+    if (slot < 0 || slot  > 5) {
         // change the color of the frames
         for (auto i : {ui->frame, ui->frame_1, ui->frame_2, ui->frame_3, ui->frame_4}) {
             i->setStyleSheet(QString(R"(

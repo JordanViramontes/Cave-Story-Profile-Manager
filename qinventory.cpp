@@ -14,8 +14,7 @@ QInventory::QInventory(QWidget *parent)
     ui->maxHealthSpinBox->setMinimum(1);
     ui->maxHealthSpinBox->setValue(1);
 
-    // get all widgets we're gonna signal block
-    QVector<QWidget*> weaponSlots = ui->weaponsTable->getAllWeaponSlots();
+    // get all widgets we're gonna signal block including all the weapon table slots
     signalBlockWidgets = {
         ui->healthSlider,
         ui->healthSpinBox,
@@ -24,7 +23,8 @@ QInventory::QInventory(QWidget *parent)
         ui->weaponsTable,
         ui->selectedWeaponCombo,
     };
-    for (auto i : weaponSlots) { signalBlockWidgets.push_back(i); }
+    QVector<QWidget*> weaponSlots = ui->weaponsTable->getAllWeaponSlots();
+    for (auto i : std::as_const(weaponSlots)) { signalBlockWidgets.push_back(i); }
 
     // connections to big widgets
     connect(ui->weaponsTable, SIGNAL(weaponTableChanged(QVector<int>)), ui->weaponOrderTable, SLOT(weaponUiChanged(QVector<int>)));
@@ -170,14 +170,14 @@ void QInventory::onSelectFile(QString filePath) {
     }
 
     // // update weapon widget table order
-    // ui->weaponsTable->reorderTable(enabledWeapons);
+    ui->weaponsTable->reorderTable(enabledWeapons);
 
     // // update weapons order table
-    // ui->weaponOrderTable->setAllSlots(enabledWeapons);
+    ui->weaponOrderTable->setAllSlots(enabledWeapons);
 
     // // update selected weapon combo box
-    // onUpdateSelectWeaponChoices(ui->weaponsTable->getValidEnabledWidgets());
-    // ui->selectedWeaponCombo->setCurrentIndex((int)currWeapon);
+    onUpdateSelectWeaponChoices(ui->weaponsTable->getValidEnabledWidgets());
+    ui->selectedWeaponCombo->setCurrentIndex((int)currWeapon);
 
     // parse items
     // unsigned int itemIt = 0x0D8;
@@ -345,6 +345,9 @@ void QInventory::onUpdateSelectWeaponChoices(QVector<int> weapons) {
 void QInventory::onUpdateCurrentWeapon(int slot) {
     SignalLocker locker(signalBlockWidgets); // lock signals
 
-    // update the highlighted weapon and the combo box
-    qDebug() << "incoming new one: " << slot;
+    // set the weapon order table
+    ui->weaponOrderTable->setHighlightedSlot(slot);
+
+    // set weapon combo box
+    ui->selectedWeaponCombo->setCurrentIndex(slot);
 }

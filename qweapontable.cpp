@@ -105,7 +105,6 @@ QVector<QWidget*> QWeaponTable::getAllWeaponSlots() {
     for (int i = 0; i < rowCount(); i++) {
         QWidget* weapon = cellWidget(i, 0);
         QWeaponTableSlot * weaponTest = qobject_cast<QWeaponTableSlot*>(cellWidget(i, 0));
-        qDebug() << "check: " << weaponTest->getWeaponType();
         widgets.push_back(weapon);
     }
 
